@@ -3,10 +3,10 @@
 <h2> Bis zum 16.04.2023 </h2>
 
 <ul>
-	<li> User "taentzer" als Contributer hinzufügen. *(Bis jetzt gab es kein Konto mit dem Usernamen taentzer)*</li>
-	<li> Zu Luc Wallis Kontakt aufnehmen und als Contributer hinzufügen. *(Kontakt wurde aufgenommen, es wird auf Antwort gewartet.)*</li>
-	<li> Abdelrahman als Contributer hinzufügen. *(Hat noch kein Konto erstellt, will bald aber eins erstellen)*</li>
-	<li> Sicherstellen, dass alle ein korrektes Setup (IntelliJ, git) haben.</li>
+	<li> User "taentzer" als Contributer hinzufügen <i>(Bis jetzt gab es kein Konto mit dem Usernamen taentzer)</i></li>
+	<li> Zu Luc Wallis Kontakt aufnehmen und als Contributer hinzufügen <i>(Kontakt wurde aufgenommen, es wird auf Antwort gewartet.)</i></li>
+	<li> Abdelrahman als Contributer hinzufügen <i>(Hat noch kein Konto erstellt, will aber bald eins erstellen)</i></li>
+	<li> Sicherstellen, dass alle ein korrektes Setup (IntelliJ, git) haben</li>
 	<ul>
 		<li> David Krell </li>
 		<li> David Klitsch </li>
