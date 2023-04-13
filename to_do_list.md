@@ -22,7 +22,7 @@
 	</ul>
 	<li> Vorläufige Paketstruktur erstellen </li>
 	<li> Entscheiden welches Build-Tool genutzt werden soll </li>
-	<li> Ordner Dokumentation im Repository erstellen </li>
+	<li> :heavy_check_mark: <del> Ordner Dokumentation im Repository erstellen</del> </li>
 	<li> <a href="https://de.wikipedia.org/wiki/Gantt-Diagramm">Gantt-Diagramm</a> für den Zeitplan und Arbeitseinteilung erstellen </li>
 	<li> Vorläufiges Klassendiagramm erstellen </li>
 	</ul>
