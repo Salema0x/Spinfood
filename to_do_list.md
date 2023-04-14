@@ -10,7 +10,7 @@
 	<ul>
 		<li> David Krell </li>
 		<li> David Klitsch </li>
-		<li> Abdelrahman Salem </li>
+		<li><del>Abdelrahman Salem</del></li>
 		<li> Luc Wallis </li>
 	</ul>
 	<li> Alle haben die Anforderungsbeschreibung gelesen.</li>
