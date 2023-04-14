@@ -25,6 +25,7 @@ hs_err_pid*
 replay_pid*
 
 ### IntelliJ IDEA ###
+Spinfood-Projekt/.idea
 **/.idea
 .idea/modules.xml
 .idea/jarRepositories.xml
