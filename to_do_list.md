@@ -8,7 +8,7 @@
 	<li> :heavy_check_mark:<del>Abdelrahman als Contributer hinzufügen</del></li>
 	<li> Sicherstellen, dass alle ein korrektes Setup (IntelliJ, git, JDK, Java Projekt) haben <i>(Siehe Abschnitt <a name="Set-Up">Set-Up</a>)</i></li>
 	<ul>
-		<li> David Krell </li>
+		<li> <del>David Krell</del> </li>
 		<li> David Klitsch </li>
 		<li> Abdelrahman Salem </li>
 		<li> Luc Wallis </li>
