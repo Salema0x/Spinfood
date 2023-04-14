@@ -5,7 +5,7 @@
 <ul>
 	<li> User "taentzer" als Contributer hinzufügen <i>(Bis jetzt gab es kein Konto mit dem Usernamen taentzer)</i></li>
 	<li> Zu Luc Wallis Kontakt aufnehmen und als Contributer hinzufügen <i>(Kontakt wurde aufgenommen, es wird auf Antwort gewartet.)</i></li>
-	<li> Abdelrahman als Contributer hinzufügen <i>(Hat noch kein Konto erstellt, will aber bald eins erstellen)</i></li>
+	<li> :heavy_check_mark:<del>Abdelrahman als Contributer hinzufügen</del></li>
 	<li> Sicherstellen, dass alle ein korrektes Setup (IntelliJ, git) haben</li>
 	<ul>
 		<li> David Krell </li>
