@@ -28,10 +28,12 @@
 	</ul>
 <h3>Set-Up</h3>
 <p>Am besten ist es, wenn wir alle auf den gleichen Versionen anfangen zu entwickeln um so potentielle Konflikte durch verschiedene Versionen zu umgehen.</p>
-<h4>Git Updaten </h4>
+<h4>Git Updaten und einrichten </h4>
 Wir werden die neuste git-Version verwenden, dazu sollte jeder sein git einmal updaten.
 Unter Windows öffnet ihr eine git Bash und gibt <code>git update-git-for-windows</code> ein.  Falls das nicht funktioniert könnt ihr zuerst <code>git-update</code> ausprobieren und dann nochmal <code>git update-git-for-windows</code>. Wenn dann "Up to date" ausgegeben wird habt ihr die neuste Version.
 Für Linux und Mac kann man <a href="https://phoenixnap.com/kb/how-to-update-git">hier</a> nachlesen.
+
+Achtet auch darauf Git richtig zu konfigurieren mit den folgenden Befehlen: <code> git config --global user.name "euer git Username (hier Ilias Kürzel)"</code> und <code> git config --global user.email "eure students mail"</code>.
 <h4>JDK Version</h4>
 Ich habe mich für die JDK Version 17 entschieden, obwohl auch schon JDK 20 draußen ist, ist das JDK 17 der letzte Long-Term JDK Release und kriegt Updates bis September 2024. Wohingegen die neuere Version JDK 20 nur Updates bis September 2023 erhält. Ihr könnt das JDK 17 <a href="https://www.oracle.com/java/technologies/downloads/#jdk17-windows">hier</a> herunterladen.
 <h4>IntelliJ Version</h4>
