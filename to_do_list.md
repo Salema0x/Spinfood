@@ -43,4 +43,4 @@ Um das Projekt in IntelliJ verwenden zu können und um auch von IntelliJ aus com
 Ihr könnt dann im IntelliJ den Code verändern und dort mittels "Git" -> "commit". Eure Änderungen committen und pushen. Am besten pullt ihr immer mittels "Git" -> "pull" bevor ihr anfangt weiter zu programmieren.
 <br>
 <br>
-<p>Note: Falls ihr eine Fehlermeldung beim Klonen habt die besagt <code> fatal: credential-cache unavailable; no unix socket support</code>, benutzt diesen Befehel <code> git config --global credential.helper wincred</code> dann diesen <code> git config --global credential.helper manager-core </code>.</p>
+<p>Note: Falls ihr eine Fehlermeldung beim Klonen habt die besagt <code> fatal: credential-cache unavailable; no unix socket support</code>, benutzt diesen Befehl <code> git config --global credential.helper wincred</code> dann diesen <code> git config --global credential.helper manager-core </code>.</p>
