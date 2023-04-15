@@ -15,7 +15,7 @@
 	</ul>
 	<li> Alle haben die Anforderungsbeschreibung gelesen </li>
 	<ul>
-		<li> David Krell </li>
+		<li> <del>David Krell</del> </li>
 		<li> David Klitsch </li>
 		<li> Abdelrahman Salem </li>
 		<li> Luc Wallis </li>
