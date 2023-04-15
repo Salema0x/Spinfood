@@ -42,5 +42,4 @@ Am besten ist es vermutlich wenn ihr euch alle die Ultimate Version von IntelliJ
 Um das Projekt in IntelliJ verwenden zu können und um auch von IntelliJ aus committen und pushen zu können, klont ihr euch zuerst das git Repository an einen Ort eurer Wahl. Dann klickt ihr auf den Ordner "Spinfood-Projekt" und öffnet diesen Ordner mit IntelliJ.
 Ihr könnt dann im IntelliJ den Code verändern und dort mittels "Git" -> "commit". Eure Änderungen committen und pushen. Am besten pullt ihr immer mittels "Git" -> "pull" bevor ihr anfangt weiter zu programmieren.
 
-<h4>Note: Falls ihr eine Fehlermeldung beim Klonen habt die besagt <strong> fatal: credential-cache unavailable; no unix socket support</strong>, benutzt diesen Befehel git config --global credential.helper wincred<br> dann diesen ->$ git config --global credential.helper manager-core
-</h4>
+<p>Note: Falls ihr eine Fehlermeldung beim Klonen habt die besagt <code> fatal: credential-cache unavailable; no unix socket support</code>, benutzt diesen Befehel <code> git config --global credential.helper wincred</code> dann diesen <code> git config --global credential.helper manager-core </code>.</p>
