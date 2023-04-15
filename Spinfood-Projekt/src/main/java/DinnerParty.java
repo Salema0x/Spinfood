@@ -117,7 +117,7 @@ public class DinnerParty {
                             + "Please arrive by 6:00pm to start preparing your meal.\n\n"
                             + "Best,\n"
                             + "The Spinfood Team",
-                    team.get(0), team.get(1), routes.get(i), team.get(3), team.get(2)); //müsste hier auch wieder eine out of bounds exception werfen
+                    team.get(0), team.get(1), routes.get(i), team.get(3), team.get(2));
             System.out.printf("Sending email to XY with subject XZ");
         }
     }
