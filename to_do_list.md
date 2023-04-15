@@ -10,14 +10,14 @@
 	<ul>
 		<li> <del>David Krell</del> </li>
 		<li> David Klitsch </li>
-		<li><del> Abdelrahman Salem</del> </li>
+		<li> <del> Abdelrahman Salem</del> </li>
 		<li> Luc Wallis </li>
 	</ul>
 	<li> Alle haben die Anforderungsbeschreibung gelesen </li>
 	<ul>
 		<li> <del>David Krell</del> </li>
 		<li> David Klitsch </li>
-		<li> Abdelrahman Salem </li>
+		<li> <del>Abdelrahman Salem</del> </li>
 		<li> Luc Wallis </li>
 	</ul>
 	<li> Vorläufige Paketstruktur erstellen </li>
