@@ -4,7 +4,7 @@
 
 <ul>
 	<li> User "taentzer" als Contributer hinzufügen <i>(Bis jetzt gab es kein Konto mit dem Usernamen "taentzer")</i></li>
-	<li> <del>Zu Luc Wallis Kontakt aufnehmen und</del> als Contributer hinzufügen <del><i>(Kontakt wurde via E-Mail(13.04) aufgenommen, es wird auf Antwort gewartet; Erneut Kontakt via E-Mail aufgenommen(15.04); evtl. Handynummer gefunden - Nachricht wird ignoriert)</i></del><i>(Muss sich noch ein Gitea Konto erstellen)</i></li>
+	<li> <del>Zu Luc Wallis Kontakt aufnehmen und</del> als Contributer hinzufügen<i>(Muss sich noch ein Gitea Konto erstellen)</i></li>
 	<li> :heavy_check_mark:<del>Abdelrahman als Contributer hinzufügen</del></li>
 	<li> Sicherstellen, dass alle ein korrektes Setup (IntelliJ, git, JDK, Java Projekt) haben <i>(Siehe Abschnitt <a name="Set-Up">Set-Up</a>)</i></li>
 	<ul>
