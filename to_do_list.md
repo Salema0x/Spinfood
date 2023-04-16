@@ -9,14 +9,14 @@
 	<li> Sicherstellen, dass alle ein korrektes Setup (IntelliJ, git, JDK, Java Projekt) haben <i>(Siehe Abschnitt <a name="Set-Up">Set-Up</a>)</i></li>
 	<ul>
 		<li> <del>David Krell</del> </li>
-		<li> David Klitsch </li>
-		<li> <del> Abdelrahman Salem</del> </li>
+		<li> <del>David Klitsch </del> </li>
+		<li> <del>Abdelrahman Salem</del> </li>
 		<li> Luc Wallis </li>
 	</ul>
 	<li> Alle haben die Anforderungsbeschreibung gelesen </li>
 	<ul>
 		<li> <del>David Krell</del> </li>
-		<li> David Klitsch </li>
+		<li> <del>David Klitsch </del></li>
 		<li> <del>Abdelrahman Salem</del> </li>
 		<li> Luc Wallis </li>
 	</ul>
