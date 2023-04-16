@@ -1,6 +1,6 @@
 <h1> To-Do-List </h1>
 
-<h2> Bis zum 16.04.2023 </h2>
+<h2> Bis zum 20.04.2023 </h2>
 
 <ul>
 	<li> User "taentzer" als Contributer hinzufügen <i>(Bis jetzt gab es kein Konto mit dem Usernamen "taentzer")</i></li>
