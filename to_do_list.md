@@ -4,21 +4,18 @@
 
 <ul>
 	<li> User "taentzer" als Contributer hinzufügen <i>(Bis jetzt gab es kein Konto mit dem Usernamen "taentzer")</i></li>
-	<li> <del>Zu Luc Wallis Kontakt aufnehmen und</del> als Contributer hinzufügen<i>(Muss sich noch ein Gitea Konto erstellen)</i></li>
 	<li> :heavy_check_mark:<del>Abdelrahman als Contributer hinzufügen</del></li>
-	<li> Sicherstellen, dass alle ein korrektes Setup (IntelliJ, git, JDK, Java Projekt) haben <i>(Siehe Abschnitt <a name="Set-Up">Set-Up</a>)</i></li>
+	<li> :heavy_check_mark: <del>Sicherstellen, dass alle ein korrektes Setup (IntelliJ, git, JDK, Java Projekt) haben <i>(Siehe Abschnitt <a name="Set-Up">Set-Up</a>)</i></del></li>
 	<ul>
 		<li> <del>David Krell</del> </li>
 		<li> <del>David Klitsch </del> </li>
 		<li> <del>Abdelrahman Salem</del> </li>
-		<li> Luc Wallis </li>
 	</ul>
-	<li> Alle haben die Anforderungsbeschreibung gelesen </li>
+	<li> :heavy_check_mark: <del>Alle haben die Anforderungsbeschreibung gelesen</del> </li>
 	<ul>
 		<li> <del>David Krell</del> </li>
 		<li> <del>David Klitsch </del></li>
 		<li> <del>Abdelrahman Salem</del> </li>
-		<li> Luc Wallis </li>
 	</ul>
 	<li> Vorläufige Paketstruktur erstellen </li>
 	<li> :heavy_check_mark: <del> Entscheiden welches Build-Tool genutzt werden soll</del> <i> (Es wurde sich für Maven entschieden)</i></li>
