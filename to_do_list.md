@@ -5,17 +5,20 @@
 <ul>
 	<li> User "taentzer" als Contributer hinzufügen <i>(Bis jetzt gab es kein Konto mit dem Usernamen "taentzer")</i></li>
 	<li> :heavy_check_mark:<del>Abdelrahman als Contributer hinzufügen</del></li>
-	<li> :heavy_check_mark: <del>Sicherstellen, dass alle ein korrektes Setup (IntelliJ, git, JDK, Java Projekt) haben <i>(Siehe Abschnitt <a name="Set-Up">Set-Up</a>)</i></del></li>
+	<li> Lennart als Contributer hinzufügen</li>
+	<li> Sicherstellen, dass alle ein korrektes Setup (IntelliJ, git, JDK, Java Projekt) haben <i>(Siehe Abschnitt <a name="Set-Up">Set-Up</a>)</i></li>
 	<ul>
 		<li> <del>David Krell</del> </li>
 		<li> <del>David Klitsch </del> </li>
 		<li> <del>Abdelrahman Salem</del> </li>
+		<li> Lennart Scheil </li>
 	</ul>
-	<li> :heavy_check_mark: <del>Alle haben die Anforderungsbeschreibung gelesen</del> </li>
+	<li> Alle haben die Anforderungsbeschreibung gelesen </li>
 	<ul>
 		<li> <del>David Krell</del> </li>
 		<li> <del>David Klitsch </del></li>
 		<li> <del>Abdelrahman Salem</del> </li>
+		<li> Lennart Scheil </li>
 	</ul>
 	<li> Vorläufige Paketstruktur erstellen </li>
 	<li> :heavy_check_mark: <del> Entscheiden welches Build-Tool genutzt werden soll</del> <i> (Es wurde sich für Maven entschieden)</i></li>
