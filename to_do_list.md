@@ -11,14 +11,14 @@
 		<li> <del>David Krell</del> </li>
 		<li> <del>David Klitsch </del> </li>
 		<li> <del>Abdelrahman Salem</del> </li>
-		<li> Lennart Scheil </li>
+		<li> <del>Lennart Scheil<del> </li>
 	</ul>
 	<li> Alle haben die Anforderungsbeschreibung gelesen </li>
 	<ul>
 		<li> <del>David Krell</del> </li>
 		<li> <del>David Klitsch </del></li>
 		<li> <del>Abdelrahman Salem</del> </li>
-		<li> Lennart Scheil </li>
+		<li> <del>Lennart Scheil<del> </li>
 	</ul>
 	<li> Vorläufige Paketstruktur erstellen </li>
 	<li> :heavy_check_mark: <del> Entscheiden welches Build-Tool genutzt werden soll</del> <i> (Es wurde sich für Maven entschieden)</i></li>
