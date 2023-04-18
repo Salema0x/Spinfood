@@ -13,7 +13,7 @@
 		<li> <del>Abdelrahman Salem</del> </li>
 		<li> <del>Lennart Scheil<del> </li>
 	</ul>
-	<li><del>Alle haben die Anforderungsbeschreibung gelesen</del></li>
+	<li>:heavy_check_mark:<del>Alle haben die Anforderungsbeschreibung gelesen</del></li>
 	<ul>
 		<li> <del>David Krell</del> </li>
 		<li> <del>David Klitsch </del></li>
