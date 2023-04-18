@@ -5,7 +5,7 @@
 <ul>
 	<li> User "taentzer" als Contributer hinzufügen <i>(Bis jetzt gab es kein Konto mit dem Usernamen "taentzer")</i></li>
 	<li> :heavy_check_mark:<del>Abdelrahman als Contributer hinzufügen</del></li>
-	<li> Lennart als Contributer hinzufügen</li>
+	<li> :heavy_check_mark:<del>Lennart als Contributer hinzufügen</del></li>
 	<li> Sicherstellen, dass alle ein korrektes Setup (IntelliJ, git, JDK, Java Projekt) haben <i>(Siehe Abschnitt <a name="Set-Up">Set-Up</a>)</i></li>
 	<ul>
 		<li> <del>David Krell</del> </li>
