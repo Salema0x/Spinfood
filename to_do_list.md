@@ -6,14 +6,14 @@
 	<li> User "taentzer" als Contributer hinzufügen <i>(Bis jetzt gab es kein Konto mit dem Usernamen "taentzer")</i></li>
 	<li> :heavy_check_mark:<del>Abdelrahman als Contributer hinzufügen</del></li>
 	<li> :heavy_check_mark:<del>Lennart als Contributer hinzufügen</del></li>
-	<li> Sicherstellen, dass alle ein korrektes Setup (IntelliJ, git, JDK, Java Projekt) haben <i>(Siehe Abschnitt <a name="Set-Up">Set-Up</a>)</i></li>
+	<li> :heavy_check_mark:<del>Sicherstellen, dass alle ein korrektes Setup (IntelliJ, git, JDK, Java Projekt) haben <i>(Siehe Abschnitt <a name="Set-Up">Set-Up</a>)</i></del></li>
 	<ul>
 		<li> <del>David Krell</del> </li>
 		<li> <del>David Klitsch </del> </li>
 		<li> <del>Abdelrahman Salem</del> </li>
 		<li> <del>Lennart Scheil<del> </li>
 	</ul>
-	<li> Alle haben die Anforderungsbeschreibung gelesen </li>
+	<li><del>Alle haben die Anforderungsbeschreibung gelesen</del></li>
 	<ul>
 		<li> <del>David Krell</del> </li>
 		<li> <del>David Klitsch </del></li>
