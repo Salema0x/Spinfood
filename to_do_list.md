@@ -1,9 +1,9 @@
 <h1> To-Do-List </h1>
 
-<h2> Bis zum 20.04.2023 </h2>
+<h2> :heavy_check_mark: Bis zum 20.04.2023 </h2>
 
 <ul>
-	<li> User "taentzer" als Contributer hinzufügen <i>(Bis jetzt gab es kein Konto mit dem Usernamen "taentzer")</i></li>
+	<li> :heavy_check_mark:<del>User "taentzer" als Contributer hinzufügen <i>(Bis jetzt gab es kein Konto mit dem Usernamen "taentzer")</i></del></li>
 	<li> :heavy_check_mark:<del>Abdelrahman als Contributer hinzufügen</del></li>
 	<li> :heavy_check_mark:<del>Lennart als Contributer hinzufügen</del></li>
 	<li> :heavy_check_mark:<del>Sicherstellen, dass alle ein korrektes Setup (IntelliJ, git, JDK, Java Projekt) haben <i>(Siehe Abschnitt <a name="Set-Up">Set-Up</a>)</i></del></li>
