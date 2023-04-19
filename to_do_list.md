@@ -20,11 +20,11 @@
 		<li> <del>Abdelrahman Salem</del> </li>
 		<li> <del>Lennart Scheil<del> </li>
 	</ul>
-	<li> Vorläufige Paketstruktur erstellen </li>
+	<li> :heavy_check_mark: <del>Vorläufige Paketstruktur erstellen</del> </li>
 	<li> :heavy_check_mark: <del> Entscheiden welches Build-Tool genutzt werden soll</del> <i> (Es wurde sich für Maven entschieden)</i></li>
 	<li> :heavy_check_mark: <del> Ordner Dokumentation im Repository erstellen</del> </li>
-	<li> <a href="https://de.wikipedia.org/wiki/Gantt-Diagramm">Gantt-Diagramm</a> für den Zeitplan und Arbeitseinteilung erstellen </li>
-	<li> Vorläufiges Klassendiagramm erstellen </li>
+	<li> :heavy_check_mark:<del><a href="https://de.wikipedia.org/wiki/Gantt-Diagramm">Gantt-Diagramm</a> für den Zeitplan und Arbeitseinteilung erstellen </del></li>
+	<li> :heavy_check_mark:<del>Vorläufiges Klassendiagramm erstellen </del></li>
 	</ul>
 <h3>Set-Up</h3>
 <p>Am besten ist es, wenn wir alle auf den gleichen Versionen anfangen zu entwickeln um so potentielle Konflikte durch verschiedene Versionen zu umgehen.</p>
