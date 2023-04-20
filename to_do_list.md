@@ -1,5 +1,24 @@
 <h1> To-Do-List </h1>
 
+<h2> :heavy_check_mark: Bis zum 04.05.2023 </h2>
+
+<ul>
+	<li> Bevor mit der Implementierung angefangen wird, Testfälle spezifizieren</li>
+	<li> Datenstruktur zur Repräsentation von Teilnehmern implementieren <i>(wir sollten vielleicht nochmal darüber nachdenken welche Datenstruktur sich anbieten würde, wahrscheinlich sind Listen nicht das effizienteste)</i></li>
+	<ul>
+		<li>Vielleicht bietet sich hier eine Hash-Tabelle an, weil jeder Teilnehmer ja schon mit einer ID kommt.</li>
+	</ul>
+	<li> Implementierung Einlesen der Teilnehmer</li>
+	<ul>
+		<li>.csv Datei soll eingelesen werden, die einzelnen Teilnehmer werden in einer Datenstruktur gespeichert, die einzelnen Teilnehmer werden auf der Konsole ausgegeben</li>
+	</ul>
+	<li> Klassendiagramm anpassen an die neuen Anforderungen</li>
+	<li> Gantt-Diagramm mit Planung für Woche 2 erweitern <i>(Speicherung in einer neuen Datei)</i></li>
+	<li> Testdokumentation erstellen <i>(jeder Test usw. muss dokumentiert werden)</i></li>
+</ul>
+
+
+
 <h2> :heavy_check_mark: Bis zum 20.04.2023 </h2>
 
 <ul>
