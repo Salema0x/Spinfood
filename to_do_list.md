@@ -1,6 +1,6 @@
 <h1> To-Do-List </h1>
 
-<h2> :heavy_check_mark: Bis zum 04.05.2023 </h2>
+<h2> Bis zum 04.05.2023 </h2>
 
 <ul>
 	<li> Bevor mit der Implementierung angefangen wird, Testfälle spezifizieren</li>
