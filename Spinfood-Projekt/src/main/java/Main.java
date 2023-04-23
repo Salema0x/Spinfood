@@ -25,11 +25,18 @@ public class Main {
         }
     }
 
-    public static HashMap<String, Participant> readCSV(String fileName) throws URISyntaxException {
+    /**
+     * Liest eine CSV-Datei mit Teilnehmerinformationen ein und gibt sie als HashMap zurück.
+     *
+     * @param filename der Dateiname der CSV-Datei
+     * @return eine HashMap-Instanz, die die Teilnehmerinformationen enthält
+     * @throws URISyntaxException wenn die Datei nicht gelesen werden kann oder ein E/A-Fehler auftritt
+     */
+    public static HashMap<String, Participant> readCSV(String filename) throws URISyntaxException {
         // Hash-Tabelle von Participants
         HashMap<String, Participant> participants = new HashMap<String, Participant>();
 
-        URL resource = Main.class.getResource(fileName);
+        URL resource = Main.class.getResource(filename);
 
         // Datei öffnen
         File file = Paths.get(resource.toURI()).toFile();
@@ -72,6 +79,11 @@ public class Main {
         return participants;
     }
 
+    /**
+     * Gibt die Liste der Teilnehmer auf der Konsole aus.
+     *
+     * @param participants die HashMap-Instanz, die die Teilnehmer enthält
+     */
     public static void printHashMap(HashMap<String, Participant> participants) {
         System.out.println("ID\tName\t\tAge\tSex\tFood Preference\tKitchen\t\t\t\tKitchen Story");
         System.out.println("----------------------------------------------------------------------------------------------");
