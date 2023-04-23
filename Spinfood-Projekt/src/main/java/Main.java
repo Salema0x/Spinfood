@@ -6,13 +6,14 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         //entry point
 
-        String fileName = "teilnehmerliste.csv"; // Name der CSV-Datei
+        String fileName = "testliste.csv"; // Name der CSV-Datei
 
         // Aufruf der readCSV-Funktion
         try {
@@ -71,7 +72,12 @@ public class Main {
         return participants;
     }
 
-    public static void printHashMap(HashMap hashMap){
-        //Schöner Konsolen-Output
+    public static void printHashMap(HashMap<String, Participant> participants) {
+        System.out.println("ID\tName\t\tAge\tSex\tFood Preference\tKitchen\t\t\t\tKitchen Story");
+        System.out.println("----------------------------------------------------------------------------------------------");
+        for(Map.Entry<String, Participant> entry : participants.entrySet()){
+            Participant p = entry.getValue();
+            System.out.printf("%s\t%-15s\t%d\t%s\t%-15s\t%-30s\t%-30s\n", p.getId(), p.getName(), p.getAge(), p.getSex(), p.getFoodPreference(), p.getKitchen(), p.getKitchenStory());
+        }
     }
 }
