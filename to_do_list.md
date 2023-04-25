@@ -17,7 +17,27 @@
 	<li> Testdokumentation erstellen <i>(jeder Test usw. muss dokumentiert werden)</i></li>
 </ul>
 
+<h3> Gedanken Implementierung Algorithmus </h3>
 
+<ul>
+<li> Es gibt eine extra Klasse zum einlesen von der .csv Datei "ParticipantFactory" die Main sollte einfach nur die verschiedenen Methoden aus den unterschiedlichen Klassen aufrufen. Das macht es einfacher aus der Main heraus den gesamten Ablauf zu erkennen.</li>
+<li> Eine GUI in der der Pfad zu einer .csv Datei angegeben werden kann </li>
+<li> Programm nimmt diesen Pfad entgegen und erstellt aus der .csv Datei Teilnehmer</li>
+<li> angemeldete Paare werden als Pairs abgespeichert und als Teilnehmer damit wirklich erstmal alle Teilnehmer einzeln angezeigt werden können </li>
+<li> Es muss sichergestellt werden, dass wirklich alle Einträge abgearbeitet werden </li>
+<li> Wenn eine leere .csv Datei angegeben wird darf nichts unerwartetes passieren: Ausgabe auf der Konsole: kein Teilnehmer hat sich angemeldet</li>
+<li> Für die Küchen sollte es meiner Meinung nach wirklich eine Kitchen Klasse geben</li>
+<li> Wir brauchen noch eine Methode um die agerange zu berechnen</li>
+<li> Wir brauchen noch eine Methode um count_wg zu berechnen</li>
+<li> Schönerer Code: einlesen der Datei mittels Stream API, und erstellen eines participants mittels konstruktor und nicht mit so vielen set aufrufen, ist zwar komplizierter aber sehr viel schöner. Können wir uns ja mal merken falls wir noch Zeit haben.</li>
+<li> Macht die Hash-Tabelle so bis jetzt Sinn? Bis jetzt brauchen wir die noch nicht wirklich, wird aber später evtl. nützlich sein. Eigentlich ist ja eine Hash-Tabelle nur effizient wenn wir sie mit einer Hash-Funktion verwenden? Hier können wir aber vielleicht die Participants mittels der ID einfacher suchen, also ist das vielleicht schon sinnvoll insbesondere beim Löschen eines Teilnehmers</li>
+<li> Unit Test für die Methode zum .csv Datei einlesen </li>
+<ul>
+	<li>Liste wird übergeben -> Es wird eine Liste an Teilnehmern auf der Konsole ausgegeben</li>
+	<li>Paare werden korrekt aufgesplittet in zwei Teilnehmer (wahrscheinlich extrahieren in eine zweite methode)</li>
+</ul>
+<li> Unit Tests für die anderen Methoden zur Berechnung von wg_count und agerange</li>
+</ul>
 
 <h2> :heavy_check_mark: Bis zum 20.04.2023 </h2>
 
