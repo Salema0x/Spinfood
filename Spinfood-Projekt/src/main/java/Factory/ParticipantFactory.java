@@ -34,6 +34,7 @@ public class ParticipantFactory {
                     values[4] = String.valueOf((int) Double.parseDouble(values[12]));
                     values[5] = values[13];
                     Participant participant2 = new Participant(values);
+                    participantList.add(participant2);
                     pairListFactory.pairList.add(new Pair(participant1, participant2));
 
                 }
@@ -65,6 +66,6 @@ public class ParticipantFactory {
             System.out.format(leftAlignFormat, id, name, foodPreference, age, sex, hasKitchen, kitchenStory, longitude, latitude);
         }
 
-        System.out.format("\"+--------------------------------------+------------+--------+-----+---------+----------+---------------+-------------------+---------------------+%n");
+        System.out.format("+--------------------------------------+------------+--------+-----+---------+----------+---------------+-------------------+---------------------+%n");
     }
 }

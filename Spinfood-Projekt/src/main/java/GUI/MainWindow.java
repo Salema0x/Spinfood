@@ -17,7 +17,7 @@ public class MainWindow implements ActionListener {
     private static final JMenuItem SHOW_PARTICIPANTS = new JMenuItem("Teilnehmerliste anzeigen");
     private static final JFrame FRAME = new JFrame("Spinfood-Projekt");
     private boolean showParticipantsEnabled = false;
-    private ParticipantFactory participantFactory = new ParticipantFactory();
+    private static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory();
     private static final JLabel showText = new JLabel(
             "Starten Sie indem Sie unter 'Start' den Punkt 'Teilnehmer einlesen' auswählen.");
 
@@ -83,8 +83,7 @@ public class MainWindow implements ActionListener {
                     showParticipantsEnabled = true;
                     updateJMenu();
 
-                    participantFactory.readCSV(csvFile);
-                    participantFactory.showCSV();
+                    PARTICIPANT_FACTORY.readCSV(csvFile);
                 }
             }
         }
@@ -105,6 +104,8 @@ public class MainWindow implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("Teilnehmer einlesen")) {
             createFileChooser();
+        } else if (e.getActionCommand().equals("Teilnehmerliste anzeigen")) {
+            PARTICIPANT_FACTORY.showCSV();
         }
     }
 
@@ -122,6 +123,6 @@ public class MainWindow implements ActionListener {
      * @return a participantFactory which holds the participants
      */
     public ParticipantFactory getParticipantFactory() {
-        return participantFactory;
+        return PARTICIPANT_FACTORY;
     }
 }
