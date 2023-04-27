@@ -3,6 +3,8 @@
 <h2> Bis zum 04.05.2023 </h2>
 
 <ul>
+<li>Für JUnit Tests können den .csv Teil testen, wo nur csv Dateien eingelesen werden müssen </li>
+<li>den GUI Teil sollte bisschen bearbeitet werden indem man die Liste direkt angezeigt sieht, sobald man die Datei auswählt,statt wieder auf " Liste anzeigen " drucken zu müssen</li>
 	<li> Bevor mit der Implementierung angefangen wird, Testfälle spezifizieren</li>
 	<li> Datenstruktur zur Repräsentation von Teilnehmern implementieren <i>(wir sollten vielleicht nochmal darüber nachdenken welche Datenstruktur sich anbieten würde, wahrscheinlich sind Listen nicht das effizienteste)</i></li>
 	<ul>
