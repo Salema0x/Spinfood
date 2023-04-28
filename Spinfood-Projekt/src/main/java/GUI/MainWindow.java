@@ -8,7 +8,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.Optional;
 
 public class MainWindow implements ActionListener {
 
@@ -64,6 +63,8 @@ public class MainWindow implements ActionListener {
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "Only CSV Files", "csv");
         fileChooser.setFileFilter(filter);
+        fileChooser.setAcceptAllFileFilterUsed(false);
+
 
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setMultiSelectionEnabled(false);
@@ -73,31 +74,12 @@ public class MainWindow implements ActionListener {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File csvFile = fileChooser.getSelectedFile();
 
-            Optional<String> extension = getExtension(csvFile.getName());
+            showText.setText("Es wurde die Datei: " + csvFile.getName() + " eingelesen.");
+            showParticipantsEnabled = true;
+            updateJMenu();
 
-            if (extension.isPresent()) {
-                if (!extension.get().equals("csv")) {
-                    showText.setText("Es wurde keine .csv-Datei ausgewählt!");
-                } else {
-                    showText.setText("Es wurde die Datei: " + csvFile.getName() + " eingelesen.");
-                    showParticipantsEnabled = true;
-                    updateJMenu();
-
-                    PARTICIPANT_FACTORY.readCSV(csvFile);
-                }
-            }
+            PARTICIPANT_FACTORY.readCSV(csvFile);
         }
-    }
-
-    /**
-     * Will extract the extension of a file
-     * @param filename the filename of the file
-     * @return a string with the extension, if there is no extension then the string will be empty
-     */
-    private Optional<String> getExtension(String filename) {
-        return Optional.ofNullable(filename)
-                .filter(f -> f.contains("."))
-                .map(f -> f.substring(filename.lastIndexOf(".") + 1));
     }
 
     @Override

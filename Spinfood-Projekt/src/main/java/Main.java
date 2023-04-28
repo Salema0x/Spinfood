@@ -1,4 +1,3 @@
-import Factory.ParticipantFactory;
 import GUI.MainWindow;
 
 public class Main {

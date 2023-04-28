@@ -19,7 +19,8 @@ public class ParticipantFactory {
      */
     public void readCSV(File csvFile) {
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-            String line = br.readLine();
+
+            String line;
 
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
@@ -36,7 +37,6 @@ public class ParticipantFactory {
                     Participant participant2 = new Participant(values);
                     participantList.add(participant2);
                     pairListFactory.pairList.add(new Pair(participant1, participant2));
-
                 }
             }
         } catch (IOException e) {
@@ -44,6 +44,11 @@ public class ParticipantFactory {
         }
     }
 
+    //es ist eine etage angegeben aber keine küche
+
+    /**
+     * Will display all participants in a table on the console.
+     */
     public void showCSV() {
         String leftAlignFormat = "| %-36s | %-10s | %-6s | %-3d | %-7s | %-8s | %-13d | %-17s | %-19s |%n";
 
