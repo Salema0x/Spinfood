@@ -38,11 +38,15 @@ public class Participant {
         } else if (values.length >= 10) {
             if (values[7].isEmpty()) {
                 this.kitchenStory = 0;
+            } else if (values[8].isEmpty() && values[9].isEmpty()) {
+                this.kitchenLatitude = -1;
+                this.kitchenLongitude = -1;
             } else {
                 this.kitchenStory = Byte.parseByte(String.valueOf((int) Double.parseDouble(values[7])));
+                this.kitchenLongitude = Double.parseDouble(values[8]);
+                this.kitchenLatitude = Double.parseDouble(values[9]);
             }
-            this.kitchenLongitude = Double.parseDouble(values[8]);
-            this.kitchenLatitude = Double.parseDouble(values[9]);
+
         }
     }
 

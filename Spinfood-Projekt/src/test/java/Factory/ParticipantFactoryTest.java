@@ -58,13 +58,22 @@ class ParticipantFactoryTest {
         Assertions.assertTrue(participantFactory.participantListEquals(expectedParticipantList3));
 
         //testing if participant list is still correctly read in if it is a pair and has no kitchen_story
-
+        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/testliste7.csv")).toURI()));
+        List<Participant> expectedParticipantList4 = new ArrayList<>();
+        expectedParticipantList4.add(new Participant(new String[] {"0", "f2f848e8-96d0-40e2-a7f8-7cd3751769ed", "Person1", "veggie", "22", "female", "yes", "0", "8.675847472405028", "50.57733957240503"}));
+        expectedParticipantList4.add(new Participant(new String[] {"0", "fdc3673e-210f-4938-a7ef-f31a99574b29", "Person1Partner", "veggie", "20", "female", "yes", "0", "8.675847472405028", "50.57733957240503"}));
+        Assertions.assertTrue(participantFactory.participantListEquals(expectedParticipantList4));
 
         //testing if participant list is still correctly read in if it is pair and has no kitchen_story and no coordinates
+        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/testliste8.csv")).toURI()));
+        List<Participant> expectedParticipantList5 = new ArrayList<>();
+        expectedParticipantList5.add(new Participant(new String[]{"0", "f2f848e8-96d0-40e2-a7f8-7cd3751769ed", "Person1", "veggie", "22", "female", "yes", "0", "-1.0", "-1.0"}));
+        expectedParticipantList5.add(new Participant(new String[] {"0", "fdc3673e-210f-4938-a7ef-f31a99574b29", "Person1Partner", "veggie", "20", "female", "yes", "0", "-1.0", "-1.0"}));
+        Assertions.assertTrue(participantFactory.participantListEquals(expectedParticipantList5));
     }
 
     @org.junit.jupiter.api.Test
     void showCSV() {
-        //gleiche Testfälle nur mit konsolen ausgabe
+        
     }
 }
