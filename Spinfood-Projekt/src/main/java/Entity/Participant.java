@@ -1,12 +1,12 @@
 package Entity;
 
 public class Participant {
-    private String id;
-    private String name;
-    private String foodPreference;
-    private byte age;
-    private String sex;
-    private String hasKitchen;
+    private final String id;
+    private final String name;
+    private final String foodPreference;
+    private final byte age;
+    private final String sex;
+    private final String hasKitchen;
     private byte kitchenStory;
     private double kitchenLongitude;
     private double kitchenLatitude;
@@ -44,6 +44,15 @@ public class Participant {
             this.kitchenLongitude = Double.parseDouble(values[8]);
             this.kitchenLatitude = Double.parseDouble(values[9]);
         }
+    }
+
+    /**
+     * Checks if two participants are the same.
+     * @param participant the participant to which should be compared.
+     * @return a boolean indicating if the participants are equal or not.
+     */
+    public boolean equals(Participant participant) {
+        return this.id.equals(participant.getId());
     }
 
     public String getHasKitchen() {

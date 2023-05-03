@@ -5,11 +5,14 @@ import Entity.Participant;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public class ParticipantFactory {
-    List<Participant> participantList = new ArrayList<>();
-    PairListFactory pairListFactory = new PairListFactory();
+    public List<Participant> participantList = new ArrayList<>();
+    public PairListFactory pairListFactory = new PairListFactory();
+    private final HashSet<String> ids = new HashSet<>();
 
     /**
      * Will extract all participants from the .csv file.
@@ -19,12 +22,18 @@ public class ParticipantFactory {
      */
     public void readCSV(File csvFile) {
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+            if (!participantList.isEmpty()) {
+                participantList.clear();
+                ids.clear();
+            }
+            String line = br.readLine();
 
-            String line;
-
-            while ((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null && !line.equals("")) {
                 String[] values = line.split(",");
-
+                if (ids.contains(values[1])) {
+                    continue;
+                }
+                ids.add(values[1]);
                 if (values.length <= 10) {
                     participantList.add(new Participant(values));
                 } else if (values.length == 14) {
@@ -43,8 +52,6 @@ public class ParticipantFactory {
             throw new RuntimeException(e);
         }
     }
-
-    //es ist eine etage angegeben aber keine küche
 
     /**
      * Will display all participants in a table on the console.
@@ -72,5 +79,23 @@ public class ParticipantFactory {
         }
 
         System.out.format("+--------------------------------------+------------+--------+-----+---------+----------+---------------+-------------------+---------------------+%n");
+    }
+
+    /**
+     * Checks if the participantList from this class equals another participant list.
+     * @param participantList2 the other participantList to which we should compare.
+     * @return a boolean indicating if the participantLists equals or not.
+     */
+    public boolean participantListEquals(List<Participant> participantList2) {
+        if (participantList.size() != participantList2.size()) {
+            return false;
+        }
+
+        for (int i = 0; i < participantList.size(); i++) {
+            if (!participantList.get(i).equals(participantList2.get(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 }
