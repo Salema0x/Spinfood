@@ -74,6 +74,6 @@ class ParticipantFactoryTest {
 
     @org.junit.jupiter.api.Test
     void showCSV() {
-        
+
     }
 }

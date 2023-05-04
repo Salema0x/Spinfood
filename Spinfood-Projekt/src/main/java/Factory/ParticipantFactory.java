@@ -5,7 +5,6 @@ import Entity.Participant;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -26,14 +25,18 @@ public class ParticipantFactory {
                 participantList.clear();
                 ids.clear();
             }
+
             String line = br.readLine();
 
             while ((line = br.readLine()) != null && !line.equals("")) {
                 String[] values = line.split(",");
+
                 if (ids.contains(values[1])) {
                     continue;
                 }
+
                 ids.add(values[1]);
+
                 if (values.length <= 10) {
                     participantList.add(new Participant(values));
                 } else if (values.length == 14) {

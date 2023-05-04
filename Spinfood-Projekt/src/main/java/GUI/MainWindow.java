@@ -17,7 +17,7 @@ public class MainWindow implements ActionListener {
     private static final JFrame FRAME = new JFrame("Spinfood-Projekt");
     private boolean showParticipantsEnabled = false;
     private static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory();
-    private static final JLabel showText = new JLabel(
+    private static final JLabel SHOW_TEXT = new JLabel(
             "Starten Sie indem Sie unter 'Start' den Punkt 'Teilnehmer einlesen' auswählen.");
 
 
@@ -30,7 +30,7 @@ public class MainWindow implements ActionListener {
         FRAME.setMinimumSize(new Dimension(WIDTH, HEIGHT));
         FRAME.setResizable(false);
         FRAME.setJMenuBar(createJMenuBar());
-        FRAME.getContentPane().add(showText, BorderLayout.SOUTH);
+        FRAME.getContentPane().add(SHOW_TEXT, BorderLayout.SOUTH);
         FRAME.setVisible(true);
         FRAME.setLocationRelativeTo(null);
     }
@@ -62,10 +62,9 @@ public class MainWindow implements ActionListener {
 
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "Only CSV Files", "csv");
+
         fileChooser.setFileFilter(filter);
         fileChooser.setAcceptAllFileFilterUsed(false);
-
-
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setMultiSelectionEnabled(false);
 
@@ -74,7 +73,7 @@ public class MainWindow implements ActionListener {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File csvFile = fileChooser.getSelectedFile();
 
-            showText.setText("Es wurde die Datei: " + csvFile.getName() + " eingelesen.");
+            SHOW_TEXT.setText("Es wurde die Datei: " + csvFile.getName() + " eingelesen.");
             showParticipantsEnabled = true;
             updateJMenu();
 
@@ -98,13 +97,5 @@ public class MainWindow implements ActionListener {
         if (showParticipantsEnabled) {
             SHOW_PARTICIPANTS.setEnabled(true);
         }
-    }
-
-    /**
-     * Getter-Method for participantFactory
-     * @return a participantFactory which holds the participants
-     */
-    public ParticipantFactory getParticipantFactory() {
-        return PARTICIPANT_FACTORY;
     }
 }

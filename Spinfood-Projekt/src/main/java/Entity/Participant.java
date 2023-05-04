@@ -35,6 +35,7 @@ public class Participant {
                     this.kitchenStory = Byte.parseByte(String.valueOf((int) Double.parseDouble(values[7])));
                 }
             }
+
         } else if (values.length >= 10) {
             if (values[7].isEmpty()) {
                 this.kitchenStory = 0;
