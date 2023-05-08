@@ -12,6 +12,7 @@ public class ParticipantFactory {
     public List<Participant> participantList = new ArrayList<>();
     public PairListFactory pairListFactory = new PairListFactory();
     private final HashSet<String> ids = new HashSet<>();
+    private final HashSet<String> addresses = new HashSet<>();
     private static final int MAX_PARTICIPANTS = 100; //TODO: Settings Fenster in der GUI über die die Maximalanzahl der Teilnehmer eingelesen werden kann
 
     /**
@@ -22,10 +23,18 @@ public class ParticipantFactory {
      */
     //TODO: include WG-Count
     //TODO: include Method to check that the .csv File is correctly formatted
+    //TODO: include calculating age range
+    //TODO: include calculating wg count
+    /*
+        Calculation of WG_Count: HashSet with Strings identifying the address. For every new Participant this String is created.
+        If HashSet contains the String then WG_count of the new Participant goes one up.
+        HashMap with address Strings as keys, and Participant as value.
+        If HashSet contains the String then get the Participant of that String via the HashMap.
+        WG_count of that Participant goes one up.
+        If WG_count of the participants = 3 then new participant will be a successor (only for Einzelanmeldungen), with message "Zu viele Anmeldungen aus einer WG"
+     */
     public void readCSV(File csvFile) {
-        boolean isSuccessor = false;
         int participantCounter = 0;
-
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             if (!participantList.isEmpty()) {
                 participantList.clear();
@@ -35,6 +44,8 @@ public class ParticipantFactory {
             String line = br.readLine(); /* skip the headers */
 
             while ((line = br.readLine()) != null && !line.equals("")) {
+                boolean isSuccessor = false;
+                String addressString = "";
                 String[] values = line.split(",");
 
                 if (ids.contains(values[1])) {
@@ -49,7 +60,10 @@ public class ParticipantFactory {
                 }
 
                 if (values.length <= 10) {
-                    participantList.add(new Participant(values, isSuccessor));
+                    Participant participant = new Participant(values, isSuccessor);
+                    participantList.add(participant);
+                    addressString = participant.getKitchenLatitude() + String.valueOf(participant.getKitchenLongitude()) + participant.getKitchenStory();
+
                 } else if (values.length == 14) {
                     Participant participant1 = new Participant(values, isSuccessor);
                     participantList.add(participant1);
@@ -65,6 +79,9 @@ public class ParticipantFactory {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void calculateWGCount() {
     }
 
     /**
