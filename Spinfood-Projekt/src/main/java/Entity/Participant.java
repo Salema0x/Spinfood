@@ -10,8 +10,9 @@ public class Participant {
     private byte kitchenStory;
     private double kitchenLongitude;
     private double kitchenLatitude;
+    private boolean isSuccessor;
 
-    public Participant(String[] values) {
+    public Participant(String[] values, boolean isSuccessor) {
         this.id = values[1];
         this.name = values[2];
         this.foodPreference = values[3];
@@ -49,6 +50,8 @@ public class Participant {
             }
 
         }
+
+        this.isSuccessor = isSuccessor;
     }
 
     /**
@@ -95,5 +98,6 @@ public class Participant {
     public String getSex() {
         return sex;
     }
+
 }
 

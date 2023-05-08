@@ -12,6 +12,7 @@ public class ParticipantFactory {
     public List<Participant> participantList = new ArrayList<>();
     public PairListFactory pairListFactory = new PairListFactory();
     private final HashSet<String> ids = new HashSet<>();
+    private static final int MAX_PARTICIPANTS = 100; //TODO: Settings Fenster in der GUI über die die Maximalanzahl der Teilnehmer eingelesen werden kann
 
     /**
      * Will extract all participants from the .csv file.
@@ -19,14 +20,19 @@ public class ParticipantFactory {
      *
      * @param csvFile the .csv File from which the participants should be extracted
      */
+    //TODO: include WG-Count
+    //TODO: include Method to check that the .csv File is correctly formatted
     public void readCSV(File csvFile) {
+        boolean isSuccessor = false;
+        int participantCounter = 0;
+
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             if (!participantList.isEmpty()) {
                 participantList.clear();
                 ids.clear();
             }
 
-            String line = br.readLine();
+            String line = br.readLine(); /* skip the headers */
 
             while ((line = br.readLine()) != null && !line.equals("")) {
                 String[] values = line.split(",");
@@ -36,17 +42,22 @@ public class ParticipantFactory {
                 }
 
                 ids.add(values[1]);
+                participantCounter++;
+
+                if (participantCounter > MAX_PARTICIPANTS) {
+                    isSuccessor = true;
+                }
 
                 if (values.length <= 10) {
-                    participantList.add(new Participant(values));
+                    participantList.add(new Participant(values, isSuccessor));
                 } else if (values.length == 14) {
-                    Participant participant1 = new Participant(values);
+                    Participant participant1 = new Participant(values, isSuccessor);
                     participantList.add(participant1);
                     values[1] = values[10];
                     values[2] = values[11];
                     values[4] = String.valueOf((int) Double.parseDouble(values[12]));
                     values[5] = values[13];
-                    Participant participant2 = new Participant(values);
+                    Participant participant2 = new Participant(values, isSuccessor);
                     participantList.add(participant2);
                     pairListFactory.pairList.add(new Pair(participant1, participant2));
                 }
