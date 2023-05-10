@@ -42,6 +42,8 @@ public class Participant {
         } else if (values.length >= 10) {
             if (values[7].isEmpty()) {
                 this.kitchenStory = 0;
+                this.kitchenLongitude = -1;
+                this.kitchenLatitude = -1;
             } else if (values[8].isEmpty() && values[9].isEmpty()) {
                 this.kitchenLatitude = -1;
                 this.kitchenLongitude = -1;
@@ -50,7 +52,6 @@ public class Participant {
                 this.kitchenLongitude = Double.parseDouble(values[8]);
                 this.kitchenLatitude = Double.parseDouble(values[9]);
             }
-
         }
 
         this.isSuccessor = isSuccessor;

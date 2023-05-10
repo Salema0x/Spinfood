@@ -5,6 +5,7 @@ import Entity.Participant;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -35,17 +36,20 @@ public class ParticipantFactory {
      */
     public void readCSV(File csvFile) {
         int participantCounter = 0;
+        boolean isSuccessor = false;
+        HashMap<String, Participant> addressParticipantMap = new HashMap<>();
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             if (!participantList.isEmpty()) {
                 participantList.clear();
                 ids.clear();
+                addressParticipantMap.clear();
             }
 
             String line = br.readLine(); /* skip the headers */
 
             while ((line = br.readLine()) != null && !line.equals("")) {
-                boolean isSuccessor = false;
-                String addressString = "";
+
+                String addressString;
                 String[] values = line.split(",");
 
                 if (ids.contains(values[1])) {
@@ -53,7 +57,18 @@ public class ParticipantFactory {
                 }
 
                 ids.add(values[1]);
-                participantCounter++;
+
+                if (values.length == 14) {
+                    participantCounter = participantCounter + 2;
+                    if (ids.contains(values[10])) {
+                        continue;
+                    } else {
+                        ids.add(values[10]);
+                    }
+                } else {
+                    participantCounter++;
+                }
+
 
                 if (participantCounter > MAX_PARTICIPANTS) {
                     isSuccessor = true;
@@ -74,14 +89,16 @@ public class ParticipantFactory {
                     Participant participant2 = new Participant(values, isSuccessor);
                     participantList.add(participant2);
                     pairListFactory.pairList.add(new Pair(participant1, participant2));
+                    addressString = participant1.getKitchenLatitude() + String.valueOf(participant1.getKitchenLongitude()) + participant1.getKitchenStory();
+                    if (!addressParticipantMap.containsKey(addressString) && participant1.getKitchenLongitude() != -1.0) {
+                        addressParticipantMap.put(addressString, participant1);
+                        addressParticipantMap.put(addressString, participant2);
+                    }
                 }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private void calculateWGCount() {
     }
 
     /**
