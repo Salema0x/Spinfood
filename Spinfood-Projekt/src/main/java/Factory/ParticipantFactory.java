@@ -13,19 +13,16 @@ public class ParticipantFactory {
     public List<Participant> participantList = new ArrayList<>();
     public PairListFactory pairListFactory = new PairListFactory();
     private final HashSet<String> ids = new HashSet<>();
-    private final HashSet<String> addresses = new HashSet<>();
     private static final int MAX_PARTICIPANTS = 100; //TODO: Settings Fenster in der GUI über die die Maximalanzahl der Teilnehmer eingelesen werden kann
-
+    HashMap<String, List<Participant>> addressParticipantMap = new HashMap<>();
     /**
      * Will extract all participants from the .csv file.
      * Will split up pairs in two participants and add them as a pair.
      *
      * @param csvFile the .csv File from which the participants should be extracted
      */
-    //TODO: include WG-Count
     //TODO: include Method to check that the .csv File is correctly formatted
     //TODO: include calculating age range
-    //TODO: include calculating wg count
     /*
         Calculation of WG_Count: HashSet with Strings identifying the address. For every new Participant this String is created.
         If HashSet contains the String then WG_count of the new Participant goes one up.
@@ -37,7 +34,7 @@ public class ParticipantFactory {
     public void readCSV(File csvFile) {
         int participantCounter = 0;
         boolean isSuccessor = false;
-        HashMap<String, Participant> addressParticipantMap = new HashMap<>();
+
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
             if (!participantList.isEmpty()) {
                 participantList.clear();
@@ -69,7 +66,6 @@ public class ParticipantFactory {
                     participantCounter++;
                 }
 
-
                 if (participantCounter > MAX_PARTICIPANTS) {
                     isSuccessor = true;
                 }
@@ -79,6 +75,22 @@ public class ParticipantFactory {
                     participantList.add(participant);
                     addressString = participant.getKitchenLatitude() + String.valueOf(participant.getKitchenLongitude()) + participant.getKitchenStory();
 
+                    if (!addressParticipantMap.containsKey(addressString) && participant.getKitchenLongitude() != -1.0) {
+                        addressParticipantMap.put(addressString, new ArrayList<>(List.of(participant)));
+                    } else {
+                        participant.increaseCountWG();
+                        if (participant.getCount_wg() > 3) {
+                            isSuccessor = true;
+                        }
+
+                        List<Participant> wgMembers = addressParticipantMap.get(addressString);
+                        for (Participant wgMember : wgMembers) {
+                            wgMember.increaseCountWG();
+                        }
+
+                        wgMembers.add(participant);
+                        addressParticipantMap.replace(addressString, wgMembers, wgMembers);
+                    }
                 } else if (values.length == 14) {
                     Participant participant1 = new Participant(values, isSuccessor);
                     participantList.add(participant1);
@@ -91,8 +103,22 @@ public class ParticipantFactory {
                     pairListFactory.pairList.add(new Pair(participant1, participant2));
                     addressString = participant1.getKitchenLatitude() + String.valueOf(participant1.getKitchenLongitude()) + participant1.getKitchenStory();
                     if (!addressParticipantMap.containsKey(addressString) && participant1.getKitchenLongitude() != -1.0) {
-                        addressParticipantMap.put(addressString, participant1);
-                        addressParticipantMap.put(addressString, participant2);
+                        addressParticipantMap.put(addressString, new ArrayList<>(List.of(participant1, participant2)));
+                    } else {
+                        participant1.increaseCountWG();
+                        participant2.increaseCountWG();
+                        if (participant1.getCount_wg() > 3) {
+                            isSuccessor = true;
+                        }
+
+                        List<Participant> wgMembers = addressParticipantMap.get(addressString);
+                        for (Participant wgMember : wgMembers) {
+                            wgMember.increaseCountWG();
+                        }
+
+                        wgMembers.add(participant1);
+                        wgMembers.add(participant2);
+                        addressParticipantMap.replace(addressString, wgMembers, wgMembers);
                     }
                 }
             }

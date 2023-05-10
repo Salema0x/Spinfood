@@ -11,8 +11,8 @@ public class Participant {
     private double kitchenLongitude;
     private double kitchenLatitude;
     private boolean isSuccessor;
-    private int count_wg;
-    private String agerange;
+    private int count_wg = 0;
+    private String ageRange;
 
     public Participant(String[] values, boolean isSuccessor) {
         this.id = values[1];
@@ -100,6 +100,14 @@ public class Participant {
 
     public String getSex() {
         return sex;
+    }
+
+    public void increaseCountWG() {
+        this.count_wg++;
+    }
+
+    public int getCount_wg() {
+        return count_wg;
     }
 
     public boolean isSuccessor() {
