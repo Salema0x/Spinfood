@@ -6,12 +6,14 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 
 public class Criteria extends JPanel {
+
+    private JList<String> list;
     private final JFrame frame = MainWindow.getFRAME();
-    private boolean dragEnabled = true;
 
     public void display() {
         frame.getContentPane().add(createList());
@@ -26,9 +28,9 @@ public class Criteria extends JPanel {
             listModel.addElement("Kriterium " + i);
         }
 
-        JList<String> list = new JList<>(listModel);
+        list = new JList<>(listModel);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list.setDragEnabled(dragEnabled);
+        list.setDragEnabled(true);
         list.setDropMode(DropMode.INSERT);
         list.setTransferHandler(new TransferHandler() {
             private int index;
@@ -77,11 +79,20 @@ public class Criteria extends JPanel {
         });
 
         JPanel panel = new JPanel(new BorderLayout());
-        panel.add(list);
+        panel.add(list, BorderLayout.CENTER);
         panel.setBorder(BorderFactory.createTitledBorder("List"));
 
         JButton confirmButton = new JButton("Bestätigen");
         confirmButton.setMnemonic(KeyEvent.VK_D);
+        confirmButton.setActionCommand("confirm");
+        confirmButton.addActionListener(this::actionPerformed);
+        panel.add(confirmButton, BorderLayout.SOUTH);
         return panel;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        if (e.getActionCommand().equals("confirm")) {
+            list.setDragEnabled(false);
+        }
     }
 }
