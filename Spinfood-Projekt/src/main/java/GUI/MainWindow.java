@@ -19,7 +19,7 @@ public class MainWindow implements ActionListener {
     private static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory();
     private static final JLabel SHOW_TEXT = new JLabel(
             "Starten Sie indem Sie unter 'Start' den Punkt 'Teilnehmer einlesen' auswählen.");
-
+    private final Criteria criteriaWindow = new Criteria();
 
     /**
      * Will create a Main Window for the application using JFrame.
@@ -42,11 +42,17 @@ public class MainWindow implements ActionListener {
     private JMenuBar createJMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         JMenu startMenu = new JMenu("Start");
+        JMenu pairMenu = new JMenu("Paare");
         menuBar.add(startMenu);
+        menuBar.add(pairMenu);
 
         JMenuItem readParticipants = new JMenuItem("Teilnehmer einlesen");
         readParticipants.addActionListener(this);
         startMenu.add(readParticipants);
+
+        JMenuItem setCriteria = new JMenuItem("Kriterien anordnen");
+        setCriteria.addActionListener(this);
+        pairMenu.add(setCriteria);
 
         SHOW_PARTICIPANTS.addActionListener(this);
         SHOW_PARTICIPANTS.setEnabled(showParticipantsEnabled);
@@ -87,6 +93,8 @@ public class MainWindow implements ActionListener {
             createFileChooser();
         } else if (e.getActionCommand().equals("Teilnehmerliste anzeigen")) {
             PARTICIPANT_FACTORY.showCSV();
+        } else if (e.getActionCommand().equals("Kriterien anordnen")) {
+            criteriaWindow.display();
         }
     }
 
@@ -97,5 +105,9 @@ public class MainWindow implements ActionListener {
         if (showParticipantsEnabled) {
             SHOW_PARTICIPANTS.setEnabled(true);
         }
+    }
+
+    public static JFrame getFRAME() {
+        return FRAME;
     }
 }
