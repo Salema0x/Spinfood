@@ -1,9 +1,12 @@
 package Entity;
 
+import java.util.Objects;
+
 public class Participant {
     private final String id;
     private final String name;
     private final String foodPreference;
+    private final int foodPreferenceNumber;
     private final byte age;
     private final String sex;
     private final String hasKitchen;
@@ -55,6 +58,14 @@ public class Participant {
         }
 
         this.isSuccessor = isSuccessor;
+
+        if (foodPreference.equals("none") || foodPreference.equals("meat")) {
+            foodPreferenceNumber = 0;
+        } else if (foodPreference.equals("veggie")) {
+            foodPreferenceNumber = 1;
+        } else {
+            foodPreferenceNumber = 2;
+        }
     }
 
     /**
@@ -118,4 +129,3 @@ public class Participant {
         isSuccessor = successor;
     }
 }
-

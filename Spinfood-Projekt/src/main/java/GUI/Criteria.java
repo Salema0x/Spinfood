@@ -9,11 +9,16 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Criteria extends JPanel {
 
     private JList<String> list;
     private final JFrame frame = MainWindow.getFRAME();
+    private List<Object> criteriaOrder = new ArrayList<>();
+    private final DefaultListModel<String> listModel = new DefaultListModel<>();
 
     public void display() {
         frame.getContentPane().add(createList());
@@ -21,8 +26,8 @@ public class Criteria extends JPanel {
         frame.setVisible(true);
     }
 
+
     private JPanel createList() {
-        DefaultListModel<String> listModel = new DefaultListModel<>();
 
         for (int i = 5; i <=9; i++ ) {
             listModel.addElement("Kriterium " + i);
@@ -90,9 +95,14 @@ public class Criteria extends JPanel {
         return panel;
     }
 
-    public void actionPerformed(ActionEvent e) {
+    private void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("confirm")) {
             list.setDragEnabled(false);
+            criteriaOrder = Arrays.stream(listModel.toArray()).toList();
         }
+    }
+
+    public List<Object> getCriteriaOrder() {
+        return criteriaOrder;
     }
 }

@@ -100,7 +100,7 @@ public class ParticipantFactory {
                     values[5] = values[13];
                     Participant participant2 = new Participant(values, isSuccessor);
                     participantList.add(participant2);
-                    pairListFactory.pairList.add(new Pair(participant1, participant2));
+                    pairListFactory.registeredPairs.add(new Pair(participant1, participant2));
                     addressString = participant1.getKitchenLatitude() + String.valueOf(participant1.getKitchenLongitude()) + participant1.getKitchenStory();
                     if (!addressParticipantMap.containsKey(addressString) && participant1.getKitchenLongitude() != -1.0) {
                         addressParticipantMap.put(addressString, new ArrayList<>(List.of(participant1, participant2)));
@@ -171,5 +171,9 @@ public class ParticipantFactory {
             }
         }
         return true;
+    }
+
+    public List<Participant> getParticipantList() {
+        return participantList;
     }
 }
