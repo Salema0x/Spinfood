@@ -23,6 +23,7 @@ public class ParticipantFactory {
      */
     //TODO: include Method to check that the .csv File is correctly formatted
     //TODO: include calculating age range
+    //TODO: include extracting party location
     /*
         Calculation of WG_Count: HashSet with Strings identifying the address. For every new Participant this String is created.
         If HashSet contains the String then WG_count of the new Participant goes one up.
