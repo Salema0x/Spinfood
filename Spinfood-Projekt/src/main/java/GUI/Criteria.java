@@ -1,9 +1,5 @@
 package GUI;
 
-import Entity.Participant;
-import Factory.PairListFactory;
-import Factory.ParticipantFactory;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
@@ -19,94 +15,53 @@ import java.util.List;
 
 public class Criteria extends JPanel {
 
+    private static final DefaultListModel<String> LIST_MODEL = new DefaultListModel<>();
+    private static final JFrame FRAME = MainWindow.getFRAME();
+    private static List<Object> CRITERIA_ORDER = new ArrayList<>();
     private JList<String> list;
-    private final JFrame frame = MainWindow.getFRAME();
-    private List<Object> criteriaOrder = new ArrayList<>();
-    private final DefaultListModel<String> listModel = new DefaultListModel<>();
 
-    public void display() {
-        frame.getContentPane().add(createList());
-        frame.pack();
-        frame.setVisible(true);
+
+    public Criteria() {
+        LIST_MODEL.addElement("Essensvorlieben");
+        LIST_MODEL.addElement("Altersdifferenz");
+        LIST_MODEL.addElement("Geschlechterdiversität");
+        LIST_MODEL.addElement("Weglänge");
+        LIST_MODEL.addElement("Minimale Nachrücker");
     }
 
+    /**
+     * Shows the Frame from MainWindow with a JList where the user can arrange the criteria.
+     */
+    public void display() {
+        FRAME.getContentPane().add(createList());
+        FRAME.pack();
+        FRAME.setVisible(true);
+    }
 
     private JPanel createList() {
-
-        for (int i = 5; i <=9; i++ ) {
-            listModel.addElement("Kriterium " + i);
-        }
-
-        list = new JList<>(listModel);
+        list = new JList<>(LIST_MODEL);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setDragEnabled(true);
         list.setDropMode(DropMode.INSERT);
-        list.setTransferHandler(new TransferHandler() {
-            private int index;
-            private boolean beforeIndex = false;
-
-            @Override
-            public int getSourceActions(JComponent comp) {
-                return MOVE;
-            }
-
-            @Override
-            public Transferable createTransferable(JComponent comp) {
-                index = list.getSelectedIndex();
-                return new StringSelection(list.getSelectedValue());
-            }
-
-            @Override
-            public void exportDone(JComponent comp, Transferable trans, int action) {
-                if (action == MOVE) {
-                    if (beforeIndex) {
-                        listModel.remove(index + 1);
-                    } else {
-                        listModel.remove(index);
-                    }
-                }
-            }
-
-            @Override
-            public boolean canImport(TransferHandler.TransferSupport support) {
-                return support.isDataFlavorSupported(DataFlavor.stringFlavor);
-            }
-
-            @Override
-            public boolean importData(TransferHandler.TransferSupport support) {
-                try {
-                    String str = (String) support.getTransferable().getTransferData(DataFlavor.stringFlavor);
-                    JList.DropLocation dropLocation = (JList.DropLocation) support.getDropLocation();
-                    listModel.add(dropLocation.getIndex(), str);
-                    beforeIndex = dropLocation.getIndex() < index;
-                    return true;
-                } catch (UnsupportedFlavorException | IOException e) {
-                    e.printStackTrace();
-                }
-                return false;
-            }
-        });
+        list.setTransferHandler(new TransferHandler(list, LIST_MODEL));
 
         JPanel panel = new JPanel(new BorderLayout());
-        panel.add(list, BorderLayout.CENTER);
-        panel.setBorder(BorderFactory.createTitledBorder("List"));
 
         JButton confirmButton = new JButton("Bestätigen");
         confirmButton.setMnemonic(KeyEvent.VK_D);
         confirmButton.setActionCommand("confirm");
         confirmButton.addActionListener(this::actionPerformed);
+
         panel.add(confirmButton, BorderLayout.SOUTH);
+        panel.add(list, BorderLayout.CENTER);
+
         return panel;
     }
 
     private void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("confirm")) {
             list.setDragEnabled(false);
-            criteriaOrder = Arrays.stream(listModel.toArray()).toList();
+            CRITERIA_ORDER = Arrays.stream(LIST_MODEL.toArray()).toList();
         }
-    }
-
-    public List<Object> getCriteriaOrder() {
-        return criteriaOrder;
     }
 }

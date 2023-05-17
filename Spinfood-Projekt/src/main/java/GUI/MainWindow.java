@@ -13,13 +13,14 @@ public class MainWindow implements ActionListener {
 
     private static final int WIDTH = 600;
     private static final int HEIGHT = 500;
-    private static final JMenuItem SHOW_PARTICIPANTS = new JMenuItem("Teilnehmerliste anzeigen");
     private static final JFrame FRAME = new JFrame("Spinfood-Projekt");
-    private boolean showParticipantsEnabled = false;
+    private static final JMenuItem SHOW_PARTICIPANTS = new JMenuItem("Teilnehmerliste anzeigen");
+    private static final JMenuItem SET_CRITERIA = new JMenuItem("Wichtigkeit der Kriterien");
     private static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory();
     private static final JLabel SHOW_TEXT = new JLabel(
             "Starten Sie indem Sie unter 'Start' den Punkt 'Teilnehmer einlesen' auswählen.");
-    private final Criteria criteriaWindow = new Criteria();
+    private static final Criteria CRITERIA_WINDOW = new Criteria();
+    private boolean participantsRead = false;
 
     /**
      * Will create a Main Window for the application using JFrame.
@@ -41,8 +42,10 @@ public class MainWindow implements ActionListener {
      */
     private JMenuBar createJMenuBar() {
         JMenuBar menuBar = new JMenuBar();
+
         JMenu startMenu = new JMenu("Start");
         JMenu pairMenu = new JMenu("Paare");
+
         menuBar.add(startMenu);
         menuBar.add(pairMenu);
 
@@ -50,13 +53,14 @@ public class MainWindow implements ActionListener {
         readParticipants.addActionListener(this);
         startMenu.add(readParticipants);
 
-        JMenuItem setCriteria = new JMenuItem("Kriterien anordnen");
-        setCriteria.addActionListener(this);
-        pairMenu.add(setCriteria);
+        SET_CRITERIA.addActionListener(this);
+        SET_CRITERIA.setEnabled(participantsRead);
+        pairMenu.add(SET_CRITERIA);
 
         SHOW_PARTICIPANTS.addActionListener(this);
-        SHOW_PARTICIPANTS.setEnabled(showParticipantsEnabled);
+        SHOW_PARTICIPANTS.setEnabled(participantsRead);
         startMenu.add(SHOW_PARTICIPANTS);
+
         return menuBar;
     }
 
@@ -79,8 +83,10 @@ public class MainWindow implements ActionListener {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File csvFile = fileChooser.getSelectedFile();
 
+            //TODO: Methode (checkFileValidity) um zu überprüfen ob die .csv Datei die richtigen Header hat.
+
             SHOW_TEXT.setText("Es wurde die Datei: " + csvFile.getName() + " eingelesen.");
-            showParticipantsEnabled = true;
+            participantsRead = true;
             updateJMenu();
 
             PARTICIPANT_FACTORY.readCSV(csvFile);
@@ -93,8 +99,8 @@ public class MainWindow implements ActionListener {
             createFileChooser();
         } else if (e.getActionCommand().equals("Teilnehmerliste anzeigen")) {
             PARTICIPANT_FACTORY.showCSV();
-        } else if (e.getActionCommand().equals("Kriterien anordnen")) {
-            criteriaWindow.display();
+        } else if (e.getActionCommand().equals("Wichtigkeit der Kriterien")) {
+            CRITERIA_WINDOW.display();
         }
     }
 
@@ -102,8 +108,9 @@ public class MainWindow implements ActionListener {
      * Will enable, disable submenus in the MenuBar.
      */
     private void updateJMenu() {
-        if (showParticipantsEnabled) {
+        if (participantsRead) {
             SHOW_PARTICIPANTS.setEnabled(true);
+            SET_CRITERIA.setEnabled(true);
         }
     }
 

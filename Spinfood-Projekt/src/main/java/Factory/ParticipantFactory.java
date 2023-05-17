@@ -8,7 +8,7 @@ import java.util.*;
 
 public class ParticipantFactory {
     public List<Participant> participantList = new ArrayList<>();
-    private List<Pair> registeredPairs = new ArrayList<>();
+    private final List<Pair> registeredPairs = new ArrayList<>();
     private final HashSet<String> ids = new HashSet<>();
     private static final int MAX_PARTICIPANTS = 100; //TODO: Settings Fenster in der GUI über die die Maximalanzahl der Teilnehmer eingelesen werden kann
     HashMap<String, List<Participant>> addressParticipantMap = new HashMap<>();
