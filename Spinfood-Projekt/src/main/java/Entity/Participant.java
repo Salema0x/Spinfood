@@ -42,8 +42,12 @@ public class Participant {
                 }
             }
 
-        } else if (values.length >= 10) {
-            if (values[7].isEmpty()) {
+        } else if (values.length == 10) {
+            if (values[7].isEmpty() && !values[8].isEmpty() && !values[9].isEmpty()) {
+                this.kitchenStory = 0;
+                this.kitchenLongitude = Double.parseDouble(values[8]);
+                this.kitchenLatitude = Double.parseDouble(values[9]);
+            } else if (values[7].isEmpty() && values[8].isEmpty() && values[9].isEmpty()) {
                 this.kitchenStory = 0;
                 this.kitchenLongitude = -1;
                 this.kitchenLatitude = -1;
@@ -79,6 +83,10 @@ public class Participant {
 
     public String getHasKitchen() {
         return hasKitchen;
+    }
+
+    public int getFoodPreferenceNumber() {
+        return foodPreferenceNumber;
     }
 
     public String getFoodPreference() {

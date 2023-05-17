@@ -4,14 +4,11 @@ import Entity.Pair;
 import Entity.Participant;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class ParticipantFactory {
     public List<Participant> participantList = new ArrayList<>();
-    public PairListFactory pairListFactory = new PairListFactory();
+    private List<Pair> registeredPairs = new ArrayList<>();
     private final HashSet<String> ids = new HashSet<>();
     private static final int MAX_PARTICIPANTS = 100; //TODO: Settings Fenster in der GUI über die die Maximalanzahl der Teilnehmer eingelesen werden kann
     HashMap<String, List<Participant>> addressParticipantMap = new HashMap<>();
@@ -75,10 +72,9 @@ public class ParticipantFactory {
                     Participant participant = new Participant(values, isSuccessor);
                     participantList.add(participant);
                     addressString = participant.getKitchenLatitude() + String.valueOf(participant.getKitchenLongitude()) + participant.getKitchenStory();
-
                     if (!addressParticipantMap.containsKey(addressString) && participant.getKitchenLongitude() != -1.0) {
                         addressParticipantMap.put(addressString, new ArrayList<>(List.of(participant)));
-                    } else {
+                    } else if (participant.getKitchenLongitude() != -1.0){
                         participant.increaseCountWG();
                         if (participant.getCount_wg() > 3) {
                             isSuccessor = true;
@@ -93,15 +89,15 @@ public class ParticipantFactory {
                         addressParticipantMap.replace(addressString, wgMembers, wgMembers);
                     }
                 } else if (values.length == 14) {
-                    Participant participant1 = new Participant(values, isSuccessor);
+                    Participant participant1 = new Participant(createSubArray(values), isSuccessor);
                     participantList.add(participant1);
                     values[1] = values[10];
                     values[2] = values[11];
                     values[4] = String.valueOf((int) Double.parseDouble(values[12]));
                     values[5] = values[13];
-                    Participant participant2 = new Participant(values, isSuccessor);
+                    Participant participant2 = new Participant(createSubArray(values), isSuccessor);
                     participantList.add(participant2);
-                    pairListFactory.registeredPairs.add(new Pair(participant1, participant2));
+                    registeredPairs.add(new Pair(participant1, participant2));
                     addressString = participant1.getKitchenLatitude() + String.valueOf(participant1.getKitchenLongitude()) + participant1.getKitchenStory();
                     if (!addressParticipantMap.containsKey(addressString) && participant1.getKitchenLongitude() != -1.0) {
                         addressParticipantMap.put(addressString, new ArrayList<>(List.of(participant1, participant2)));
@@ -113,8 +109,10 @@ public class ParticipantFactory {
                         }
 
                         List<Participant> wgMembers = addressParticipantMap.get(addressString);
-                        for (Participant wgMember : wgMembers) {
-                            wgMember.increaseCountWG();
+                        if (!wgMembers.isEmpty()) {
+                            for (Participant wgMember : wgMembers) {
+                                wgMember.increaseCountWG();
+                            }
                         }
 
                         wgMembers.add(participant1);
@@ -126,6 +124,16 @@ public class ParticipantFactory {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String[] createSubArray(String[] values) {
+        return Arrays
+                .stream(values)
+                .toList()
+                .stream()
+                .limit(10)
+                .toList()
+                .toArray(String[]::new);
     }
 
     /**
@@ -176,5 +184,9 @@ public class ParticipantFactory {
 
     public List<Participant> getParticipantList() {
         return participantList;
+    }
+
+    public List<Pair> getRegisteredPairs() {
+        return registeredPairs;
     }
 }

@@ -1,5 +1,9 @@
 package GUI;
 
+import Entity.Participant;
+import Factory.PairListFactory;
+import Factory.ParticipantFactory;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
