@@ -37,10 +37,35 @@ public class PairListFactory {
         noKitchenParticipants = participantList.stream()
                 .filter(p -> p.getHasKitchen().equals("no"))
                 .collect(Collectors.toList());
+
+        decideAlgorithm();
     }
 
-    private void criteria5() {
+    private void decideAlgorithm() {
+        int indexCriteria5 = criteriaOrder.indexOf("Kriterium 5");
+        int indexCriteria6 = criteriaOrder.indexOf("Kriterium 6");
+        int indexCriteria7 = criteriaOrder.indexOf("Kriterium 7");
 
+        if (indexCriteria5 > indexCriteria6 && indexCriteria5 > indexCriteria7) {
+            if (indexCriteria6 > indexCriteria7) {
+                //Kriterium 5 > Kriterium 6 > Kriterium 7
+            } else {
+                //Kriterium 5 > Kriterium 7 > Kriterium 6
+            }
+        } else if (indexCriteria6 > indexCriteria5 && indexCriteria6 > indexCriteria7) {
+            if (indexCriteria5 > indexCriteria7) {
+                //Kriterium 6 > Kriterium 5 > Kriterium 7
+            } else {
+                //Kriterium 6 > Kriterium 7 > Kriterium 5
+            }
+        } else {
+            if (indexCriteria5 > indexCriteria6) {
+                //Kriterium 7 > Kriterium 5 > Kriterium 6
+            } else {
+                //Kriterium 7 > Kriterium 6 > Kriterium 5
+            }
+        }
     }
+
 
 }
