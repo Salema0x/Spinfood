@@ -67,5 +67,23 @@ public class PairListFactory {
         }
     }
 
+    /*
+    List Sorters
+
+    public void sortParticipants(List<Participant> participants) {
+        participants.sort((a, b) -> {
+            if (a.food_preference != b.food_preference) return a.food_preference - b.food_preference;
+            return a.age - b.age;
+        });
+    }
+
+    public void sortParticipants2(List<Participant> participants) {
+        participants.sort((a, b) -> {
+            if (a.age != b.age) return a.age - b.age;
+            return a.sex.compareTo(b.sex);
+        });
+    }
+     */
+
 
 }
