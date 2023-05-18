@@ -33,6 +33,7 @@ public class PairListFactory {
                 .collect(Collectors.toList());
 
         decideAlgorithm();
+        makePairs();
     }
 
     private void decideAlgorithm() {
@@ -215,6 +216,54 @@ public class PairListFactory {
                 return a.getAge() - b.getAge();
             }
         });
+    }
+
+    private void makePairs() {
+
+        if (!yesKitchenParticipants.isEmpty() && !noKitchenParticipants.isEmpty()) {
+            while (!yesKitchenParticipants.isEmpty() && !noKitchenParticipants.isEmpty()) {
+                Participant participant1 = yesKitchenParticipants.remove(0);
+                Participant participant2 = noKitchenParticipants.remove(0);
+                pairList.add(new Pair(participant1, participant2));
+            }
+        } else if (!yesKitchenParticipants.isEmpty() && !maybeKitchenParticipants.isEmpty()) {
+            while (!yesKitchenParticipants.isEmpty() && !maybeKitchenParticipants.isEmpty()) {
+                Participant participant1 = yesKitchenParticipants.remove(0);
+                Participant participant2 = maybeKitchenParticipants.remove(0);
+                pairList.add(new Pair(participant1, participant2));
+            }
+        } else if (!yesKitchenParticipants.isEmpty()) {
+            while (yesKitchenParticipants.size() > 1) {
+                Participant participant1 = yesKitchenParticipants.remove(0);
+                Participant participant2 = yesKitchenParticipants.remove(0);
+                pairList.add(new Pair(participant1, participant2));
+            }
+        } else if (!maybeKitchenParticipants.isEmpty() && !noKitchenParticipants.isEmpty()) {
+            while (!maybeKitchenParticipants.isEmpty() && !noKitchenParticipants.isEmpty()) {
+                Participant participant1 = maybeKitchenParticipants.remove(0);
+                Participant participant2 = noKitchenParticipants.remove(0);
+                pairList.add(new Pair(participant1, participant2));
+            }
+        } else if (!maybeKitchenParticipants.isEmpty()) {
+            while (maybeKitchenParticipants.size() > 1) {
+                Participant participant1 = maybeKitchenParticipants.remove(0);
+                Participant participant2 = maybeKitchenParticipants.remove(0);
+                pairList.add(new Pair(participant1, participant2));
+            }
+        }
+
+        identifySuccessors();
+    }
+
+    private void identifySuccessors() {
+        if (yesKitchenParticipants.size() == 1) {
+            yesKitchenParticipants.get(0).setSuccessor(true);
+        }
+
+        if (maybeKitchenParticipants.size() == 1) {
+            maybeKitchenParticipants.get(0).setSuccessor(true);
+        }
+
     }
 
 }
