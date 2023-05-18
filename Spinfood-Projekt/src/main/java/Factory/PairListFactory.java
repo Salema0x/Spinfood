@@ -8,18 +8,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PairListFactory {
-    public List<Pair> registeredPairs = new ArrayList<>();
+    public List<Pair> registeredPairs;
     public List<Pair> pairList = new ArrayList<>();
-    private final List<Participant> participantList;
     private final List<Object> criteriaOrder;
-
     private final List<Participant> yesKitchenParticipants;
     private final List<Participant> maybeKitchenParticipants;
     private final List<Participant> noKitchenParticipants;
 
 
-    public PairListFactory(List<Participant> participantList, List<Object> criteriaOrder) {
-        this.participantList = participantList;
+    public PairListFactory(List<Participant> participantList, List<Pair> registeredPairs, List<Object> criteriaOrder) {
+        this.registeredPairs = registeredPairs;
         this.criteriaOrder = criteriaOrder;
 
         yesKitchenParticipants = participantList.stream()
