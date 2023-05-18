@@ -29,15 +29,15 @@ class ParticipantFactoryTest {
 
         //if empty .csv file is given the participant list is empty
         participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/testliste1.csv")).toURI()));
-        Assertions.assertTrue(participantFactory.participantList.isEmpty());
+        Assertions.assertTrue(participantFactory.getParticipantList().isEmpty());
 
         //checking that if the same participant is in the .csv file he is only once in the participant list
         participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/testliste2.csv")).toURI()));
-        Assertions.assertEquals(1, participantFactory.participantList.size());
+        Assertions.assertEquals(1, participantFactory.getParticipantList().size());
 
         //checking that if a pair is on the list, the participants get extracted and are both in the participant list
         participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/testliste3.csv")).toURI()));
-        Assertions.assertEquals(2, participantFactory.participantList.size());
+        Assertions.assertEquals(2, participantFactory.getParticipantList().size());
 
         //testing if participant list is still correctly read in if he has no kitchen story, kitchen story will then be set on 0
         participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/testliste4.csv")).toURI()));
