@@ -37,6 +37,8 @@ public class PairListFactory {
         decideAlgorithm();
     }
 
+
+
     private void decideAlgorithm() {
         int indexCriteria5 = criteriaOrder.indexOf("Kriterium 5");
         int indexCriteria6 = criteriaOrder.indexOf("Kriterium 6");
@@ -218,5 +220,47 @@ public class PairListFactory {
             }
         });
     }
+
+    public void createPairs() {
+        // First, pair participants who have a kitchen with those who might not have one
+        for (int i = 0; i < yesKitchenParticipants.size() && !maybeKitchenParticipants.isEmpty(); i++) {
+            Pair pair = new Pair(yesKitchenParticipants.get(i), maybeKitchenParticipants.remove(0));
+            pairList.add(pair);
+        }
+
+        // Then, pair the remaining participants who have a kitchen with those who do not have one
+        for (int i = 0; i < yesKitchenParticipants.size() && !noKitchenParticipants.isEmpty(); i++) {
+            Pair pair = new Pair(yesKitchenParticipants.get(i), noKitchenParticipants.remove(0));
+            pairList.add(pair);
+        }
+
+        // Pair remaining participants with kitchen among themselves
+        for (int i = 0; i < yesKitchenParticipants.size() - 1; i += 2) {
+            Pair pair = new Pair(yesKitchenParticipants.get(i), yesKitchenParticipants.get(i + 1));
+            pairList.add(pair);
+        }
+
+        // If there is still an unpaired participant with kitchen, leave them unpaired for now
+        if (yesKitchenParticipants.size() % 2 != 0) {
+            // Handle unpaired participant with kitchen
+        }
+
+        // Finally, pair the remaining participants without a kitchen or with 'maybe' kitchen
+        List<Participant> remainingParticipants = new ArrayList<>();
+        remainingParticipants.addAll(maybeKitchenParticipants);
+        remainingParticipants.addAll(noKitchenParticipants);
+
+        for (int i = 0; i < remainingParticipants.size() - 1; i += 2) {
+            Pair pair = new Pair(remainingParticipants.get(i), remainingParticipants.get(i + 1));
+            pairList.add(pair);
+        }
+
+        // If we have an odd number of remaining participants, the last one cannot be paired
+        if (remainingParticipants.size() % 2 != 0) {
+            Participant unpairedParticipant = remainingParticipants.get(remainingParticipants.size() - 1);
+            // The unpaired participant is left unpaired
+        }
+    }
+
 
 }
