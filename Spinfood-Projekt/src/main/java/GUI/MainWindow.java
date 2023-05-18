@@ -19,7 +19,7 @@ public class MainWindow implements ActionListener {
     private static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory();
     private static final JLabel SHOW_TEXT = new JLabel(
             "Starten Sie indem Sie unter 'Start' den Punkt 'Teilnehmer einlesen' auswählen.");
-    private static final Criteria CRITERIA_WINDOW = new Criteria();
+    private static final CriteriaArranger CRITERIA_WINDOW = new CriteriaArranger();
     private boolean participantsRead = false;
 
     /**
@@ -116,5 +116,9 @@ public class MainWindow implements ActionListener {
 
     public static JFrame getFRAME() {
         return FRAME;
+    }
+
+    public static JLabel getShowText() {
+        return SHOW_TEXT;
     }
 }

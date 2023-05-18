@@ -76,7 +76,7 @@ public class ParticipantFactory {
                         addressParticipantMap.put(addressString, new ArrayList<>(List.of(participant)));
                     } else if (participant.getKitchenLongitude() != -1.0){
                         participant.increaseCountWG();
-                        if (participant.getCount_wg() > 3) {
+                        if (participant.getCountWg() > 3) {
                             isSuccessor = true;
                         }
 
@@ -104,7 +104,7 @@ public class ParticipantFactory {
                     } else {
                         participant1.increaseCountWG();
                         participant2.increaseCountWG();
-                        if (participant1.getCount_wg() > 3) {
+                        if (participant1.getCountWg() > 3) {
                             isSuccessor = true;
                         }
 

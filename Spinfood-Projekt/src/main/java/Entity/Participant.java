@@ -1,7 +1,5 @@
 package Entity;
 
-import java.util.Objects;
-
 public class Participant {
     private final String id;
     private final String name;
@@ -14,8 +12,8 @@ public class Participant {
     private double kitchenLongitude;
     private double kitchenLatitude;
     private boolean isSuccessor;
-    private int count_wg = 0;
-    private String ageRange;
+    private int countWg = 0;
+    private byte ageRange;
 
     public Participant(String[] values, boolean isSuccessor) {
         this.id = values[1];
@@ -122,11 +120,11 @@ public class Participant {
     }
 
     public void increaseCountWG() {
-        this.count_wg++;
+        this.countWg++;
     }
 
-    public int getCount_wg() {
-        return count_wg;
+    public int getCountWg() {
+        return countWg;
     }
 
     public boolean isSuccessor() {

@@ -2,7 +2,6 @@ package Factory;
 
 import Entity.Pair;
 import Entity.Participant;
-import GUI.Criteria;
 
 import java.util.ArrayList;
 import java.util.List;

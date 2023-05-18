@@ -2,18 +2,13 @@ package GUI;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Criteria extends JPanel {
+public class CriteriaArranger extends JPanel {
 
     private static final DefaultListModel<String> LIST_MODEL = new DefaultListModel<>();
     private static final JFrame FRAME = MainWindow.getFRAME();
@@ -21,7 +16,7 @@ public class Criteria extends JPanel {
     private JList<String> list;
 
 
-    public Criteria() {
+    public CriteriaArranger() {
         LIST_MODEL.addElement("Essensvorlieben");
         LIST_MODEL.addElement("Altersdifferenz");
         LIST_MODEL.addElement("Geschlechterdiversität");
@@ -33,11 +28,17 @@ public class Criteria extends JPanel {
      * Shows the Frame from MainWindow with a JList where the user can arrange the criteria.
      */
     public void display() {
+        FRAME.getContentPane().remove(MainWindow.getShowText());
         FRAME.getContentPane().add(createList());
         FRAME.pack();
         FRAME.setVisible(true);
     }
 
+    /**
+     * Creates a List where the criteria can be arranged and the order can be set.
+     * @return A JPanel including the list with the criteria and a button to confirm the arrangement.
+     *         Includes a button which provides more information about the criteria.
+     */
     private JPanel createList() {
         list = new JList<>(LIST_MODEL);
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -52,16 +53,30 @@ public class Criteria extends JPanel {
         confirmButton.setActionCommand("confirm");
         confirmButton.addActionListener(this::actionPerformed);
 
+        JButton explanationButton = new JButton("Erklärung Kriterien");
+        explanationButton.setMnemonic(KeyEvent.VK_D);
+        explanationButton.setActionCommand("explanation");
+        explanationButton.addActionListener(this::actionPerformed);
+
         panel.add(confirmButton, BorderLayout.SOUTH);
         panel.add(list, BorderLayout.CENTER);
+        panel.add(explanationButton, BorderLayout.NORTH);
+
+        panel.setBorder(BorderFactory.createLineBorder(Color.white));
 
         return panel;
     }
 
+    /**
+     * Specifies what should happen if ActionEvents occur.
+     * @param e the ActionEvent that was triggered.
+     */
     private void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("confirm")) {
             list.setDragEnabled(false);
             CRITERIA_ORDER = Arrays.stream(LIST_MODEL.toArray()).toList();
+        } else if (e.getActionCommand().equals("explanation")) {
+            //TODO: Include a JOptionPane.showMessageDialog() explaining all the criteria
         }
     }
 }

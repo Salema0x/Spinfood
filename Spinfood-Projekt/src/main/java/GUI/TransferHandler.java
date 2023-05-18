@@ -57,6 +57,7 @@ public class TransferHandler extends javax.swing.TransferHandler {
         } catch (UnsupportedFlavorException | IOException e) {
             e.printStackTrace();
         }
+
         return false;
     }
 }
