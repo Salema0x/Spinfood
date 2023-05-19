@@ -1,5 +1,6 @@
 package GUI;
 
+import Factory.PairListFactory;
 import Factory.ParticipantFactory;
 
 import javax.swing.*;
@@ -8,18 +9,24 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainWindow implements ActionListener {
 
     private static final int WIDTH = 600;
     private static final int HEIGHT = 500;
-    private static final JMenuItem SHOW_PARTICIPANTS = new JMenuItem("Teilnehmerliste anzeigen");
     private static final JFrame FRAME = new JFrame("Spinfood-Projekt");
-    private boolean showParticipantsEnabled = false;
+    private static final JMenuItem SHOW_PARTICIPANTS = new JMenuItem("Teilnehmerliste anzeigen");
+    private static final JMenuItem SET_CRITERIA = new JMenuItem("Wichtigkeit der Kriterien");
+    private static final JMenuItem START_PAIRS = new JMenuItem("Paare bilden");
     private static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory();
-    private static final JLabel showText = new JLabel(
+    private static final JLabel SHOW_TEXT = new JLabel(
             "Starten Sie indem Sie unter 'Start' den Punkt 'Teilnehmer einlesen' auswählen.");
+    private static List<Object> CRITERIA_ORDER = new ArrayList<>();
+    private static final CriteriaArranger CRITERIA_WINDOW = new CriteriaArranger();
+    private static boolean participantsRead = false;
+    private static boolean criteriaOrdered = false;
 
 
     /**
@@ -31,7 +38,7 @@ public class MainWindow implements ActionListener {
         FRAME.setMinimumSize(new Dimension(WIDTH, HEIGHT));
         FRAME.setResizable(false);
         FRAME.setJMenuBar(createJMenuBar());
-        FRAME.getContentPane().add(showText, BorderLayout.SOUTH);
+        FRAME.getContentPane().add(SHOW_TEXT, BorderLayout.SOUTH);
         FRAME.setVisible(true);
         FRAME.setLocationRelativeTo(null);
     }
@@ -42,16 +49,29 @@ public class MainWindow implements ActionListener {
      */
     private JMenuBar createJMenuBar() {
         JMenuBar menuBar = new JMenuBar();
+
         JMenu startMenu = new JMenu("Start");
+        JMenu pairMenu = new JMenu("Paare");
+
         menuBar.add(startMenu);
+        menuBar.add(pairMenu);
 
         JMenuItem readParticipants = new JMenuItem("Teilnehmer einlesen");
         readParticipants.addActionListener(this);
         startMenu.add(readParticipants);
 
+        START_PAIRS.addActionListener(this);
+        START_PAIRS.setEnabled(criteriaOrdered);
+
+        SET_CRITERIA.addActionListener(this);
+        SET_CRITERIA.setEnabled(participantsRead);
+        pairMenu.add(SET_CRITERIA);
+        pairMenu.add(START_PAIRS);
+
         SHOW_PARTICIPANTS.addActionListener(this);
-        SHOW_PARTICIPANTS.setEnabled(showParticipantsEnabled);
+        SHOW_PARTICIPANTS.setEnabled(participantsRead);
         startMenu.add(SHOW_PARTICIPANTS);
+
         return menuBar;
     }
 
@@ -63,8 +83,9 @@ public class MainWindow implements ActionListener {
 
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "Only CSV Files", "csv");
-        fileChooser.setFileFilter(filter);
 
+        fileChooser.setFileFilter(filter);
+        fileChooser.setAcceptAllFileFilterUsed(false);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setMultiSelectionEnabled(false);
 
@@ -73,31 +94,14 @@ public class MainWindow implements ActionListener {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File csvFile = fileChooser.getSelectedFile();
 
-            Optional<String> extension = getExtension(csvFile.getName());
+            //TODO: Methode (checkFileValidity) um zu überprüfen ob die .csv Datei die richtigen Header hat.
 
-            if (extension.isPresent()) {
-                if (!extension.get().equals("csv")) {
-                    showText.setText("Es wurde keine .csv-Datei ausgewählt!");
-                } else {
-                    showText.setText("Es wurde die Datei: " + csvFile.getName() + " eingelesen.");
-                    showParticipantsEnabled = true;
-                    updateJMenu();
+            SHOW_TEXT.setText("Es wurde die Datei: " + csvFile.getName() + " eingelesen.");
+            participantsRead = true;
+            updateJMenu();
 
-                    PARTICIPANT_FACTORY.readCSV(csvFile);
-                }
-            }
+            PARTICIPANT_FACTORY.readCSV(csvFile);
         }
-    }
-
-    /**
-     * Will extract the extension of a file
-     * @param filename the filename of the file
-     * @return a string with the extension, if there is no extension then the string will be empty
-     */
-    private Optional<String> getExtension(String filename) {
-        return Optional.ofNullable(filename)
-                .filter(f -> f.contains("."))
-                .map(f -> f.substring(filename.lastIndexOf(".") + 1));
     }
 
     @Override
@@ -106,23 +110,44 @@ public class MainWindow implements ActionListener {
             createFileChooser();
         } else if (e.getActionCommand().equals("Teilnehmerliste anzeigen")) {
             PARTICIPANT_FACTORY.showCSV();
+        } else if (e.getActionCommand().equals("Wichtigkeit der Kriterien")) {
+            CRITERIA_WINDOW.display();
+        } else if (e.getActionCommand().equals("Paare bilden")) {
+            PairListFactory pairListFactory = new PairListFactory(
+                    PARTICIPANT_FACTORY.getParticipantList(),
+                    PARTICIPANT_FACTORY.getRegisteredPairs(),
+                    CRITERIA_ORDER);
+
         }
     }
 
     /**
      * Will enable, disable submenus in the MenuBar.
      */
-    private void updateJMenu() {
-        if (showParticipantsEnabled) {
+    public static void updateJMenu() {
+        if (participantsRead) {
             SHOW_PARTICIPANTS.setEnabled(true);
+            SET_CRITERIA.setEnabled(true);
+        }
+
+        if (criteriaOrdered) {
+            START_PAIRS.setEnabled(true);
         }
     }
 
-    /**
-     * Getter-Method for participantFactory
-     * @return a participantFactory which holds the participants
-     */
-    public ParticipantFactory getParticipantFactory() {
-        return PARTICIPANT_FACTORY;
+    public static JFrame getFRAME() {
+        return FRAME;
+    }
+
+    public static JLabel getShowText() {
+        return SHOW_TEXT;
+    }
+
+    public static void setCriteriaOrder(List<Object> criteriaOrder) {
+        CRITERIA_ORDER = criteriaOrder;
+    }
+
+    public static void setCriteriaOrdered(boolean isCriteriaOrdered) {
+        criteriaOrdered = isCriteriaOrdered;
     }
 }
