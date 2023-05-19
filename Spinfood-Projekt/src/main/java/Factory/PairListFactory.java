@@ -22,20 +22,20 @@ public class PairListFactory {
         this.criteriaOrder = criteriaOrder;
         this.participantList = participantList;
 
-        yesKitchenParticipants.set(0, createList("yes", "none"));
-        yesKitchenParticipants.set(1, createList("yes", "meat"));
-        yesKitchenParticipants.set(2, createList("yes", "veggie"));
-        yesKitchenParticipants.set(3, createList("yes", "vegan"));
+        yesKitchenParticipants.add(createList("yes", "none"));
+        yesKitchenParticipants.add(createList("yes", "meat"));
+        yesKitchenParticipants.add(createList("yes", "veggie"));
+        yesKitchenParticipants.add(createList("yes", "vegan"));
 
-        maybeKitchenParticipants.set(0, createList("maybe", "none"));
-        maybeKitchenParticipants.set(1, createList("maybe", "meat"));
-        maybeKitchenParticipants.set(2, createList("maybe", "veggie"));
-        maybeKitchenParticipants.set(3, createList("maybe", "vegan"));
+        maybeKitchenParticipants.add(createList("maybe", "none"));
+        maybeKitchenParticipants.add(createList("maybe", "meat"));
+        maybeKitchenParticipants.add(createList("maybe", "veggie"));
+        maybeKitchenParticipants.add(createList("maybe", "vegan"));
 
-        noKitchenParticipants.set(0, createList("no", "none"));
-        noKitchenParticipants.set(1, createList("no", "meat"));
-        noKitchenParticipants.set(2, createList("no", "veggie"));
-        noKitchenParticipants.set(3, createList("no", "vegan"));
+        noKitchenParticipants.add(createList("no", "none"));
+        noKitchenParticipants.add(createList("no", "meat"));
+        noKitchenParticipants.add(createList("no", "veggie"));
+        noKitchenParticipants.add(createList("no", "vegan"));
 
         decideAlgorithm();
         makePairs();
