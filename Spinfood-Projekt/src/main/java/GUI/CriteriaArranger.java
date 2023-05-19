@@ -12,7 +12,6 @@ public class CriteriaArranger extends JPanel {
 
     private static final DefaultListModel<String> LIST_MODEL = new DefaultListModel<>();
     private static final JFrame FRAME = MainWindow.getFRAME();
-    private static List<Object> CRITERIA_ORDER = new ArrayList<>();
     private JList<String> list;
 
 
@@ -74,7 +73,7 @@ public class CriteriaArranger extends JPanel {
     private void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("confirm")) {
             list.setDragEnabled(false);
-            CRITERIA_ORDER = Arrays.asList(LIST_MODEL.toArray());
+            List<Object> CRITERIA_ORDER = Arrays.asList(LIST_MODEL.toArray());
             MainWindow.setCriteriaOrder(CRITERIA_ORDER);
             MainWindow.setCriteriaOrdered(true);
             MainWindow.updateJMenu();

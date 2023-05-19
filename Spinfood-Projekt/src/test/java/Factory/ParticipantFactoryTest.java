@@ -70,8 +70,22 @@ class ParticipantFactoryTest {
         expectedParticipantList5.add(new Participant(new String[]{"0", "f2f848e8-96d0-40e2-a7f8-7cd3751769ed", "Person1", "veggie", "22", "female", "yes", "0", "-1.0", "-1.0"}, false));
         expectedParticipantList5.add(new Participant(new String[] {"0", "fdc3673e-210f-4938-a7ef-f31a99574b29", "Person1Partner", "veggie", "20", "female", "yes", "0", "-1.0", "-1.0"}, false));
         Assertions.assertTrue(participantFactory.participantListEquals(expectedParticipantList5));
-        //TODO: add Testcase for isSuccessor
+
+        //testing isSuccessor
+        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/testliste9.csv")).toURI()));
+        Assertions.assertFalse(participantFactory.getParticipantList().get(0).isSuccessor()); //First participant cant be Successor
+        Assertions.assertTrue(participantFactory.getParticipantList().get(101).isSuccessor());  //MAX Participants = 100 -> 101 Participant = Successor
+
+        //testing if participant is correctly marked as Successor, if WG count > 3
+        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/testliste10.csv")).toURI()));
+        Assertions.assertFalse(participantFactory.getParticipantList().get(0).isSuccessor());
+        Assertions.assertFalse(participantFactory.getParticipantList().get(4).isSuccessor());
+        Assertions.assertFalse(participantFactory.getParticipantList().get(5).isSuccessor());
+        Assertions.assertTrue(participantFactory.getParticipantList().get(6).isSuccessor());
+        Assertions.assertTrue(participantFactory.getParticipantList().get(7).isSuccessor());
+
     }
+
 
     @org.junit.jupiter.api.Test
     void showCSV() {
