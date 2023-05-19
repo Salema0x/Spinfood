@@ -11,29 +11,44 @@ public class PairListFactory {
     public List<Pair> registeredPairs;
     public List<Pair> pairList = new ArrayList<>();
     private final List<Object> criteriaOrder;
-    private final List<Participant> yesKitchenParticipants;
-    private final List<Participant> maybeKitchenParticipants;
-    private final List<Participant> noKitchenParticipants;
+    private final List<Participant> participantList;
+    private final List<List<Participant>> yesKitchenParticipants = new ArrayList<>();
+    private final List<List<Participant>> maybeKitchenParticipants = new ArrayList<>();
+    private final List<List<Participant>> noKitchenParticipants = new ArrayList<>();
 
 
     public PairListFactory(List<Participant> participantList, List<Pair> registeredPairs, List<Object> criteriaOrder) {
         this.registeredPairs = registeredPairs;
         this.criteriaOrder = criteriaOrder;
+        this.participantList = participantList;
 
-        yesKitchenParticipants = participantList.stream()
-                .filter(p -> p.getHasKitchen().equals("yes"))
-                .collect(Collectors.toList());
+        yesKitchenParticipants.set(0, createList("yes", "none"));
+        yesKitchenParticipants.set(1, createList("yes", "meat"));
+        yesKitchenParticipants.set(2, createList("yes", "veggie"));
+        yesKitchenParticipants.set(3, createList("yes", "vegan"));
 
-        maybeKitchenParticipants = participantList.stream()
-                .filter(p -> p.getHasKitchen().equals("maybe"))
-                .collect(Collectors.toList());
+        maybeKitchenParticipants.set(0, createList("maybe", "none"));
+        maybeKitchenParticipants.set(1, createList("maybe", "meat"));
+        maybeKitchenParticipants.set(2, createList("maybe", "veggie"));
+        maybeKitchenParticipants.set(3, createList("maybe", "vegan"));
 
-        noKitchenParticipants = participantList.stream()
-                .filter(p -> p.getHasKitchen().equals("no"))
-                .collect(Collectors.toList());
+        noKitchenParticipants.set(0, createList("no", "none"));
+        noKitchenParticipants.set(1, createList("no", "meat"));
+        noKitchenParticipants.set(2, createList("no", "veggie"));
+        noKitchenParticipants.set(3, createList("no", "vegan"));
 
         decideAlgorithm();
         makePairs();
+    }
+
+    private List<Participant> createList(String kitchenIdentification, String foodIdentification) {
+        return participantList
+                .stream()
+                .filter(p -> p.getHasKitchen().equals(kitchenIdentification))
+                .toList()
+                .stream()
+                .filter(p -> p.getFoodPreference().equals(foodIdentification))
+                .collect(Collectors.toList());
     }
 
     private void decideAlgorithm() {
@@ -43,183 +58,138 @@ public class PairListFactory {
 
         if (indexCriteria5 > indexCriteria6 && indexCriteria5 > indexCriteria7) {
             if (indexCriteria6 > indexCriteria7) {
-                sorter567();
+                sorter567Starter();
             } else {
-                sorter576();
+                sorter576Starter();
             }
         } else if (indexCriteria6 > indexCriteria5 && indexCriteria6 > indexCriteria7) {
             if (indexCriteria5 > indexCriteria7) {
-                sorter657();
+                sorter657Starter();
             } else {
-                sorter675();
+                sorter675Starter();
             }
         } else {
             if (indexCriteria5 > indexCriteria6) {
-                sorter756();
+                sorter756Starter();
             } else {
-                sorter765();
+                sorter765Starter();
             }
         }
     }
 
-    private void sorter567() {
-        yesKitchenParticipants.sort((a, b) -> {
-            if (a.getFoodPreferenceNumber() != b.getFoodPreferenceNumber()) {
-                return a.getFoodPreferenceNumber() - b.getFoodPreferenceNumber();
-            } else {
-                return a.getAge() - b.getAge();
-            }
-        });
-
-        noKitchenParticipants.sort((a, b) -> {
-            if (a.getFoodPreferenceNumber() != b.getFoodPreferenceNumber()) {
-                return a.getFoodPreferenceNumber() - b.getFoodPreferenceNumber();
-            } else {
-                return a.getAge() - b.getAge();
-            }
-        });
-
-        maybeKitchenParticipants.sort((a, b) -> {
-            if (a.getFoodPreferenceNumber() != b.getFoodPreferenceNumber()) {
-                return a.getFoodPreferenceNumber() - b.getFoodPreferenceNumber();
-            } else {
-                return a.getAge() - b.getAge();
-            }
-        });
+    private void sorter567Starter() {
+        sorter567(yesKitchenParticipants);
+        sorter567(noKitchenParticipants);
+        sorter567(maybeKitchenParticipants);
     }
 
-    private void sorter576() {
-        yesKitchenParticipants.sort((a, b) -> {
-            if (a.getFoodPreferenceNumber() != b.getFoodPreferenceNumber()) {
-                return a.getFoodPreferenceNumber() - b.getFoodPreferenceNumber();
-            } else {
-                return a.getSex().compareTo(b.getSex());
-            }
-        });
-
-        noKitchenParticipants.sort((a, b) -> {
-            if (a.getFoodPreferenceNumber() != b.getFoodPreferenceNumber()) {
-                return a.getFoodPreferenceNumber() - b.getFoodPreferenceNumber();
-            } else {
-                return a.getSex().compareTo(b.getSex());
-            }
-        });
-
-        maybeKitchenParticipants.sort((a, b) -> {
-            if (a.getFoodPreferenceNumber() != b.getFoodPreferenceNumber()) {
-                return a.getFoodPreferenceNumber() - b.getFoodPreferenceNumber();
-            } else {
-                return a.getSex().compareTo(b.getSex());
-            }
-        });
+    private void sorter567(List<List<Participant>> kitchenParticipants) {
+        for (List<Participant> participants : kitchenParticipants) {
+            participants
+                    .sort((a, b) -> {
+                        if (a.getFoodPreferenceNumber() != b.getFoodPreferenceNumber()) {
+                            return a.getFoodPreferenceNumber() - b.getFoodPreferenceNumber();
+                        } else {
+                            return a.getAgeRange() - b.getAgeRange();
+                        }
+                    });
+        }
     }
 
-    private void sorter657() {
-        yesKitchenParticipants.sort((a, b) -> {
-            if (a.getAge() != b.getAge()) {
-                return a.getAge() - b.getAge();
-            } else {
-                return a.getFoodPreferenceNumber() - b.getFoodPreferenceNumber();
-            }
-        });
-
-        noKitchenParticipants.sort((a, b) -> {
-            if (a.getAge() != b.getAge()) {
-                return a.getAge() - b.getAge();
-            } else {
-                return a.getFoodPreferenceNumber() - b.getFoodPreferenceNumber();
-            }
-        });
-
-        maybeKitchenParticipants.sort((a, b) -> {
-            if (a.getAge() != b.getAge()) {
-                return a.getAge() - b.getAge();
-            } else {
-                return a.getFoodPreferenceNumber() - b.getFoodPreferenceNumber();
-            }
-        });
+    private void sorter576Starter() {
+        sorter576(yesKitchenParticipants);
+        sorter576(noKitchenParticipants);
+        sorter576(maybeKitchenParticipants);
     }
 
-    private void sorter675() {
-        yesKitchenParticipants.sort((a, b) -> {
-            if (a.getAge() != b.getAge()) {
-                return a.getAge() - b.getAge();
-            } else {
-                return a.getSex().compareTo(b.getSex());
-            }
-        });
-
-        noKitchenParticipants.sort((a, b) -> {
-            if (a.getAge() != b.getAge()) {
-                return a.getAge() - b.getAge();
-            } else {
-                return a.getSex().compareTo(b.getSex());
-            }
-        });
-
-        maybeKitchenParticipants.sort((a, b) -> {
-            if (a.getAge() != b.getAge()) {
-                return a.getAge() - b.getAge();
-            } else {
-                return a.getSex().compareTo(b.getSex());
-            }
-        });
+    private void sorter576(List<List<Participant>> kitchenParticipants) {
+        for (List<Participant> participants : kitchenParticipants) {
+            participants
+                    .sort((a, b) -> {
+                        if (a.getFoodPreferenceNumber() != b.getFoodPreferenceNumber()) {
+                            return a.getFoodPreferenceNumber() - b.getFoodPreferenceNumber();
+                        } else {
+                            return a.getSex().compareTo(b.getSex());
+                        }
+                    });
+        }
     }
 
-    private void sorter756() {
-        yesKitchenParticipants.sort((a, b) -> {
-            if (!a.getSex().equals(b.getSex())) {
-                return a.getSex().compareTo(b.getSex());
-            } else {
-                return a.getFoodPreferenceNumber() - b.getFoodPreferenceNumber();
-            }
-        });
-
-        noKitchenParticipants.sort((a, b) -> {
-            if (!a.getSex().equals(b.getSex())) {
-                return a.getSex().compareTo(b.getSex());
-            } else {
-                return a.getFoodPreferenceNumber() - b.getFoodPreferenceNumber();
-            }
-        });
-
-        maybeKitchenParticipants.sort((a, b) -> {
-            if (!a.getSex().equals(b.getSex())) {
-                return a.getSex().compareTo(b.getSex());
-            } else {
-                return a.getFoodPreferenceNumber() - b.getFoodPreferenceNumber();
-            }
-        });
+    private void sorter657Starter() {
+        sorter657(yesKitchenParticipants);
+        sorter657(noKitchenParticipants);
+        sorter657(maybeKitchenParticipants);
     }
 
-    private void sorter765() {
-        yesKitchenParticipants.sort((a, b) -> {
-            if (!a.getSex().equals(b.getSex())) {
-                return a.getSex().compareTo(b.getSex());
-            } else {
-                return a.getAge() - b.getAge();
-            }
-        });
+    private void sorter657(List<List<Participant>> kitchenParticipants) {
+        for (List<Participant> participants : kitchenParticipants) {
+            participants.sort((a, b) -> {
+                if (a.getAgeRange() != b.getAgeRange()) {
+                    return a.getAgeRange() - b.getAgeRange();
+                } else {
+                    return a.getFoodPreferenceNumber() - b.getFoodPreferenceNumber();
+                }
+            });
+        }
+    }
 
-        maybeKitchenParticipants.sort((a, b) -> {
-            if (!a.getSex().equals(b.getSex())) {
-                return a.getSex().compareTo(b.getSex());
-            } else {
-                return a.getAge() - b.getAge();
-            }
-        });
+    private void sorter675Starter() {
+        sorter675(yesKitchenParticipants);
+        sorter675(noKitchenParticipants);
+        sorter675(maybeKitchenParticipants);
+    }
 
-        noKitchenParticipants.sort((a, b) -> {
-            if (!a.getSex().equals(b.getSex())) {
-                return a.getSex().compareTo(b.getSex());
-            } else {
-                return a.getAge() - b.getAge();
-            }
-        });
+    private void sorter675(List<List<Participant>> kitchenParticipants) {
+        for (List<Participant> participants : kitchenParticipants) {
+            participants.sort((a, b) -> {
+                if (a.getAgeRange() != b.getAgeRange()) {
+                    return a.getAgeRange() - b.getAgeRange();
+                } else {
+                    return a.getSex().compareTo(b.getSex());
+                }
+            });
+        }
+    }
+
+    private void sorter756Starter() {
+        sorter756(yesKitchenParticipants);
+        sorter756(noKitchenParticipants);
+        sorter756(maybeKitchenParticipants);
+    }
+
+    private void sorter756(List<List<Participant>> kitchenParticipants) {
+        for (List<Participant> participants : kitchenParticipants) {
+            participants.sort((a, b) -> {
+                if (!a.getSex().equals(b.getSex())) {
+                    return a.getSex().compareTo(b.getSex());
+                } else {
+                    return a.getFoodPreferenceNumber() - b.getFoodPreferenceNumber();
+                }
+            });
+        }
+    }
+
+    private void sorter765Starter() {
+        sorter765(yesKitchenParticipants);
+        sorter765(noKitchenParticipants);
+        sorter765(maybeKitchenParticipants);
+    }
+
+    private void sorter765(List<List<Participant>> kitchenParticipants) {
+        for (List<Participant> participants : kitchenParticipants) {
+            participants.sort((a, b) -> {
+                if (!a.getSex().equals(b.getSex())) {
+                    return a.getSex().compareTo(b.getSex());
+                } else {
+                    return a.getAgeRange() - b.getAgeRange();
+                }
+            });
+        }
     }
 
     private void makePairs() {
 
+        /*
         if (!yesKitchenParticipants.isEmpty() && !noKitchenParticipants.isEmpty()) {
             while (!yesKitchenParticipants.isEmpty() && !noKitchenParticipants.isEmpty()) {
                 Participant participant1 = yesKitchenParticipants.remove(0);
@@ -250,18 +220,22 @@ public class PairListFactory {
                 Participant participant2 = maybeKitchenParticipants.remove(0);
                 pairList.add(new Pair(participant1, participant2));
             }
-        }
+        } */
 
         identifySuccessors();
     }
 
+    private void split() {
+
+    }
+
     private void identifySuccessors() {
         if (yesKitchenParticipants.size() == 1) {
-            yesKitchenParticipants.get(0).setSuccessor(true);
+           // yesKitchenParticipants.get(0).setSuccessor(true);
         }
 
         if (maybeKitchenParticipants.size() == 1) {
-            maybeKitchenParticipants.get(0).setSuccessor(true);
+           // maybeKitchenParticipants.get(0).setSuccessor(true);
         }
 
     }
