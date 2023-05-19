@@ -22,25 +22,30 @@ public class PairListFactory {
         this.criteriaOrder = criteriaOrder;
         this.participantList = participantList;
 
-        yesKitchenParticipants.add(createList("yes", "none"));
-        yesKitchenParticipants.add(createList("yes", "meat"));
-        yesKitchenParticipants.add(createList("yes", "veggie"));
-        yesKitchenParticipants.add(createList("yes", "vegan"));
-
-        maybeKitchenParticipants.add(createList("maybe", "none"));
-        maybeKitchenParticipants.add(createList("maybe", "meat"));
-        maybeKitchenParticipants.add(createList("maybe", "veggie"));
-        maybeKitchenParticipants.add(createList("maybe", "vegan"));
-
-        noKitchenParticipants.add(createList("no", "none"));
-        noKitchenParticipants.add(createList("no", "meat"));
-        noKitchenParticipants.add(createList("no", "veggie"));
-        noKitchenParticipants.add(createList("no", "vegan"));
-
+        createKitchenPreferenceLists();
         decideAlgorithm();
         makePairs();
     }
 
+    /**
+     * Method to fill kitchenPreference Lists with foodPreference Lists of Participants.
+     */
+    private void createKitchenPreferenceLists() {
+        String[] foodPreferences = {"none", "meat", "veggie", "vegan"};
+
+        for (String foodPreference : foodPreferences) {
+            yesKitchenParticipants.add(createList("yes", foodPreference));
+            maybeKitchenParticipants.add(createList("maybe", foodPreference));
+            noKitchenParticipants.add(createList("no", foodPreference));
+        }
+    }
+
+    /**
+     * Method to create a List of Participants with specific kitchen and food pref.
+     * @param kitchenIdentification
+     * @param foodIdentification
+     * @return List of Participants
+     */
     private List<Participant> createList(String kitchenIdentification, String foodIdentification) {
         return participantList
                 .stream()
