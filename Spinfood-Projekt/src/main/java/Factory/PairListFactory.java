@@ -65,24 +65,27 @@ public class PairListFactory {
     }
 
     private void decideAlgorithm() {
-        int indexCriteria5 = criteriaOrder.indexOf("Kriterium 5");
-        int indexCriteria6 = criteriaOrder.indexOf("Kriterium 6");
-        int indexCriteria7 = criteriaOrder.indexOf("Kriterium 7");
+        int indexCriteria5 = criteriaOrder.indexOf("Essensvorlieben");
+        int indexCriteria6 = criteriaOrder.indexOf("Altersdifferenz");
+        int indexCriteria7 = criteriaOrder.indexOf("Geschlechterdiversität");
 
-        if (indexCriteria5 > indexCriteria6 && indexCriteria5 > indexCriteria7) {
-            if (indexCriteria6 > indexCriteria7) {
+        System.out.println(criteriaOrder);
+        System.out.println(indexCriteria5 + " " + indexCriteria6 + " " + indexCriteria7);
+
+        if (indexCriteria5 < indexCriteria6 && indexCriteria5 < indexCriteria7) {
+            if (indexCriteria6 < indexCriteria7) {
                 sorter567Starter();
             } else {
                 sorter576Starter();
             }
-        } else if (indexCriteria6 > indexCriteria5 && indexCriteria6 > indexCriteria7) {
-            if (indexCriteria5 > indexCriteria7) {
+        } else if (indexCriteria6 < indexCriteria5 && indexCriteria6 < indexCriteria7) {
+            if (indexCriteria5 < indexCriteria7) {
                 sorter657Starter();
             } else {
                 sorter675Starter();
             }
         } else {
-            if (indexCriteria5 > indexCriteria6) {
+            if (indexCriteria5 < indexCriteria6) {
                 sorter756Starter();
             } else {
                 sorter765Starter();
@@ -98,6 +101,7 @@ public class PairListFactory {
 
     private void sorter567(List<List<Participant>> kitchenParticipants) {
         for (List<Participant> participants : kitchenParticipants) {
+            participants = new ArrayList<>(participants);
             participants
                     .sort((a, b) -> {
                         if (a.getFoodPreferenceNumber() != b.getFoodPreferenceNumber()) {
@@ -117,6 +121,7 @@ public class PairListFactory {
 
     private void sorter576(List<List<Participant>> kitchenParticipants) {
         for (List<Participant> participants : kitchenParticipants) {
+            participants = new ArrayList<>(participants);
             participants
                     .sort((a, b) -> {
                         if (a.getFoodPreferenceNumber() != b.getFoodPreferenceNumber()) {
@@ -136,6 +141,7 @@ public class PairListFactory {
 
     private void sorter657(List<List<Participant>> kitchenParticipants) {
         for (List<Participant> participants : kitchenParticipants) {
+            participants = new ArrayList<>(participants);
             participants.sort((a, b) -> {
                 if (a.getAgeRange() != b.getAgeRange()) {
                     return a.getAgeRange() - b.getAgeRange();
@@ -154,6 +160,7 @@ public class PairListFactory {
 
     private void sorter675(List<List<Participant>> kitchenParticipants) {
         for (List<Participant> participants : kitchenParticipants) {
+            participants = new ArrayList<>(participants);
             participants.sort((a, b) -> {
                 if (a.getAgeRange() != b.getAgeRange()) {
                     return a.getAgeRange() - b.getAgeRange();
@@ -172,6 +179,7 @@ public class PairListFactory {
 
     private void sorter756(List<List<Participant>> kitchenParticipants) {
         for (List<Participant> participants : kitchenParticipants) {
+            participants = new ArrayList<>(participants);
             participants.sort((a, b) -> {
                 if (!a.getSex().equals(b.getSex())) {
                     return a.getSex().compareTo(b.getSex());
@@ -190,6 +198,7 @@ public class PairListFactory {
 
     private void sorter765(List<List<Participant>> kitchenParticipants) {
         for (List<Participant> participants : kitchenParticipants) {
+            participants = new ArrayList<>(participants);
             participants.sort((a, b) -> {
                 if (!a.getSex().equals(b.getSex())) {
                     return a.getSex().compareTo(b.getSex());
@@ -201,42 +210,9 @@ public class PairListFactory {
     }
 
     private void makePairs() {
-
         makePairsMeat();
         makePairsOther();
-
-        /*
-        if (!yesKitchenParticipants.isEmpty() && !noKitchenParticipants.isEmpty()) {
-            while (!yesKitchenParticipants.isEmpty() && !noKitchenParticipants.isEmpty()) {
-                Participant participant1 = yesKitchenParticipants.remove(0);
-                Participant participant2 = noKitchenParticipants.remove(0);
-                pairList.add(new Pair(participant1, participant2));
-            }
-        } else if (!yesKitchenParticipants.isEmpty() && !maybeKitchenParticipants.isEmpty()) {
-            while (!yesKitchenParticipants.isEmpty() && !maybeKitchenParticipants.isEmpty()) {
-                Participant participant1 = yesKitchenParticipants.remove(0);
-                Participant participant2 = maybeKitchenParticipants.remove(0);
-                pairList.add(new Pair(participant1, participant2));
-            }
-        } else if (!yesKitchenParticipants.isEmpty()) {
-            while (yesKitchenParticipants.size() > 1) {
-                Participant participant1 = yesKitchenParticipants.remove(0);
-                Participant participant2 = yesKitchenParticipants.remove(0);
-                pairList.add(new Pair(participant1, participant2));
-            }
-        } else if (!maybeKitchenParticipants.isEmpty() && !noKitchenParticipants.isEmpty()) {
-            while (!maybeKitchenParticipants.isEmpty() && !noKitchenParticipants.isEmpty()) {
-                Participant participant1 = maybeKitchenParticipants.remove(0);
-                Participant participant2 = noKitchenParticipants.remove(0);
-                pairList.add(new Pair(participant1, participant2));
-            }
-        } else if (!maybeKitchenParticipants.isEmpty()) {
-            while (maybeKitchenParticipants.size() > 1) {
-                Participant participant1 = maybeKitchenParticipants.remove(0);
-                Participant participant2 = maybeKitchenParticipants.remove(0);
-                pairList.add(new Pair(participant1, participant2));
-            }
-        } */
+        makePairsStarter(yesKitchenParticipants.get(0), maybeKitchenParticipants.get(0), noKitchenParticipants.get(0));
 
     }
 
@@ -248,14 +224,22 @@ public class PairListFactory {
         List<Participant> noneParticipantsMaybeKitchen = maybeKitchenParticipants.get(0);
         List<Participant> meatParticipantsMaybeKitchen = maybeKitchenParticipants.get(1);
 
+        startPairRest(
+                noneParticipantsYesKitchen,
+                meatParticipantsYesKitchen,
+                noneParticipantsNoKitchen,
+                meatParticipantsNoKitchen,
+                noneParticipantsMaybeKitchen,
+                meatParticipantsMaybeKitchen);
+    }
+
+    private void startPairRest(List<Participant> noneParticipantsYesKitchen, List<Participant> meatParticipantsYesKitchen, List<Participant> noneParticipantsNoKitchen, List<Participant> meatParticipantsNoKitchen, List<Participant> noneParticipantsMaybeKitchen, List<Participant> meatParticipantsMaybeKitchen) {
         makePairsStarter(meatParticipantsYesKitchen, meatParticipantsMaybeKitchen, meatParticipantsNoKitchen);
 
-        /*
-            List<List<Participant>> noneParticipants = new ArrayList<>(List.of(noneParticipantsYesKitchen, noneParticipantsNoKitchen, noneParticipantsMaybeKitchen));
-            List<List<Participant>> meatParticipants = new ArrayList<>(List.of(meatParticipantsYesKitchen, meatParticipantsNoKitchen, meatParticipantsMaybeKitchen));
+        List<List<Participant>> noneParticipants = new ArrayList<>(List.of(noneParticipantsYesKitchen, noneParticipantsNoKitchen, noneParticipantsMaybeKitchen));
+        List<List<Participant>> meatParticipants = new ArrayList<>(List.of(meatParticipantsYesKitchen, meatParticipantsNoKitchen, meatParticipantsMaybeKitchen));
 
-            identifySuccessors();
-         */
+        pairRest(noneParticipants, meatParticipants);
     }
 
     private void makePairsOther() {
@@ -266,12 +250,17 @@ public class PairListFactory {
         List<Participant> otherParticipantsMaybeKitchen = maybeKitchenParticipants.get(2);
         List<Participant> otherParticipantsNoKitchen = noKitchenParticipants.get(2);
 
-        makePairsStarter(otherParticipantsYesKitchen, otherParticipantsMaybeKitchen, otherParticipantsNoKitchen);
+        startPairRest(noneParticipantsYesKitchen, otherParticipantsYesKitchen, noneParticipantsNoKitchen, otherParticipantsNoKitchen, noneParticipantsMaybeKitchen, otherParticipantsMaybeKitchen);
+    }
 
-        List<List<Participant>> noneParticipants = new ArrayList<>(List.of(noneParticipantsYesKitchen, noneParticipantsNoKitchen, noneParticipantsMaybeKitchen));
-        List<List<Participant>> otherParticipants = new ArrayList<>(List.of(otherParticipantsYesKitchen, otherParticipantsNoKitchen, otherParticipantsMaybeKitchen));
 
-        identifySuccessors(noneParticipants, otherParticipants);
+    private void pairRest(List<List<Participant>> noneParticipants, List<List<Participant>> restParticipants) {
+        makePairs(restParticipants.get(0), noneParticipants.get(1));
+        makePairs(restParticipants.get(0), noneParticipants.get(2));
+        makePairs(restParticipants.get(0));
+        makePairs(restParticipants.get(1), noneParticipants.get(0));
+        makePairs(restParticipants.get(1), noneParticipants.get(2));
+        makePairs(restParticipants.get(2));
     }
 
     private void makePairsStarter(List<Participant> yesKitchen, List<Participant> maybeKitchen, List<Participant> noKitchen) {
@@ -290,6 +279,8 @@ public class PairListFactory {
 
             if (!participantList1.isEmpty() && !participantList2.isEmpty()) {
                 while (!participantList1.isEmpty() && !participantList2.isEmpty()) {
+                    participantList1 = new ArrayList<>(participantList1);
+                    participantList2 = new ArrayList<>(participantList2);
                     Participant participant1 = participantList1.remove(0);
                     Participant participant2 = participantList2.remove(0);
                     pairList.add(new Pair(participant1, participant2));
@@ -298,6 +289,7 @@ public class PairListFactory {
         } else {
             if (!participantList1.isEmpty()) {
                 while (participantList1.size() > 1) {
+                    participantList1 = new ArrayList<>(participantList1);
                     Participant participant1 = participantList1.remove(0);
                     Participant participant2 = participantList1.remove(0);
                     pairList.add(new Pair(participant1, participant2));
@@ -306,9 +298,5 @@ public class PairListFactory {
         }
     }
 
-    private void identifySuccessors(List<List<Participant>> noneParticipants, List<List<Participant>> restParticipants) {
-
-
-    }
 
 }

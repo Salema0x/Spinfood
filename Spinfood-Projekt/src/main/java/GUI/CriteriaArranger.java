@@ -5,13 +5,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CriteriaArranger extends JPanel {
 
     private static final DefaultListModel<String> LIST_MODEL = new DefaultListModel<>();
     private static final JFrame FRAME = MainWindow.getFRAME();
-    private static final List<Object> CRITERIA_ORDER = new ArrayList<>();
+    private static List<Object> CRITERIA_ORDER = new ArrayList<>();
     private JList<String> list;
 
 
@@ -73,6 +74,8 @@ public class CriteriaArranger extends JPanel {
     private void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("confirm")) {
             list.setDragEnabled(false);
+            CRITERIA_ORDER = Arrays.asList(LIST_MODEL.toArray());
+            System.out.println("Test: " + CRITERIA_ORDER);
             MainWindow.setCriteriaOrder(CRITERIA_ORDER);
             MainWindow.setCriteriaOrdered(true);
             MainWindow.updateJMenu();

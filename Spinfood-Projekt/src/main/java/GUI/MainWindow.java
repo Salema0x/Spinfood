@@ -113,6 +113,7 @@ public class MainWindow implements ActionListener {
         } else if (e.getActionCommand().equals("Wichtigkeit der Kriterien")) {
             CRITERIA_WINDOW.display();
         } else if (e.getActionCommand().equals("Paare bilden")) {
+
             PairListFactory pairListFactory = new PairListFactory(
                     PARTICIPANT_FACTORY.getParticipantList(),
                     PARTICIPANT_FACTORY.getRegisteredPairs(),
