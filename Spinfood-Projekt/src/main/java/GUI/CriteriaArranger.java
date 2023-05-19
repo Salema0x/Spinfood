@@ -75,7 +75,6 @@ public class CriteriaArranger extends JPanel {
         if (e.getActionCommand().equals("confirm")) {
             list.setDragEnabled(false);
             CRITERIA_ORDER = Arrays.asList(LIST_MODEL.toArray());
-            System.out.println("Test: " + CRITERIA_ORDER);
             MainWindow.setCriteriaOrder(CRITERIA_ORDER);
             MainWindow.setCriteriaOrdered(true);
             MainWindow.updateJMenu();
