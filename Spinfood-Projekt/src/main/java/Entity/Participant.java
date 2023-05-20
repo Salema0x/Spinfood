@@ -11,9 +11,11 @@ public class Participant {
     private byte ageRange;
     private double kitchenLongitude;
     private double kitchenLatitude;
-    private int countWg = 0;
+    private int countWg = 1;
     private int foodPreferenceNumber;
     private boolean isSuccessor;
+    private Participant partner = null;
+    private boolean hasPartner = false;
 
     public Participant(String[] values, boolean isSuccessor) {
         this.id = values[1];
@@ -182,11 +184,31 @@ public class Participant {
         return ageRange;
     }
 
+    public boolean isSuccessor() {
+        return isSuccessor;
+    }
+
     public void setSuccessor(boolean successor) {
         isSuccessor = successor;
     }
 
-    public boolean getIsSuccessor() {
-        return isSuccessor;
+    public Participant getPartner() {
+        return partner;
+    }
+
+    public void setPartner(Participant partner) {
+        this.partner = partner;
+    }
+
+    public void setHasPartner(boolean hasPartner) {
+        this.hasPartner = hasPartner;
+    }
+
+    public boolean hasPartner() {
+        return hasPartner;
+    }
+
+    public void setCountWg(int countWg) {
+        this.countWg += countWg;
     }
 }

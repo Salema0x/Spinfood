@@ -17,6 +17,7 @@ public class ParticipantFactory {
     private boolean isSuccessor = false;
     private boolean pairParticipant1Exists = false;
     private boolean pairParticipant2Exists = false;
+    private byte sizeWGMembers = 0;
 
     /**
      * Will extract all participants from the .csv file.
@@ -30,6 +31,12 @@ public class ParticipantFactory {
             IDS.clear();
             ADDRESS_PARTICIPANT_MAP.clear();
             ID_PARTICIPANT_MAP.clear();
+            sizeWGMembers = 0;
+            REGISTERED_PAIRS.clear();
+            participantCounter = 0;
+            isSuccessor = false;
+            pairParticipant1Exists = false;
+            pairParticipant2Exists = false;
         }
 
         try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
@@ -55,17 +62,31 @@ public class ParticipantFactory {
                 } else if (values.length == 14) {
                     if (pairParticipant1Exists) {
                         Participant participant1 = ID_PARTICIPANT_MAP.get(values[1]);
-                        createParticipant2(values, participant1);
+                        Participant participant2 = createParticipant2(values, participant1);
+                        participant1.setPartner(participant2);
+                        participant2.setPartner(participant1);
+                        participant1.setHasPartner(true);
+                        participant2.setHasPartner(true);
+                        calculateWGCountPair(participant1, participant2);
                     } else if (pairParticipant2Exists) {
                         Participant participant2 = ID_PARTICIPANT_MAP.get(values[10]);
                         Participant participant1 = new Participant(createSubArray(values), isSuccessor);
-
+                        participant1.setPartner(participant2);
+                        participant2.setPartner(participant1);
+                        participant1.setHasPartner(true);
+                        participant2.setHasPartner(true);
                         calculateWGCountPair(participant1, participant2);
                         PARTICIPANT_LIST.add(participant1);
                         REGISTERED_PAIRS.add(new Pair(participant1, participant2));
                     } else {
                         Participant participant1 = new Participant(createSubArray(values), isSuccessor);
-                        createParticipant2(values, participant1);
+                        PARTICIPANT_LIST.add(participant1);
+                        Participant participant2 = createParticipant2(values, participant1);
+                        participant1.setPartner(participant2);
+                        participant2.setPartner(participant1);
+                        participant1.setHasPartner(true);
+                        participant2.setHasPartner(true);
+                        calculateWGCountPair(participant1, participant2);
                     }
                 }
             }
@@ -134,6 +155,7 @@ public class ParticipantFactory {
         }
     }
 
+
     /**
      * Checks if there are persons from the wg of the given participant which have already registered.
      * If the there are more than 3 registrations from one wg every following registration will be a successor.
@@ -147,18 +169,21 @@ public class ParticipantFactory {
         if (!ADDRESS_PARTICIPANT_MAP.containsKey(addressString) && participant.getKitchenLongitude() != -1.0) {
             ADDRESS_PARTICIPANT_MAP.put(addressString, new ArrayList<>(List.of(participant)));
         } else if (participant.getKitchenLongitude() != -1.0) {
-            participant.increaseCountWG();
-            if (participant.getCountWg() > 3) {
+            List<Participant> oldMembers = ADDRESS_PARTICIPANT_MAP.get(addressString);
+            List<Participant> memberStoring = calculateWGSize(addressString);
+
+            if (sizeWGMembers == 3) {
                 participant.setSuccessor(true);
-            }
+            } else if (sizeWGMembers < 3) {
+                participant.setCountWg(sizeWGMembers);
 
-            List<Participant> wgMembers = ADDRESS_PARTICIPANT_MAP.get(addressString);
-            for (Participant wgMember : wgMembers) {
-                wgMember.increaseCountWG();
-            }
+                for (Participant member : memberStoring) {
+                    member.increaseCountWG();
+                }
 
-            wgMembers.add(participant);
-            ADDRESS_PARTICIPANT_MAP.replace(addressString, wgMembers, wgMembers);
+                memberStoring.add(participant);
+                ADDRESS_PARTICIPANT_MAP.replace(addressString, oldMembers, memberStoring);
+            }
         }
     }
 
@@ -179,24 +204,56 @@ public class ParticipantFactory {
         if (!ADDRESS_PARTICIPANT_MAP.containsKey(addressString) && hasAddress) {
             ADDRESS_PARTICIPANT_MAP.put(addressString, new ArrayList<>(List.of(participant1, participant2)));
         } else if (hasAddress) {
-            participant1.increaseCountWG();
-            participant2.increaseCountWG();
-            if (participant1.getCountWg() > 3) {
+            List<Participant> memberStoring = calculateWGSize(addressString);
+            List<Participant> oldMembers = ADDRESS_PARTICIPANT_MAP.get(addressString);
+
+            if (sizeWGMembers == 3) {
                 participant1.setSuccessor(true);
                 participant2.setSuccessor(true);
-            }
+            } else if (sizeWGMembers < 3) {
+                participant1.setCountWg(sizeWGMembers);
+                participant2.setCountWg(sizeWGMembers);
 
-            List<Participant> wgMembers = ADDRESS_PARTICIPANT_MAP.get(addressString);
-            if (!wgMembers.isEmpty()) {
-                for (Participant wgMember : wgMembers) {
-                    wgMember.increaseCountWG();
+                for (Participant member : memberStoring) {
+                    member.increaseCountWG();
                 }
-            }
 
-            wgMembers.add(participant1);
-            wgMembers.add(participant2);
-            ADDRESS_PARTICIPANT_MAP.replace(addressString, wgMembers, wgMembers);
+                memberStoring.add(participant1);
+                memberStoring.add(participant2);
+                ADDRESS_PARTICIPANT_MAP.replace(addressString, oldMembers, memberStoring);
+            }
         }
+    }
+
+    /**
+     * Calculates the amount of other WG_Members in the WG and calculates all the wg Members.
+     * @param addressString A String representing the WG.
+     * @return as List with all the wg Members
+     */
+    private List<Participant> calculateWGSize(String addressString) {
+        List<Participant> wgMembers = ADDRESS_PARTICIPANT_MAP.get(addressString);
+
+        List<Participant> memberStoring = new ArrayList<>();
+
+        sizeWGMembers = 0;
+
+        while (!wgMembers.isEmpty()) {
+            Participant member = wgMembers.get(0);
+
+            if (member.hasPartner() && wgMembers.contains(member.getPartner())) {
+                sizeWGMembers++;
+                wgMembers.remove(member);
+                wgMembers.remove(member.getPartner());
+                memberStoring.add(member);
+                memberStoring.add(member.getPartner());
+            } else {
+                sizeWGMembers++;
+                wgMembers.remove(member);
+                memberStoring.add(member);
+            }
+        }
+
+        return memberStoring;
     }
 
     /**
@@ -204,7 +261,7 @@ public class ParticipantFactory {
      * @param values The currently read in values from the .csv File.
      * @param participant1 The first participant of the pair.
      */
-    private void createParticipant2(String[] values, Participant participant1) {
+    private Participant createParticipant2(String[] values, Participant participant1) {
         values[1] = values[10];
         values[2] = values[11];
         values[4] = String.valueOf((int) Double.parseDouble(values[12]));
@@ -212,10 +269,9 @@ public class ParticipantFactory {
 
         Participant participant2 = new Participant(createSubArray(values), isSuccessor);
 
-        calculateWGCountPair(participant1, participant2);
-
         PARTICIPANT_LIST.add(participant2);
         REGISTERED_PAIRS.add(new Pair(participant1, participant2));
+        return participant2;
     }
 
     /**
