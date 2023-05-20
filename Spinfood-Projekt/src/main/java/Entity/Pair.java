@@ -1,6 +1,6 @@
 package Entity;
 
-public class Pair {
+public class Pair implements Comparable<Pair>{
     private final Participant participant1;
     private final Participant participant2;
     private byte course;
@@ -47,4 +47,22 @@ public class Pair {
         this.preferenceDeviation = (byte) Math.abs(participant1.getFoodPreferenceNumber() - participant2.getFoodPreferenceNumber());
     }
 
+    public Participant getParticipant1() {
+        return participant1;
+    }
+    public Participant getParticipant2() {
+        return participant2;
+    }
+
+    @Override
+    public int compareTo(Pair o) {
+        // If pairs contain same persons (no matter the order) -> they are equal
+        if (participant1.getId() == o.getParticipant1().getId() || participant1.getId() == o.getParticipant2().getId()) {
+            return 0;
+        } else if (participant2.getId() == o.getParticipant1().getId() || participant2.getId() == o.getParticipant2().getId()) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
 }

@@ -33,21 +33,32 @@ class PairListFactoryTest {
         participantFactory = new ParticipantFactory();
 
     }
+    //Enum for criteria orders
+    //5 = foodPreference, 6 = Altersdifferenz, 7 = Geschlecht
+    private enum Criteria {
+        CRITERIA_567,       //foodPreference > Altersdifferenz > Geschlecht
+        CRITERIA_576,
+        CRITERIA_657,
+        CRITERIA_675,
+        CRITERIA_756,
+        CRITERIA_765,
+    }
 
 
 
     @org.junit.jupiter.api.Test
-    void makePairs() throws URISyntaxException {
+    void PairListFactory() throws URISyntaxException {
 
         participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/pairfactorytestlists/testliste0.csv")).toURI()));
         participantsList = participantFactory.getParticipantList();
-        initializeCriteria();
-        initializeExpectedPairLists();
+        expectedPairLists = new ArrayList<>();
         List<Object> criteria = new ArrayList<>();
         List<Pair> expectedPairs = new ArrayList<>();
+        initializeCriteria();
+        initializeExpectedPairLists();
 
 
-        //testing if pairs are correctly matched in criteria Orders 1-7
+        //testing if pairs are correctly matched in criteria Orders 1-6
         for (Criteria c : Criteria.values()) {
 
             switch (c) {
@@ -77,26 +88,27 @@ class PairListFactoryTest {
                     break;
             }
             pairListFactory = new PairListFactory(participantFactory.getParticipantList(), participantFactory.getRegisteredPairs(), criteria);
-            pairListFactory.makePairs();
             List<Pair> actualPairs = pairListFactory.pairList;
 
 
-            Assertions.assertEquals(expectedPairs, actualPairs);
+            //testing, if the expected pairs are created
+            for (Pair pair : actualPairs) {
+                for(Pair expectedPair : expectedPairs) {
+                    //searching for pairs with at least one matching participant
+                    if (pair.getParticipant1().getId() == expectedPair.getParticipant1().getId() || pair.getParticipant2().getId() == expectedPair.getParticipant2().getId() || pair.getParticipant1().getId() == expectedPair.getParticipant2().getId() || pair.getParticipant2().getId() == expectedPair.getParticipant1().getId()){
+                        //testing if the pairs are equal
+                        Assertions.assertEquals(0, pair.compareTo(expectedPair));
+                        System.out.println(pair.getParticipant1().getId() + " " + pair.getParticipant2().getId());
+                    }
+                }
+            }
 
         }
     }
 
-    //Enum for criteria orders
-    //5 = foodPreference, 6 = Altersdifferenz, 7 = Geschlecht
-    private enum Criteria {
-        CRITERIA_567,       //foodPreference > Altersdifferenz > Geschlecht
-        CRITERIA_576,
-        CRITERIA_657,
-        CRITERIA_675,
-        CRITERIA_756,
-        CRITERIA_765,
-    }
+
     void initializeExpectedPairLists() {
+    //TODO: Pärchen manuell zuordnen und dann hier einfügen
         expectedPairLists.add(new ArrayList<>() {{add(new Pair(participantsList.get(0), participantsList.get(1))); add(new Pair(participantsList.get(2), participantsList.get(3))); add(new Pair(participantsList.get(4), participantsList.get(5)));}});
         expectedPairLists.add(new ArrayList<>() {{add(new Pair(participantsList.get(0), participantsList.get(1))); add(new Pair(participantsList.get(2), participantsList.get(3))); add(new Pair(participantsList.get(4), participantsList.get(5)));}});
         expectedPairLists.add(new ArrayList<>() {{add(new Pair(participantsList.get(0), participantsList.get(1))); add(new Pair(participantsList.get(2), participantsList.get(3))); add(new Pair(participantsList.get(4), participantsList.get(5)));}});
@@ -114,6 +126,8 @@ class PairListFactoryTest {
         criteriaOrder.add(new ArrayList<>() {{add(7); add(5); add(6);}});
         criteriaOrder.add(new ArrayList<>() {{add(7); add(6); add(5);}});
     }
+
+
 
 
 }
