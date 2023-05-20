@@ -211,4 +211,8 @@ public class Participant {
     public void setCountWg(int countWg) {
         this.countWg += countWg;
     }
+
+    public boolean getIsSuccessor() {
+        return isSuccessor;
+    }
 }
