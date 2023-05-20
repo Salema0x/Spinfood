@@ -14,11 +14,11 @@ public class GroupFactory {
     /**
      * Constructor for GroupFactory. It initializes the registeredPairs and partyLocation.
      *
-     * @param registeredPairs the list of pairs registered for the event
+     * @param pairListFactory the list of pairs registered for the event from the PairListFactoryClass
      * @param partyLocation the location of the party
      */
-    public GroupFactory(List<Pair> registeredPairs, int maxGroupSize, double[][] partyLocation) {
-        this.registeredPairs = new ArrayList<>(registeredPairs);
+    public GroupFactory(PairListFactory pairListFactory, int maxGroupSize, double[][] partyLocation) {
+        this.registeredPairs = pairListFactory.getRegisteredPairs();
         this.maxGroupSize = maxGroupSize;
         this.partyLocation = partyLocation;
         this.groups = new ArrayList<>();

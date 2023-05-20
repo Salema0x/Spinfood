@@ -277,4 +277,8 @@ public class PairListFactory {
         pairList.add(new Pair(participant1, participant2));
         return participantList2;
     }
+
+    public List<Pair> getRegisteredPairs() {
+        return registeredPairs;
+    }
 }
