@@ -278,30 +278,30 @@ public class ParticipantFactory {
      * Will display all participants in a table on the console.
      */
     public void showCSV() {
-        String leftAlignFormat = "| %-36s | %-20s | %-6s | %-3d | %-7s | %-8s | %-13d | %-17s | %-19s | %-9s |%n";
+                String leftAlignFormat = "| %-36s | %-20s | %-6s | %-3d | %-7s | %-8s | %-13d | %-17s | %-19s | %-9s |%n";
 
-        System.out.format("+--------------------------------------+----------------------+--------+-----+---------+----------+---------------+-------------------+---------------------+-----------+%n");
-        System.out.format("| ID                                   | Name                 | Food   | Age | Sex     | Kitchen  | Kitchen Story | Longitude         | Latitude            | Successor |+%n");
-        System.out.format("+--------------------------------------+----------------------+--------+-----+---------+----------+---------------+-------------------+---------------------+-----------+%n");
+                System.out.format("+--------------------------------------+----------------------+--------+-----+---------+----------+---------------+-------------------+---------------------+-----------+%n");
+                System.out.format("| ID                                   | Name                 | Food   | Age | Sex     | Kitchen  | Kitchen Story | Longitude         | Latitude            | Successor |+%n");
+                System.out.format("+--------------------------------------+----------------------+--------+-----+---------+----------+---------------+-------------------+---------------------+-----------+%n");
 
-        for (Participant participant : PARTICIPANT_LIST) {
-            String id = participant.getId();
-            String name = participant.getName();
-            String foodPreference = participant.getFoodPreference();
-            String sex = participant.getSex();
-            String hasKitchen = participant.getHasKitchen();
-            String longitude = String.valueOf(participant.getKitchenLongitude());
-            String latitude = String.valueOf(participant.getKitchenLatitude());
-            String isSuccessor = String.valueOf(participant.getIsSuccessor());
+                for (Participant participant : PARTICIPANT_LIST) {
+                    String id = participant.getId();
+                    String name = participant.getName();
+                    String foodPreference = participant.getFoodPreference();
+                    String sex = participant.getSex();
+                    String hasKitchen = participant.getHasKitchen();
+                    String longitude = String.valueOf(participant.getKitchenLongitude());
+                    String latitude = String.valueOf(participant.getKitchenLatitude());
+                    String isSuccessor = String.valueOf(participant.getIsSuccessor());
 
-            byte age = participant.getAge();
-            byte kitchenStory = participant.getKitchenStory();
+                    byte age = participant.getAge();
+                    byte kitchenStory = participant.getKitchenStory();
 
-            System.out.format(leftAlignFormat, id, name, foodPreference, age, sex, hasKitchen, kitchenStory, longitude, latitude, isSuccessor);
-        }
+                    System.out.format(leftAlignFormat, id, name, foodPreference, age, sex, hasKitchen, kitchenStory, longitude, latitude, isSuccessor);
+                }
 
-        System.out.format("+--------------------------------------+----------------------+--------+-----+---------+----------+---------------+-------------------+---------------------+-----------+%n");
-    }
+                System.out.format("+--------------------------------------+----------------------+--------+-----+---------+----------+---------------+-------------------+---------------------+-----------+%n");
+            }
 
     /**
      * Checks if the participantList from this class equals another participant list.

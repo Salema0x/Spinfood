@@ -297,6 +297,26 @@ public class PairListFactory {
             }
         }
     }
+    public void showPairs() {
+        String leftAlignFormat = "%-9s| %-36s | %-36s | %-20s | %-20s |%n";
+        int pairNr = 0;
+
+        System.out.format("+--------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+        System.out.format("|Pair Nr.| ID1                                  | ID2                                  | Name1                | Name2                |%n");
+        System.out.format("+--------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+
+        for (Pair pair: pairList ) {
+            String id1 = pair.getParticipant1().getId();
+            String id2 = pair.getParticipant2().getId();
+            String name1 = pair.getParticipant1().getName();
+            String name2 = pair.getParticipant2().getName();
+            pairNr++;
 
 
+            System.out.format(leftAlignFormat,pairNr, id1, id2, name1, name2);
+        }
+
+        System.out.format("+---------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+    }
 }
+
