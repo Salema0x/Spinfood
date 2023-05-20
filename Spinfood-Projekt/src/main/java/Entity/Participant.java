@@ -8,11 +8,12 @@ public class Participant {
     private final String hasKitchen;
     private final byte age;
     private byte kitchenStory;
-    private byte ageRange;
+    private int ageRange;
     private double kitchenLongitude;
     private double kitchenLatitude;
     private int countWg = 1;
     private int foodPreferenceNumber;
+    private int sexNumber;
     private boolean isSuccessor;
     private Participant partner = null;
     private boolean hasPartner = false;
@@ -35,6 +36,7 @@ public class Participant {
 
         calculateFoodPreferenceNumber(foodPreference);
         calculateAgeRangeNumber(age);
+        calculateSexNumber(sex);
     }
 
     /**
@@ -120,6 +122,13 @@ public class Participant {
         }
     }
 
+    private void calculateSexNumber(String sex) {
+        switch (sex) {
+            case "female" -> this.sexNumber = 0;
+            case "male", "other" -> this.sexNumber = 1;
+        }
+    }
+
     /**
      * Checks if two participants are the same.
      * @param participant the participant to which should be compared.
@@ -180,7 +189,7 @@ public class Participant {
         return age;
     }
 
-    public byte getAgeRange() {
+    public int getAgeRange() {
         return ageRange;
     }
 
@@ -210,5 +219,9 @@ public class Participant {
 
     public void setCountWg(int countWg) {
         this.countWg += countWg;
+    }
+
+    public int getSexNumber() {
+        return sexNumber;
     }
 }
