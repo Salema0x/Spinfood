@@ -47,4 +47,23 @@ public class Pair {
         this.preferenceDeviation = (byte) Math.abs(participant1.getFoodPreferenceNumber() - participant2.getFoodPreferenceNumber());
     }
 
+    public byte getAgeDifference() {
+        return ageDifference;
+    }
+
+    public byte getPreferenceDeviation() {
+        return preferenceDeviation;
+    }
+
+    public double getGenderDiversityScore() {
+        return genderDiversityScore;
+    }
+
+    public Double[][] getPlaceOfCooking() {
+        return placeOfCooking;
+    }
+
+    public void setPlaceOfCooking(Double[][] placeOfCooking) {
+        this.placeOfCooking = placeOfCooking;
+    }
 }
