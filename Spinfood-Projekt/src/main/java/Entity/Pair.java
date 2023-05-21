@@ -1,5 +1,7 @@
 package Entity;
 
+import java.util.Objects;
+
 public class Pair {
     private final Participant participant1;
     private final Participant participant2;
@@ -46,5 +48,20 @@ public class Pair {
     private void calculatePreferenceDeviation() {
         this.preferenceDeviation = (byte) Math.abs(participant1.getFoodPreferenceNumber() - participant2.getFoodPreferenceNumber());
     }
+    
+    public boolean isEqualTo(Pair pair) {
+        if (participant1.getId().equals(pair.getParticipant1().getId()) || participant1.getId().equals(pair.getParticipant2().getId())) {
+            return true;
+        } else {
+            return participant2.getId().equals(pair.getParticipant1().getId()) || participant2.getId().equals(pair.getParticipant2().getId());
+        }
+    }
 
+    public Participant getParticipant1() {
+        return participant1;
+    }
+
+    public Participant getParticipant2() {
+        return participant2;
+    }
 }

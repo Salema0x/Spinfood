@@ -2,6 +2,7 @@ package Factory;
 
 import Entity.Pair;
 import Entity.Participant;
+import Misc.ParticipantComparator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,8 @@ public class PairListFactory {
     private final List<List<Participant>> maybeKitchenParticipants = new ArrayList<>();
     private final List<List<Participant>> noKitchenParticipants = new ArrayList<>();
 
+    //Fixme: participantList contains the pair participants as well
+    //Fixme: participantList contains the successors as well
 
     public PairListFactory(List<Participant> participantList, List<Pair> registeredPairs, List<Object> criteriaOrder) {
         this.registeredPairs = registeredPairs;
@@ -86,21 +89,21 @@ public class PairListFactory {
 
         if (indexCriteria5 < indexCriteria6 && indexCriteria5 < indexCriteria7) {
             if (indexCriteria6 < indexCriteria7) {
-                sorterStarter(getFoodPreferenceNumber, getAgeRange);
+                sorterStarter(true, 2, getFoodPreferenceNumber, getAgeRange, getSex);
             } else {
-                sorterStarter(getFoodPreferenceNumber, getSex);
+                sorterStarter(true, 1, getFoodPreferenceNumber, getSex, getAgeRange);
             }
         } else if (indexCriteria6 < indexCriteria5 && indexCriteria6 < indexCriteria7) {
             if (indexCriteria5 < indexCriteria7) {
-                sorterStarter(getAgeRange, getFoodPreferenceNumber);
+                sorterStarter(true, 2, getAgeRange, getFoodPreferenceNumber, getSex);
             } else {
-                sorterStarter(getAgeRange, getSex);
+                sorterStarter(true, 1, getAgeRange, getSex, getFoodPreferenceNumber);
             }
         } else {
             if (indexCriteria5 < indexCriteria6) {
-                sorterStarter(getSex, getFoodPreferenceNumber);
+                sorterStarter(true, 0, getSex, getFoodPreferenceNumber, getAgeRange);
             } else {
-                sorterStarter(getSex, getAgeRange);
+                sorterStarter(true, 0, getSex, getAgeRange, getFoodPreferenceNumber);
             }
         }
     }
@@ -110,10 +113,10 @@ public class PairListFactory {
      * @param methods A Function Interface showing which functions should be used for comparing.
      */
     @SafeVarargs
-    private void sorterStarter(Function<Participant, Integer>... methods) {
-        sorter(yesKitchenParticipants, methods[0], methods[1]);
-        sorter(noKitchenParticipants, methods[0], methods[1]);
-        sorter(maybeKitchenParticipants, methods[0], methods[1]);
+    private void sorterStarter(boolean sexUp, int sexFunctionIndex, Function<Participant, Integer>... methods) {
+        sorter(yesKitchenParticipants, sexUp, sexFunctionIndex, methods[0], methods[1], methods[2]);
+        sorter(noKitchenParticipants, sexUp, sexFunctionIndex, methods[0], methods[1], methods[2]);
+        sorter(maybeKitchenParticipants, sexUp, sexFunctionIndex, methods[0], methods[1], methods[2]);
     }
 
     /**
@@ -122,20 +125,16 @@ public class PairListFactory {
      * @param methods The functions which should be used for sorting.
      */
     @SafeVarargs
-    private void sorter(List<List<Participant>> kitchenParticipants, Function<Participant, Integer>... methods) {
+    private void sorter(List<List<Participant>> kitchenParticipants, boolean sexUp, int sexFunctionIndex, Function<Participant, Integer>... methods) {
         Function<Participant, Integer> firstMethod = methods[0];
         Function<Participant, Integer> secondMethod = methods[1];
+        Function<Participant, Integer> thirdMethod = methods[2];
 
         for (List<Participant> participants : kitchenParticipants) {
+            int index = kitchenParticipants.indexOf(participants);
             participants = new ArrayList<>(participants);
-            participants
-                    .sort((a, b) -> {
-                        if (!firstMethod.apply(a).equals(firstMethod.apply(b))) {
-                            return firstMethod.apply(a) - firstMethod.apply(b);
-                        } else {
-                            return secondMethod.apply(a) - secondMethod.apply(b);
-                        }
-                    });
+            participants.sort(new ParticipantComparator(sexUp, sexFunctionIndex, firstMethod, secondMethod, thirdMethod));
+            kitchenParticipants.set(index, participants);
         }
     }
 
@@ -276,5 +275,27 @@ public class PairListFactory {
         participant2.setHasPartner(true);
         pairList.add(new Pair(participant1, participant2));
         return participantList2;
+    }
+
+    public void showPairs() {
+        String leftAlignFormat = "%-9s| %-36s | %-36s | %-20s | %-20s |%n";
+        int pairNr = 0;
+
+        System.out.format("+--------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+        System.out.format("|Pair Nr.| ID1                                  | ID2                                  | Name1                | Name2                |%n");
+        System.out.format("+--------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+
+        for (Pair pair: pairList ) {
+            String id1 = pair.getParticipant1().getId();
+            String id2 = pair.getParticipant2().getId();
+            String name1 = pair.getParticipant1().getName();
+            String name2 = pair.getParticipant2().getName();
+            pairNr++;
+
+
+            System.out.format(leftAlignFormat,pairNr, id1, id2, name1, name2);
+        }
+
+        System.out.format("+---------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
     }
 }
