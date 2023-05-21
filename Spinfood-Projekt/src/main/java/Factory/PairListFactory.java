@@ -18,6 +18,11 @@ public class PairListFactory {
     private final List<List<Participant>> yesKitchenParticipants = new ArrayList<>();
     private final List<List<Participant>> maybeKitchenParticipants = new ArrayList<>();
     private final List<List<Participant>> noKitchenParticipants = new ArrayList<>();
+    private int sexFunctionIndex;
+    private Function<Participant, Integer> firstMethod;
+    private Function<Participant, Integer> secondMethod;
+    private Function<Participant, Integer> thirdMethod;
+    private List<Participant> removements = new ArrayList<>();
 
     //Fixme: participantList contains the pair participants as well
     //Fixme: participantList contains the successors as well
@@ -88,44 +93,63 @@ public class PairListFactory {
         Function<Participant, Integer> getSex = Participant::getSexNumber;
 
         if (indexCriteria5 < indexCriteria6 && indexCriteria5 < indexCriteria7) {
-            if (indexCriteria6 < indexCriteria7) {
-                sorterStarter(true, 2, getFoodPreferenceNumber, getAgeRange, getSex);
-            } else {
-                sorterStarter(true, 1, getFoodPreferenceNumber, getSex, getAgeRange);
-            }
+            assignFields(indexCriteria6, indexCriteria7, getFoodPreferenceNumber, getAgeRange, getSex);
         } else if (indexCriteria6 < indexCriteria5 && indexCriteria6 < indexCriteria7) {
-            if (indexCriteria5 < indexCriteria7) {
-                sorterStarter(true, 2, getAgeRange, getFoodPreferenceNumber, getSex);
-            } else {
-                sorterStarter(true, 1, getAgeRange, getSex, getFoodPreferenceNumber);
-            }
+            assignFields(indexCriteria5, indexCriteria7, getAgeRange, getFoodPreferenceNumber, getSex);
         } else {
             if (indexCriteria5 < indexCriteria6) {
-                sorterStarter(true, 0, getSex, getFoodPreferenceNumber, getAgeRange);
+                this.sexFunctionIndex = 0;
+                firstMethod = getSex;
+                secondMethod = getFoodPreferenceNumber;
+                thirdMethod = getAgeRange;
+                sorterStarter(0, getSex, getFoodPreferenceNumber, getAgeRange);
             } else {
-                sorterStarter(true, 0, getSex, getAgeRange, getFoodPreferenceNumber);
+                firstMethod = getSex;
+                secondMethod = getFoodPreferenceNumber;
+                thirdMethod = getAgeRange;
+                this.sexFunctionIndex = 0;
+                sorterStarter(0, getSex, getAgeRange, getFoodPreferenceNumber);
             }
+        }
+    }
+
+    private void assignFields(int indexCriteria6, int indexCriteria7, Function<Participant, Integer> getFoodPreferenceNumber, Function<Participant, Integer> getAgeRange, Function<Participant, Integer> getSex) {
+        if (indexCriteria6 < indexCriteria7) {
+            sexFunctionIndex = 2;
+            firstMethod = getFoodPreferenceNumber;
+            secondMethod = getAgeRange;
+            thirdMethod = getSex;
+            sorterStarter(2, getFoodPreferenceNumber, getAgeRange, getSex);
+        } else {
+            sexFunctionIndex = 1;
+            firstMethod = getFoodPreferenceNumber;
+            secondMethod = getSex;
+            thirdMethod = getAgeRange;
+            sorterStarter(1, getFoodPreferenceNumber, getSex, getAgeRange);
+
         }
     }
 
     /**
      * Starts the sorter Method. With the three main lists.
+     *
      * @param methods A Function Interface showing which functions should be used for comparing.
      */
     @SafeVarargs
-    private void sorterStarter(boolean sexUp, int sexFunctionIndex, Function<Participant, Integer>... methods) {
-        sorter(yesKitchenParticipants, sexUp, sexFunctionIndex, methods[0], methods[1], methods[2]);
-        sorter(noKitchenParticipants, sexUp, sexFunctionIndex, methods[0], methods[1], methods[2]);
-        sorter(maybeKitchenParticipants, sexUp, sexFunctionIndex, methods[0], methods[1], methods[2]);
+    private void sorterStarter(int sexFunctionIndex, Function<Participant, Integer>... methods) {
+        sorter(yesKitchenParticipants, sexFunctionIndex, methods[0], methods[1], methods[2]);
+        sorter(noKitchenParticipants, sexFunctionIndex, methods[0], methods[1], methods[2]);
+        sorter(maybeKitchenParticipants, sexFunctionIndex, methods[0], methods[1], methods[2]);
     }
 
     /**
      * Sorts the Lists contained in the given list with the given functions.
+     *
      * @param kitchenParticipants the list of lists which should get sorted.
      * @param methods The functions which should be used for sorting.
      */
     @SafeVarargs
-    private void sorter(List<List<Participant>> kitchenParticipants, boolean sexUp, int sexFunctionIndex, Function<Participant, Integer>... methods) {
+    private void sorter(List<List<Participant>> kitchenParticipants, int sexFunctionIndex, Function<Participant, Integer>... methods) {
         Function<Participant, Integer> firstMethod = methods[0];
         Function<Participant, Integer> secondMethod = methods[1];
         Function<Participant, Integer> thirdMethod = methods[2];
@@ -133,7 +157,7 @@ public class PairListFactory {
         for (List<Participant> participants : kitchenParticipants) {
             int index = kitchenParticipants.indexOf(participants);
             participants = new ArrayList<>(participants);
-            participants.sort(new ParticipantComparator(sexUp, sexFunctionIndex, firstMethod, secondMethod, thirdMethod));
+            participants.sort(new ParticipantComparator(true, sexFunctionIndex, firstMethod, secondMethod, thirdMethod));
             kitchenParticipants.set(index, participants);
         }
     }
@@ -145,7 +169,6 @@ public class PairListFactory {
         makePairsMeat();
         makePairsOther();
         makePairsStarter(yesKitchenParticipants.get(0), maybeKitchenParticipants.get(0), noKitchenParticipants.get(0));
-
     }
 
     /**
@@ -180,8 +203,6 @@ public class PairListFactory {
      * @param meatParticipantsMaybeKitchen The participants with meat preference and maybe kitchen.
      */
     private void startPairRest(List<Participant> noneParticipantsYesKitchen, List<Participant> meatParticipantsYesKitchen, List<Participant> noneParticipantsNoKitchen, List<Participant> meatParticipantsNoKitchen, List<Participant> noneParticipantsMaybeKitchen, List<Participant> meatParticipantsMaybeKitchen) {
-        makePairsStarter(meatParticipantsYesKitchen, meatParticipantsMaybeKitchen, meatParticipantsNoKitchen);
-
         List<List<Participant>> noneParticipants = new ArrayList<>(List.of(noneParticipantsYesKitchen, noneParticipantsNoKitchen, noneParticipantsMaybeKitchen));
         List<List<Participant>> meatParticipants = new ArrayList<>(List.of(meatParticipantsYesKitchen, meatParticipantsNoKitchen, meatParticipantsMaybeKitchen));
 
@@ -210,7 +231,13 @@ public class PairListFactory {
      * @param restParticipants List of Lists with the leftover participants
      */
     private void pairRest(List<List<Participant>> noneParticipants, List<List<Participant>> restParticipants) {
-        makePairs(restParticipants.get(0), noneParticipants.get(1));
+        ParticipantComparator comparator = new ParticipantComparator(false, sexFunctionIndex, firstMethod, secondMethod, thirdMethod);
+
+        List<Participant> tempList = new ArrayList<>(noneParticipants.get(1));
+        tempList.sort(comparator);
+
+        makePairs(restParticipants.get(0),tempList);
+
         makePairs(restParticipants.get(0), noneParticipants.get(2));
         makePairs(restParticipants.get(0));
         makePairs(restParticipants.get(1), noneParticipants.get(0));
@@ -225,11 +252,45 @@ public class PairListFactory {
      * @param noKitchen Participants which have no kitchen.
      */
     private void makePairsStarter(List<Participant> yesKitchen, List<Participant> maybeKitchen, List<Participant> noKitchen) {
-        makePairs(yesKitchen, noKitchen);
-        makePairs(yesKitchen, maybeKitchen);
-        makePairs(yesKitchen);
-        makePairs(maybeKitchen, noKitchen);
-        makePairs(maybeKitchen);
+        ParticipantComparator comparator = new ParticipantComparator(false, sexFunctionIndex, firstMethod, secondMethod, thirdMethod);
+
+        List<Participant> tempList = new ArrayList<>(noKitchen);
+        tempList.sort(comparator);
+
+        makePairs(yesKitchen, tempList);
+
+        makePairs(maybeKitchen, tempList);
+
+        tempList = new ArrayList<>(maybeKitchen);
+        tempList.sort(comparator);
+
+        makePairs(yesKitchen, tempList);
+
+        maybeKitchen = tempList;
+
+        List<Participant> females = splitListForSex(yesKitchen).get(0);
+        List<Participant> males = splitListForSex(yesKitchen).get(1);
+
+        makePairs(females, males);
+
+        females = splitListForSex(maybeKitchen).get(0);
+        males = splitListForSex(maybeKitchen).get(1);
+
+        makePairs(females, males);
+    }
+
+    private List<List<Participant>> splitListForSex(List<Participant> participants) {
+        List<Participant> females = participants
+                .stream()
+                .filter(p -> p.getSex().equals("female"))
+                .toList();
+
+        List<Participant> males = participants
+                .stream()
+                .filter(p -> p.getSex().equals("male") || p.getSex().equals("other"))
+                .toList();
+
+        return new ArrayList<>(List.of(females, males));
     }
 
     /**
@@ -245,14 +306,13 @@ public class PairListFactory {
 
             if (!participantList1.isEmpty() && !participantList2.isEmpty()) {
                 while (!participantList1.isEmpty() && !participantList2.isEmpty()) {
-                    participantList1 = new ArrayList<>(participantList1);
-                    participantList2 = getParticipants(participantList1, participantList2);
-                }
-            }
-        } else {
-            if (!participantList1.isEmpty()) {
-                while (participantList1.size() > 1) {
-                    participantList1 = getParticipants(participantList1, participantList1);
+                    getParticipants(participantList1, participantList2);
+
+                    for (Participant participant : removements) {
+                        participantList1.remove(participant);
+                        participantList2.remove(participant);
+                    }
+                    removements.clear();
                 }
             }
         }
@@ -264,17 +324,20 @@ public class PairListFactory {
      * @param participantList2 Second participant list.
      * @return a modifiable second participant list.
      */
-    private List<Participant> getParticipants(List<Participant> participantList1, List<Participant> participantList2) {
+    private void getParticipants(List<Participant> participantList1, List<Participant> participantList2) {
         participantList2 = new ArrayList<>(participantList2);
         participantList1 = new ArrayList<>(participantList1);
         Participant participant1 = participantList1.remove(0);
         Participant participant2 = participantList2.remove(0);
+
+        removements.add(participant1);
+        removements.add(participant2);
+
         participant1.setPartner(participant2);
         participant2.setPartner(participant1);
         participant1.setHasPartner(true);
         participant2.setHasPartner(true);
         pairList.add(new Pair(participant1, participant2));
-        return participantList2;
     }
 
     public void showPairs() {

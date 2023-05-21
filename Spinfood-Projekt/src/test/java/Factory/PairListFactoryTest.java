@@ -78,6 +78,7 @@ class PairListFactoryTest {
 
             Assertions.assertEquals(5, pairListFactory.pairList.size());
             List<Pair> actualPairs = pairListFactory.pairList;
+            pairListFactory.showPairs();
             //Fixme Algorithmus ordnet Participants mehrfach zu, test failed
 
             for (Pair pair : actualPairs) {
