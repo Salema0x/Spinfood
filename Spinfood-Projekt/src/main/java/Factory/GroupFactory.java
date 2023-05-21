@@ -59,7 +59,7 @@ public class GroupFactory {
         Pair closestPair = null;
         double smallestDistance = Double.MAX_VALUE;
         for (Pair pair : registeredPairs) {
-            double distance = calculateTotalDistance(group, pair);
+            double distance = calculateGroupPairDeviation(group, pair);
             if (distance < smallestDistance) {
                 smallestDistance = distance;
                 closestPair = pair;
@@ -69,31 +69,31 @@ public class GroupFactory {
     }
 
     /**
-     * This method calculates the total distance between a Pair and a Group.
-     * The distance is based on a set of criteria like geographical distance, age difference,
+     * This method calculates the total deviation between a Pair and a Group.
+     * The deviation is based on a set of criteria like geographical distance, age difference,
      * preference deviation, and gender diversity score.
      *
      * @param group The group for which we want to calculate the distance
      * @param pair The Pair for which we want to calculate the distance
-     * @return The total distance between the Pair and the Group
+     * @return The total deviation between the Pair and the Group
      */
-    private double calculateTotalDistance(Group group, Pair pair) {
-        double distance = 0;
+    private double calculateGroupPairDeviation(Group group, Pair pair) {
+        double deviation = 0;
         for (Pair groupPair : group.getPairs()) {
-            distance += calculatePairDistance(groupPair, pair);
+            deviation += calculatePairDeviation(groupPair, pair);
         }
-        return distance / group.getPairs().size();
+        return deviation / group.getPairs().size();
     }
 
     /**
-     * This method calculates the distance between two Pairs based on a set of criteria like geographical distance,
+     * This method calculates the deviation between two Pairs based on a set of criteria like geographical distance,
      * age difference, preference deviation, and gender diversity score.
      *
      * @param pair1 The first Pair
      * @param pair2 The second Pair
-     * @return The distance between the two Pairs
+     * @return The deviation between the two Pairs
      */
-    private double calculatePairDistance(Pair pair1, Pair pair2) {
+    private double calculatePairDeviation(Pair pair1, Pair pair2) {
         double geographicalDistance = calculateGeographicalDistance(pair1.getPlaceOfCooking(), pair2.getPlaceOfCooking());
         double ageDifference = Math.abs(pair1.getAgeDifference() - pair2.getAgeDifference());
         double preferenceDeviation = Math.abs(pair1.getPreferenceDeviation() - pair2.getPreferenceDeviation());
@@ -124,5 +124,3 @@ public class GroupFactory {
         return EARTH_RADIUS * c;
     }
 }
-
-
