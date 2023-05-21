@@ -109,8 +109,19 @@ public class GroupFactory {
      * @return The geographical distance between the two places
      */
     private double calculateGeographicalDistance(Double[][] place1, Double[][] place2) {
-        // Hier sollte die Funktion zur Berechnung der Entfernung zwischen zwei geografischen Koordinaten implementiert werden.
-        return 0;
+        double latitudeDifference = Math.toRadians(place2[0][0] - place1[0][0]);
+        double longitudeDifference = Math.toRadians(place2[0][1] - place1[0][1]);
+
+        double a = Math.pow(Math.sin(latitudeDifference / 2), 2)
+                + Math.cos(Math.toRadians(place1[0][0])) * Math.cos(Math.toRadians(place2[0][0]))
+                * Math.pow(Math.sin(longitudeDifference / 2), 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        // Radius of the earth in kilometers
+        final int EARTH_RADIUS = 6371;
+
+        return EARTH_RADIUS * c;
     }
 }
 
