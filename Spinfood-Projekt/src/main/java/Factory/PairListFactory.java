@@ -22,7 +22,8 @@ public class PairListFactory {
     private Function<Participant, Integer> firstMethod;
     private Function<Participant, Integer> secondMethod;
     private Function<Participant, Integer> thirdMethod;
-    private List<Participant> removements = new ArrayList<>();
+    private final List<Participant> removements = new ArrayList<>();
+    private final List<Participant> upperRemovements = new ArrayList<>();
 
     //Fixme: participantList contains the pair participants as well
     //Fixme: participantList contains the successors as well
@@ -61,6 +62,7 @@ public class PairListFactory {
 
         decideAlgorithm();
         makePairs();
+        showPairs();
         System.out.println("Done!");
     }
 
@@ -169,6 +171,12 @@ public class PairListFactory {
         makePairsMeat();
         makePairsOther();
         makePairsStarter(yesKitchenParticipants.get(0), maybeKitchenParticipants.get(0), noKitchenParticipants.get(0));
+
+        for (Participant participant : upperRemovements) {
+            yesKitchenParticipants.get(0).remove(participant);
+            maybeKitchenParticipants.get(0).remove(participant);
+            noKitchenParticipants.get(0).remove(participant);
+        }
     }
 
     /**
@@ -184,6 +192,17 @@ public class PairListFactory {
 
         makePairsStarter(meatParticipantsYesKitchen, meatParticipantsMaybeKitchen, meatParticipantsNoKitchen);
 
+        for (Participant participant : upperRemovements) {
+            meatParticipantsMaybeKitchen.remove(participant);
+            meatParticipantsNoKitchen.remove(participant);
+            meatParticipantsYesKitchen.remove(participant);
+            noneParticipantsYesKitchen.remove(participant);
+            noneParticipantsMaybeKitchen.remove(participant);
+            noneParticipantsNoKitchen.remove(participant);
+        }
+
+        upperRemovements.clear();
+
         startPairRest(
                 noneParticipantsYesKitchen,
                 meatParticipantsYesKitchen,
@@ -191,22 +210,7 @@ public class PairListFactory {
                 meatParticipantsNoKitchen,
                 noneParticipantsMaybeKitchen,
                 meatParticipantsMaybeKitchen);
-    }
 
-    /**
-     * Starts with making restPairs. If one category is not fully paired it will get paired with the none eaters.
-     * @param noneParticipantsYesKitchen The participants with no preference and yes kitchen.
-     * @param meatParticipantsYesKitchen The participants with meat preference and yes kitchen.
-     * @param noneParticipantsNoKitchen The participants with no preference and no kitchen.
-     * @param meatParticipantsNoKitchen The participants with meat preference and no kitchen.
-     * @param noneParticipantsMaybeKitchen The participants with no preference and maybe kitchen.
-     * @param meatParticipantsMaybeKitchen The participants with meat preference and maybe kitchen.
-     */
-    private void startPairRest(List<Participant> noneParticipantsYesKitchen, List<Participant> meatParticipantsYesKitchen, List<Participant> noneParticipantsNoKitchen, List<Participant> meatParticipantsNoKitchen, List<Participant> noneParticipantsMaybeKitchen, List<Participant> meatParticipantsMaybeKitchen) {
-        List<List<Participant>> noneParticipants = new ArrayList<>(List.of(noneParticipantsYesKitchen, noneParticipantsNoKitchen, noneParticipantsMaybeKitchen));
-        List<List<Participant>> meatParticipants = new ArrayList<>(List.of(meatParticipantsYesKitchen, meatParticipantsNoKitchen, meatParticipantsMaybeKitchen));
-
-        pairRest(noneParticipants, meatParticipants);
     }
 
     /**
@@ -222,7 +226,46 @@ public class PairListFactory {
 
         makePairsStarter(otherParticipantsYesKitchen, otherParticipantsMaybeKitchen, otherParticipantsNoKitchen);
 
+        otherParticipantsNoKitchen = new ArrayList<>(otherParticipantsNoKitchen);
+
+        for (Participant participant : upperRemovements) {
+            otherParticipantsYesKitchen.remove(participant);
+            otherParticipantsMaybeKitchen.remove(participant);
+            otherParticipantsNoKitchen.remove(participant);
+            noneParticipantsNoKitchen.remove(participant);
+            noneParticipantsMaybeKitchen.remove(participant);
+            noneParticipantsYesKitchen.remove(participant);
+        }
+
+        upperRemovements.clear();
+
         startPairRest(noneParticipantsYesKitchen, otherParticipantsYesKitchen, noneParticipantsNoKitchen, otherParticipantsNoKitchen, noneParticipantsMaybeKitchen, otherParticipantsMaybeKitchen);
+    }
+
+    /**
+     * Starts with making restPairs. If one category is not fully paired it will get paired with the none eaters.
+     * @param noneParticipantsYesKitchen The participants with no preference and yes kitchen.
+     * @param meatParticipantsYesKitchen The participants with meat preference and yes kitchen.
+     * @param noneParticipantsNoKitchen The participants with no preference and no kitchen.
+     * @param meatParticipantsNoKitchen The participants with meat preference and no kitchen.
+     * @param noneParticipantsMaybeKitchen The participants with no preference and maybe kitchen.
+     * @param meatParticipantsMaybeKitchen The participants with meat preference and maybe kitchen.
+     */
+    private void startPairRest(List<Participant> noneParticipantsYesKitchen, List<Participant> meatParticipantsYesKitchen, List<Participant> noneParticipantsNoKitchen, List<Participant> meatParticipantsNoKitchen, List<Participant> noneParticipantsMaybeKitchen, List<Participant> meatParticipantsMaybeKitchen) {
+
+        List<List<Participant>> noneParticipants = new ArrayList<>(List.of(noneParticipantsYesKitchen, noneParticipantsNoKitchen, noneParticipantsMaybeKitchen));
+        List<List<Participant>> meatParticipants = new ArrayList<>(List.of(meatParticipantsYesKitchen, meatParticipantsNoKitchen, meatParticipantsMaybeKitchen));
+
+        pairRest(noneParticipants, meatParticipants);
+
+        for (Participant participant : upperRemovements) {
+            meatParticipantsYesKitchen.remove(participant);
+            meatParticipantsMaybeKitchen.remove(participant);
+            meatParticipantsNoKitchen.remove(participant);
+            noneParticipantsNoKitchen.remove(participant);
+            noneParticipantsMaybeKitchen.remove(participant);
+            noneParticipantsYesKitchen.remove(participant);
+        }
     }
 
     /**
@@ -236,13 +279,17 @@ public class PairListFactory {
         List<Participant> tempList = new ArrayList<>(noneParticipants.get(1));
         tempList.sort(comparator);
 
-        makePairs(restParticipants.get(0),tempList);
+        makePairs(restParticipants.get(0), tempList);
 
-        makePairs(restParticipants.get(0), noneParticipants.get(2));
-        makePairs(restParticipants.get(0));
-        makePairs(restParticipants.get(1), noneParticipants.get(0));
-        makePairs(restParticipants.get(1), noneParticipants.get(2));
-        makePairs(restParticipants.get(2));
+        tempList = new ArrayList<>(noneParticipants.get(2));
+        tempList.sort(comparator);
+
+        makePairs(restParticipants.get(0), tempList);
+
+        noneParticipants.set(2, tempList);
+
+        tempList = new ArrayList<>(noneParticipants.get(1));
+        makePairs(restParticipants.get(2), tempList);
     }
 
     /**
@@ -259,8 +306,6 @@ public class PairListFactory {
 
         makePairs(yesKitchen, tempList);
 
-        makePairs(maybeKitchen, tempList);
-
         tempList = new ArrayList<>(maybeKitchen);
         tempList.sort(comparator);
 
@@ -268,13 +313,16 @@ public class PairListFactory {
 
         maybeKitchen = tempList;
 
-        List<Participant> females = splitListForSex(yesKitchen).get(0);
-        List<Participant> males = splitListForSex(yesKitchen).get(1);
+        tempList = new ArrayList<>(noKitchen);
+        makePairs(maybeKitchen, tempList);
+
+        List<Participant> females = splitListForSex(maybeKitchen).get(0);
+        List<Participant> males = splitListForSex(maybeKitchen).get(1);
 
         makePairs(females, males);
 
-        females = splitListForSex(maybeKitchen).get(0);
-        males = splitListForSex(maybeKitchen).get(1);
+        females = splitListForSex(yesKitchen).get(0);
+        males = splitListForSex(yesKitchen).get(1);
 
         makePairs(females, males);
     }
@@ -296,24 +344,19 @@ public class PairListFactory {
     /**
      * Generates the actual pairs and adds them to the pairList.
      * @param participantList1 The firs list of participants.
-     * @param optionalParticipantList An optional second participant List. Is optional because we can also form pairs from one single list.
+     * @param participantList2 An optional second participant List. Is optional because we can also form pairs from one single list.
      */
-    @SafeVarargs
-    private void makePairs(List<Participant> participantList1, List<Participant>... optionalParticipantList) {
-        List<Participant> participantList2;
-        if (optionalParticipantList.length > 0) {
-            participantList2 = optionalParticipantList[0];
+    private void makePairs(List<Participant> participantList1, List<Participant> participantList2) {
+        while (!participantList1.isEmpty() && !participantList2.isEmpty()) {
+            getParticipants(participantList1, participantList2);
 
-            if (!participantList1.isEmpty() && !participantList2.isEmpty()) {
-                while (!participantList1.isEmpty() && !participantList2.isEmpty()) {
-                    getParticipants(participantList1, participantList2);
+            for (Participant participant : removements) {
+                participantList1.remove(participant);
+            }
 
-                    for (Participant participant : removements) {
-                        participantList1.remove(participant);
-                        participantList2.remove(participant);
-                    }
-                    removements.clear();
-                }
+            for (Participant participant : removements)  {
+                upperRemovements.add(participant);
+                participantList2.remove(participant);
             }
         }
     }
@@ -354,7 +397,6 @@ public class PairListFactory {
             String name1 = pair.getParticipant1().getName();
             String name2 = pair.getParticipant2().getName();
             pairNr++;
-
 
             System.out.format(leftAlignFormat,pairNr, id1, id2, name1, name2);
         }
