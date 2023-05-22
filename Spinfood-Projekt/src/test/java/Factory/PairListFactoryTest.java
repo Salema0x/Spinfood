@@ -36,7 +36,7 @@ class PairListFactoryTest {
     @org.junit.jupiter.api.Test
     void PairListFactory() throws URISyntaxException {
 
-        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/PairListFactoryTestlists/testliste0.csv")).toURI()));
+        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/pairfactorytestlists/testliste0.csv")).toURI()));
         participantList = participantFactory.getParticipantList();
 
         expectedPairLists = new ArrayList<>();
@@ -77,7 +77,7 @@ class PairListFactoryTest {
             pairListFactory = new PairListFactory(participantFactory.getParticipantList(), participantFactory.getRegisteredPairs(), criteria);
 
             //testing if correct amount of pairs is created
-            Assertions.assertEquals(participantFactory.getParticipantList().size(), pairListFactory.pairList.size());
+            Assertions.assertEquals(participantFactory.getParticipantList().size()/2, pairListFactory.pairList.size());
             pairListFactory.showPairs();
 
 
