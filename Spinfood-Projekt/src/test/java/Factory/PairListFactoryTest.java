@@ -5,11 +5,7 @@ import Entity.Participant;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,84 +13,83 @@ import java.util.Objects;
 
 class PairListFactoryTest {
 
+    private enum Criteria {
+        CRITERIA_FOOD_AGE_SEX,
+        CRITERIA_FOOD_SEX_AGE,
+        CRITERIA_AGE_FOOD_SEX,
+        CRITERIA_AGE_SEX_FOOD,
+        CRITERIA_SEX_FOOD_AGE,
+        CRITERIA_SEX_AGE_FOOD,
+    }
+
     PairListFactory pairListFactory;
     ParticipantFactory participantFactory;
-
-    List<Participant> participantsList; //List of participants
-
-    List<List<Pair>> expectedPairLists; //List of expected PairLists
-
-    List<List<Object>> criteriaOrder; //List of criteria orders
-
-
+    List<Participant> participantList;
+    List<List<Pair>> expectedPairLists;
+    List<List<Object>> criteriaOrder;
 
     @BeforeEach
     void setUp() {
         participantFactory = new ParticipantFactory();
-
     }
-
-
-
 
     @org.junit.jupiter.api.Test
     void PairListFactory() throws URISyntaxException {
 
-        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/pairfactorytestlists/testliste0.csv")).toURI()));
-        participantFactory.showCSV();
-        participantsList = participantFactory.getParticipantList();
+        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/PairListFactoryTestlists/testliste0.csv")).toURI()));
+        participantList = participantFactory.getParticipantList();
+
         expectedPairLists = new ArrayList<>();
         List<Object> criteria = new ArrayList<>();
         List<Pair> expectedPairs = new ArrayList<>();
+
         initializeCriteria();
         initializeExpectedPairLists();
 
-
-        //testing if participants are correctly matched into pairs by criteria Orders 1-6
         for (Criteria c : Criteria.values()) {
-
             switch (c) {
-                case CRITERIA_567:
+                case CRITERIA_FOOD_AGE_SEX -> {
                     criteria = criteriaOrder.get(0);
                     expectedPairs = expectedPairLists.get(0);
-                    break;
-                case CRITERIA_576:
+                }
+                case CRITERIA_FOOD_SEX_AGE -> {
                     criteria = criteriaOrder.get(1);
                     expectedPairs = expectedPairLists.get(1);
-                    break;
-                case CRITERIA_657:
+                }
+                case CRITERIA_AGE_FOOD_SEX -> {
                     criteria = criteriaOrder.get(2);
                     expectedPairs = expectedPairLists.get(2);
-                    break;
-                case CRITERIA_675:
+                }
+                case CRITERIA_AGE_SEX_FOOD -> {
                     criteria = criteriaOrder.get(3);
                     expectedPairs = expectedPairLists.get(3);
-                    break;
-                case CRITERIA_756:
+                }
+                case CRITERIA_SEX_FOOD_AGE -> {
                     criteria = criteriaOrder.get(4);
                     expectedPairs = expectedPairLists.get(4);
-                    break;
-                case CRITERIA_765:
+                }
+                case CRITERIA_SEX_AGE_FOOD -> {
                     criteria = criteriaOrder.get(5);
                     expectedPairs = expectedPairLists.get(5);
-                    break;
+                }
             }
+
             pairListFactory = new PairListFactory(participantFactory.getParticipantList(), participantFactory.getRegisteredPairs(), criteria);
+
+            //testing if correct amount of pairs is created
+            Assertions.assertEquals(participantFactory.getParticipantList().size(), pairListFactory.pairList.size());
             pairListFactory.showPairs();
 
-            //testing if the correct amount of pairs is created
-            Assertions.assertEquals(5, pairListFactory.pairList.size());
+
+            //testing if bad pair is created(Bsp.: match vegan with meat)
+            Assertions.assertFalse(checkBadPair(c));
+
+            //testing if created pairs match predicted pairs
             List<Pair> actualPairs = pairListFactory.pairList;
-            //Fixme Algorithmus ordnet Participants mehrfach zu, test failed
-
-
-            //testing, if the expected pairs are created
             for (Pair pair : actualPairs) {
-                for(Pair expectedPair : expectedPairs) {
-                    //searching for a compatible pair in expectedPairs (at least one matching participantId)
-                    if (pair.getParticipant1().getId() == expectedPair.getParticipant1().getId() || pair.getParticipant2().getId() == expectedPair.getParticipant2().getId() || pair.getParticipant1().getId() == expectedPair.getParticipant2().getId() || pair.getParticipant2().getId() == expectedPair.getParticipant1().getId()){
-                        //testing if the pairs are equal
-                        Assertions.assertEquals(0, pair.compareTo(expectedPair));
+                for (Pair expectedPair : expectedPairs) {
+                    if (pair.getParticipant1().getId().equals(expectedPair.getParticipant1().getId()) || pair.getParticipant2().getId().equals(expectedPair.getParticipant2().getId()) || pair.getParticipant1().getId().equals(expectedPair.getParticipant2().getId()) || pair.getParticipant2().getId().equals(expectedPair.getParticipant1().getId())) {
+                        Assertions.assertTrue(pair.isEqualTo(expectedPair));
                         break;
                     }
                 }
@@ -103,45 +98,185 @@ class PairListFactoryTest {
         }
 
 
-
-
-
-
     }
 
-    //Helper methods and classes
-    void initializeExpectedPairLists() {
-    //TODO: Pärchen manuell so zuordnen wie der Algorithmus es tun sollte und dann hier einfügen
-        expectedPairLists.add(new ArrayList<>() {{add(new Pair(participantsList.get(0), participantsList.get(1))); add(new Pair(participantsList.get(2), participantsList.get(3))); add(new Pair(participantsList.get(4), participantsList.get(5)));}});
-        expectedPairLists.add(new ArrayList<>() {{add(new Pair(participantsList.get(0), participantsList.get(1))); add(new Pair(participantsList.get(2), participantsList.get(3))); add(new Pair(participantsList.get(4), participantsList.get(5)));}});
-        expectedPairLists.add(new ArrayList<>() {{add(new Pair(participantsList.get(0), participantsList.get(1))); add(new Pair(participantsList.get(2), participantsList.get(3))); add(new Pair(participantsList.get(4), participantsList.get(5)));}});
-        expectedPairLists.add(new ArrayList<>() {{add(new Pair(participantsList.get(0), participantsList.get(1))); add(new Pair(participantsList.get(2), participantsList.get(3))); add(new Pair(participantsList.get(4), participantsList.get(5)));}});
-        expectedPairLists.add(new ArrayList<>() {{add(new Pair(participantsList.get(0), participantsList.get(1))); add(new Pair(participantsList.get(2), participantsList.get(3))); add(new Pair(participantsList.get(4), participantsList.get(5)));}});
-        expectedPairLists.add(new ArrayList<>() {{add(new Pair(participantsList.get(0), participantsList.get(1))); add(new Pair(participantsList.get(2), participantsList.get(3))); add(new Pair(participantsList.get(4), participantsList.get(5)));}});
+    private void initializeExpectedPairLists() {
+        //TODO: Pärchen manuell so zuordnen wie der Algorithmus es tun sollte und dann hier einfügen
+        expectedPairLists.add(new ArrayList<>() {{
+            add(new Pair(participantList.get(0), participantList.get(1)));
+            add(new Pair(participantList.get(2), participantList.get(3)));
+            add(new Pair(participantList.get(4), participantList.get(5)));
+        }});
+        expectedPairLists.add(new ArrayList<>() {{
+            add(new Pair(participantList.get(0), participantList.get(1)));
+            add(new Pair(participantList.get(2), participantList.get(3)));
+            add(new Pair(participantList.get(4), participantList.get(5)));
+        }});
+        expectedPairLists.add(new ArrayList<>() {{
+            add(new Pair(participantList.get(0), participantList.get(1)));
+            add(new Pair(participantList.get(2), participantList.get(3)));
+            add(new Pair(participantList.get(4), participantList.get(5)));
+        }});
+        expectedPairLists.add(new ArrayList<>() {{
+            add(new Pair(participantList.get(0), participantList.get(1)));
+            add(new Pair(participantList.get(2), participantList.get(3)));
+            add(new Pair(participantList.get(4), participantList.get(5)));
+        }});
+        expectedPairLists.add(new ArrayList<>() {{
+            add(new Pair(participantList.get(0), participantList.get(1)));
+            add(new Pair(participantList.get(2), participantList.get(3)));
+            add(new Pair(participantList.get(4), participantList.get(5)));
+        }});
+        expectedPairLists.add(new ArrayList<>() {{
+            add(new Pair(participantList.get(0), participantList.get(1)));
+            add(new Pair(participantList.get(2), participantList.get(3)));
+            add(new Pair(participantList.get(4), participantList.get(5)));
+        }});
     }
 
-    void initializeCriteria() {
+    private void initializeCriteria() {
         criteriaOrder = new ArrayList<>();
-        criteriaOrder.add(new ArrayList<>() {{add(5); add(6); add(7);}});
-        criteriaOrder.add(new ArrayList<>() {{add(5); add(7); add(6);}});
-        criteriaOrder.add(new ArrayList<>() {{add(6); add(5); add(7);}});
-        criteriaOrder.add(new ArrayList<>() {{add(6); add(7); add(5);}});
-        criteriaOrder.add(new ArrayList<>() {{add(7); add(5); add(6);}});
-        criteriaOrder.add(new ArrayList<>() {{add(7); add(6); add(5);}});
+        criteriaOrder.add(new ArrayList<>() {{
+            add("Essensvorlieben");
+            add("Altersdifferenz");
+            add("Geschlechterdiversität");
+        }});
+        criteriaOrder.add(new ArrayList<>() {{
+            add("Essensvorlieben");
+            add("Geschlechterdiversität");
+            add("Altersdifferenz");
+        }});
+        criteriaOrder.add(new ArrayList<>() {{
+            add("Altersdifferenz");
+            add("Essensvorlieben");
+            add("Geschlechterdiversität");
+        }});
+        criteriaOrder.add(new ArrayList<>() {{
+            add("Altersdifferenz");
+            add("Geschlechterdiversität");
+            add("Essensvorlieben");
+        }});
+        criteriaOrder.add(new ArrayList<>() {{
+            add("Geschlechterdiversität");
+            add("Essensvorlieben");
+            add("Altersdifferenz");
+        }});
+        criteriaOrder.add(new ArrayList<>() {{
+            add("Geschlechterdiversität");
+            add("Altersdifferenz");
+            add("Essensvorlieben");
+        }});
     }
 
-    //Enum for criteria orders
-    //5 = foodPreference, 6 = Altersdifferenz, 7 = Geschlecht
-    private enum Criteria {
-        CRITERIA_567,       //foodPreference > Altersdifferenz > Geschlecht
-        CRITERIA_576,
-        CRITERIA_657,
-        CRITERIA_675,
-        CRITERIA_756,
-        CRITERIA_765,
+    private boolean checkBadPair(Criteria c) {
+        for (Pair p : pairListFactory.pairList) {
+
+            switch (c) {
+                case CRITERIA_FOOD_AGE_SEX -> {
+                    if (foodDifference(p, 3) || ageDifference(p, 2) || sexDifference(p, 1)) {
+                        return true;
+                    }
+                    return false;
+                }
+                case CRITERIA_FOOD_SEX_AGE -> {
+                    if (foodDifference(p, 3) || sexDifference(p, 2) || ageDifference(p, 1)) {
+                        return true;
+                    }
+                    return false;
+                }
+                case CRITERIA_AGE_FOOD_SEX -> {
+                    if (ageDifference(p, 3) || foodDifference(p, 2) || sexDifference(p, 1)) {
+                        return true;
+                    }
+                    return false;
+                }
+                case CRITERIA_AGE_SEX_FOOD -> {
+                    if (ageDifference(p, 3) || sexDifference(p, 2) || foodDifference(p, 1)) {
+                        return true;
+                    }
+                    return false;
+                }
+                case CRITERIA_SEX_AGE_FOOD -> {
+                    if (sexDifference(p, 3) || ageDifference(p, 2) || foodDifference(p, 1)) {
+                        return true;
+                    }
+                    return false;
+                }
+                case CRITERIA_SEX_FOOD_AGE -> {
+                    if (sexDifference(p, 3) || foodDifference(p, 2) || ageDifference(p, 1)) {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+        }
+        return false;
     }
 
+    private boolean foodDifference(Pair p, int criteriaWeight) {
+        String foodPreference1 = p.getParticipant1().getFoodPreference();
+        String foodPreference2 = p.getParticipant2().getFoodPreference();
 
+        //lowest criteria weight -> accepts every combination except: vegan&meat
+        if (foodPreference1.equals("vegan") && foodPreference2.equals("meat")) {
+            System.out.println("Bad Pair: " + p.getParticipant1().getName() + " and " + p.getParticipant2().getName() + "Food Preference: " + foodPreference1 + " and " + foodPreference2);
+            return true;
+        }
+
+        //medium criteria weight -> accepts every combination except:  vegetarian&meat + vegan&meat
+        if (criteriaWeight > 1 && foodPreference1.equals("vegetarian") && foodPreference2.equals("meat")) {
+            System.out.println("Bad Pair: " + p.getParticipant1().getName() + " and " + p.getParticipant2().getName() + "Food Preference: " + foodPreference1 + " and " + foodPreference2);
+            return true;
+        }
+        //highest criteria weight -> accepts only the following combinations:  vegan&vegan/veggie&veggie/meat&meat or any combination with none
+        if (criteriaWeight > 2 && foodPreference1.equals("vegetarian") && foodPreference2.equals("vegan")) {
+            System.out.println("Bad Pair: " + p.getParticipant1().getName() + " and " + p.getParticipant2().getName() + "Food Preference: " + foodPreference1 + " and " + foodPreference2);
+            return true;
+        }
+        return false;
+    }
+
+    //TODO: check if i used the right age differences
+    private boolean ageDifference(Pair p, int criteriaWeight) {
+        int ageDifference = Math.abs(p.getParticipant1().getAge() - p.getParticipant2().getAge());
+        switch (criteriaWeight) {
+
+            //lowest criteria weight -> accepts ageDiff up to 8 years
+            case (1):
+                if (ageDifference > 8) {
+                    System.out.println("Bad Pair: " + p.getParticipant1().getName() + " and " + p.getParticipant2().getName() + "Age Difference: " + ageDifference);
+                    return true;
+                }
+
+            //medium criteria weight -> accepts ageDiff up to 7 years
+            case (2):
+                if (ageDifference > 7) {
+                    System.out.println("Bad Pair: " + p.getParticipant1().getName() + " and " + p.getParticipant2().getName() + "Age Difference: " + ageDifference);
+                    return true;
+                }
+
+            //highest criteria weight -> accepts ageDiff up to 5 years
+            case (3):
+                if (ageDifference > 5) {
+                    System.out.println("Bad Pair: " + p.getParticipant1().getName() + " and " + p.getParticipant2().getName() + "Age Difference: " + ageDifference);
+                    return true;
+                }
+        }
+        return false;
+    }
+
+    private boolean sexDifference(Pair p, int criteriaWeight) {
+
+        //lowest criteria weight -> accepts any combination of sex (female&female, male&male, female&male)
+        if(criteriaWeight ==1) {
+            return false;
+        }
+        //medium/high criteria weight -> accepts only combinations of male&female
+        if ((p.getParticipant1().getSex().equals("male") && p.getParticipant2().getSex().equals("female")) || ((p.getParticipant1().getSex().equals("female") && p.getParticipant2().getSex().equals("male")))) {
+            return false;
+        }
+        return true;
+    }
 
 
 }
