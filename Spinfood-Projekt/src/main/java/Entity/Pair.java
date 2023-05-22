@@ -48,13 +48,18 @@ public class Pair {
     private void calculatePreferenceDeviation() {
         this.preferenceDeviation = (byte) Math.abs(participant1.getFoodPreferenceNumber() - participant2.getFoodPreferenceNumber());
     }
-    
+
+    //pairs are equal when one participant has the same ID. Other participant is not checked.
     public boolean isEqualTo(Pair pair) {
-        if (participant1.getId().equals(pair.getParticipant1().getId()) || participant1.getId().equals(pair.getParticipant2().getId())) {
+        //checks equal ID´s in same order
+        if (participant1.getId().equals(pair.getParticipant1().getId()) && participant2.getId().equals(pair.getParticipant2().getId())) {
             return true;
-        } else {
-            return participant2.getId().equals(pair.getParticipant1().getId()) || participant2.getId().equals(pair.getParticipant2().getId());
         }
+        //checks equal ID´s in mixed order
+        else if(participant1.getId().equals(pair.getParticipant2().getId()) && participant2.getId().equals(pair.getParticipant1().getId())) {
+            return true;
+        }
+        return false;
     }
 
     public Participant getParticipant1() {
