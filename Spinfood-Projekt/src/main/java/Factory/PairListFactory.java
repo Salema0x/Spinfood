@@ -25,13 +25,13 @@ public class PairListFactory {
     private final List<Participant> removements = new ArrayList<>();
     private final List<Participant> upperRemovements = new ArrayList<>();
 
-    //Fixme: participantList contains the pair participants as well
-    //Fixme: participantList contains the successors as well
-
     public PairListFactory(List<Participant> participantList, List<Pair> registeredPairs, List<Object> criteriaOrder) {
         this.registeredPairs = registeredPairs;
         this.criteriaOrder = criteriaOrder;
         this.participantList = participantList;
+
+        cleanParticipantListFromRegisteredPairs();
+        cleanParticipantListFromSuccessors();
 
         yesKitchenParticipants.add(createList("yes", "none"));
         yesKitchenParticipants.add(createList("yes", "meat"));
@@ -64,6 +64,29 @@ public class PairListFactory {
         makePairs();
         showPairs();
         System.out.println("Done!");
+    }
+
+    /**
+     * Removes participants which are already in a pair from the participant List.
+     */
+    private void cleanParticipantListFromRegisteredPairs() {
+        for (Pair pair : registeredPairs) {
+            participantList.remove(pair.getParticipant1());
+            participantList.remove(pair.getParticipant2());
+        }
+    }
+
+    /**
+     * Removes Participants which are already a successor from the participant List.
+     */
+    private void cleanParticipantListFromSuccessors() {
+        List<Participant> successors = participantList.stream()
+                .filter(Participant::isSuccessor)
+                .toList();
+
+        for (Participant participant : successors) {
+            participantList.remove(participant);
+        }
     }
 
     /**
@@ -327,6 +350,11 @@ public class PairListFactory {
         makePairs(females, males);
     }
 
+    /**
+     * Splits a list in two lists according to the sex.
+     * @param participants The list of participants which should get split.
+     * @return A List of Lists containing the both lists.
+     */
     private List<List<Participant>> splitListForSex(List<Participant> participants) {
         List<Participant> females = participants
                 .stream()
@@ -365,7 +393,6 @@ public class PairListFactory {
      * Makes the list of second participants modifiable and generates the pairs and sets fields.
      * @param participantList1 First participant list.
      * @param participantList2 Second participant list.
-     * @return a modifiable second participant list.
      */
     private void getParticipants(List<Participant> participantList1, List<Participant> participantList2) {
         participantList2 = new ArrayList<>(participantList2);
