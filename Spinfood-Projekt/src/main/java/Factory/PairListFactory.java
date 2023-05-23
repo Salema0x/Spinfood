@@ -4,6 +4,7 @@ import Entity.Pair;
 import Entity.Participant;
 import Misc.ParticipantComparator;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -215,25 +216,14 @@ public class PairListFactory {
 
         makePairsStarter(meatParticipantsYesKitchen, meatParticipantsMaybeKitchen, meatParticipantsNoKitchen);
 
-        for (Participant participant : upperRemovements) {
-            meatParticipantsMaybeKitchen.remove(participant);
-            meatParticipantsNoKitchen.remove(participant);
-            meatParticipantsYesKitchen.remove(participant);
-            noneParticipantsYesKitchen.remove(participant);
-            noneParticipantsMaybeKitchen.remove(participant);
-            noneParticipantsNoKitchen.remove(participant);
-        }
+        makeLists(noneParticipantsYesKitchen, noneParticipantsNoKitchen, noneParticipantsMaybeKitchen, List.of(meatParticipantsYesKitchen, noneParticipantsMaybeKitchen, noneParticipantsNoKitchen), meatParticipantsYesKitchen);
+    }
 
-        upperRemovements.clear();
+    private void makeLists(List<Participant> noneParticipantsYesKitchen, List<Participant> noneParticipantsNoKitchen, List<Participant> noneParticipantsMaybeKitchen, List<List<Participant>> meatParticipantsYesKitchen2, List<Participant> meatParticipantsYesKitchen) {
+        List<List<Participant>> noneParticipantLists = new ArrayList<>(List.of(noneParticipantsYesKitchen, noneParticipantsMaybeKitchen, noneParticipantsNoKitchen));
+        List<List<Participant>> preferenceParticipantLists = new ArrayList<>(meatParticipantsYesKitchen2);
 
-        startPairRest(
-                noneParticipantsYesKitchen,
-                meatParticipantsYesKitchen,
-                noneParticipantsNoKitchen,
-                meatParticipantsNoKitchen,
-                noneParticipantsMaybeKitchen,
-                meatParticipantsMaybeKitchen);
-
+        removeUpperListEntries(noneParticipantLists, preferenceParticipantLists);
     }
 
     /**
@@ -251,18 +241,36 @@ public class PairListFactory {
 
         otherParticipantsNoKitchen = new ArrayList<>(otherParticipantsNoKitchen);
 
-        for (Participant participant : upperRemovements) {
-            otherParticipantsYesKitchen.remove(participant);
-            otherParticipantsMaybeKitchen.remove(participant);
-            otherParticipantsNoKitchen.remove(participant);
-            noneParticipantsNoKitchen.remove(participant);
-            noneParticipantsMaybeKitchen.remove(participant);
-            noneParticipantsYesKitchen.remove(participant);
+        makeLists(noneParticipantsYesKitchen, noneParticipantsNoKitchen, noneParticipantsMaybeKitchen, List.of(otherParticipantsYesKitchen, otherParticipantsMaybeKitchen, otherParticipantsNoKitchen), otherParticipantsYesKitchen);
+
+    }
+
+    /**
+     * Removes already used participants from lists.
+     * @param noneParticipantsLists list with participants with no preference
+     * @param preferenceParticipantsList list with participants with preference
+     */
+    private void removeUpperListEntries(List<List<Participant>> noneParticipantsLists, List<List<Participant>> preferenceParticipantsList) {
+        for (List<Participant> noneParticipantList : noneParticipantsLists) {
+            for (Participant participant : upperRemovements) {
+                noneParticipantList.remove(participant);
+            }
+        }
+
+        for (List<Participant> preferenceParticipantList : preferenceParticipantsList) {
+            for (Participant participant : upperRemovements) {
+                preferenceParticipantList.remove(participant);
+            }
         }
 
         upperRemovements.clear();
 
-        startPairRest(noneParticipantsYesKitchen, otherParticipantsYesKitchen, noneParticipantsNoKitchen, otherParticipantsNoKitchen, noneParticipantsMaybeKitchen, otherParticipantsMaybeKitchen);
+        startPairRest(noneParticipantsLists.get(0),
+                preferenceParticipantsList.get(0),
+                noneParticipantsLists.get(2),
+                preferenceParticipantsList.get(2),
+                noneParticipantsLists.get(1),
+                preferenceParticipantsList.get(1));
     }
 
     /**
