@@ -4,7 +4,6 @@ import Entity.Pair;
 import Entity.Participant;
 import Misc.ParticipantComparator;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -139,6 +138,14 @@ public class PairListFactory {
         }
     }
 
+    /**
+     * Assigns the fields, and starts the sorters.
+     * @param indexCriteria6 the index of criteria6 in the criteriaOrder list
+     * @param indexCriteria7 the index of criteria7 in the criteriaOrder list
+     * @param getFoodPreferenceNumber the first method with which the sorter gets started
+     * @param getAgeRange the second method with which the sorter gets started
+     * @param getSex the third method with which the sorter gets started
+     */
     private void assignFields(int indexCriteria6, int indexCriteria7, Function<Participant, Integer> getFoodPreferenceNumber, Function<Participant, Integer> getAgeRange, Function<Participant, Integer> getSex) {
         if (indexCriteria6 < indexCriteria7) {
             sexFunctionIndex = 2;
@@ -216,14 +223,7 @@ public class PairListFactory {
 
         makePairsStarter(meatParticipantsYesKitchen, meatParticipantsMaybeKitchen, meatParticipantsNoKitchen);
 
-        makeLists(noneParticipantsYesKitchen, noneParticipantsNoKitchen, noneParticipantsMaybeKitchen, List.of(meatParticipantsYesKitchen, noneParticipantsMaybeKitchen, noneParticipantsNoKitchen), meatParticipantsYesKitchen);
-    }
-
-    private void makeLists(List<Participant> noneParticipantsYesKitchen, List<Participant> noneParticipantsNoKitchen, List<Participant> noneParticipantsMaybeKitchen, List<List<Participant>> meatParticipantsYesKitchen2, List<Participant> meatParticipantsYesKitchen) {
-        List<List<Participant>> noneParticipantLists = new ArrayList<>(List.of(noneParticipantsYesKitchen, noneParticipantsMaybeKitchen, noneParticipantsNoKitchen));
-        List<List<Participant>> preferenceParticipantLists = new ArrayList<>(meatParticipantsYesKitchen2);
-
-        removeUpperListEntries(noneParticipantLists, preferenceParticipantLists);
+        removeFromUpperLists(List.of(noneParticipantsYesKitchen, meatParticipantsYesKitchen, noneParticipantsNoKitchen, meatParticipantsNoKitchen, noneParticipantsMaybeKitchen, meatParticipantsMaybeKitchen));
     }
 
     /**
@@ -241,36 +241,21 @@ public class PairListFactory {
 
         otherParticipantsNoKitchen = new ArrayList<>(otherParticipantsNoKitchen);
 
-        makeLists(noneParticipantsYesKitchen, noneParticipantsNoKitchen, noneParticipantsMaybeKitchen, List.of(otherParticipantsYesKitchen, otherParticipantsMaybeKitchen, otherParticipantsNoKitchen), otherParticipantsYesKitchen);
-
+        removeFromUpperLists(List.of(noneParticipantsYesKitchen, otherParticipantsYesKitchen, noneParticipantsNoKitchen, otherParticipantsNoKitchen, noneParticipantsMaybeKitchen, otherParticipantsMaybeKitchen));
     }
 
     /**
-     * Removes already used participants from lists.
-     * @param noneParticipantsLists list with participants with no preference
-     * @param preferenceParticipantsList list with participants with preference
+     * Removes already used participants from all lists and starts pairing the remaining ones
+     * @param lists a list of lists containing those lists from which the participants should get removed from
      */
-    private void removeUpperListEntries(List<List<Participant>> noneParticipantsLists, List<List<Participant>> preferenceParticipantsList) {
-        for (List<Participant> noneParticipantList : noneParticipantsLists) {
+    private void removeFromUpperLists(List<List<Participant>> lists) {
+        for (List<Participant> participants : lists) {
             for (Participant participant : upperRemovements) {
-                noneParticipantList.remove(participant);
+                participants.remove(participant);
             }
         }
 
-        for (List<Participant> preferenceParticipantList : preferenceParticipantsList) {
-            for (Participant participant : upperRemovements) {
-                preferenceParticipantList.remove(participant);
-            }
-        }
-
-        upperRemovements.clear();
-
-        startPairRest(noneParticipantsLists.get(0),
-                preferenceParticipantsList.get(0),
-                noneParticipantsLists.get(2),
-                preferenceParticipantsList.get(2),
-                noneParticipantsLists.get(1),
-                preferenceParticipantsList.get(1));
+        startPairRest(lists.get(0), lists.get(1), lists.get(2), lists.get(3), lists.get(4), lists.get(5));
     }
 
     /**
@@ -418,6 +403,9 @@ public class PairListFactory {
         pairList.add(new Pair(participant1, participant2));
     }
 
+    /**
+     * Prints the pairs onto the console
+     */
     public void showPairs() {
         String leftAlignFormat = "%-9s| %-36s | %-36s | %-20s | %-20s |%n";
         int pairNr = 0;
