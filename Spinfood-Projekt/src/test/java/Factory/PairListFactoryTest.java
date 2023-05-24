@@ -22,6 +22,10 @@ class PairListFactoryTest {
         CRITERIA_SEX_AGE_FOOD,
     }
 
+    double[] meanFoodDeviationMax = new double[] {7, 1.5, 0.7};
+    double[] meanAgeDeviationMax = new double[] {5, 3, 2.5};
+    double[] meanGenderDeviationMin = new double[] {0.3, 0.35, 0.39};
+
     PairListFactory pairListFactory;
     ParticipantFactory participantFactory;
     List<Participant> participantList;
@@ -73,12 +77,8 @@ class PairListFactoryTest {
             for (Pair p : pairList) {
                 Assertions.assertFalse(checkNoGoPair(p));
             }
-            System.out.println("CriteriaOrder " + c.toString() + " MeanFoodDeviation = " + calculateMeanFoodDeviation(pairList));
-            System.out.println("CriteriaOrder " + c.toString() + " MeanAgeDeviation = " + calculateAgeDeviation(pairList));
-            System.out.println("CriteriaOrder " + c.toString() + " MeanGenderDeviation = " + calculateGenderDeviation(pairList));
 
             //checks if generated pairs fulfill deviation restrictions, given by the criteria Order
-            //TODO add correct bounds for deviation
             Assertions.assertFalse(checkDeviationToHigh(pairList,c));
 
 
@@ -156,62 +156,62 @@ class PairListFactoryTest {
 
         switch (criteria) {
             case CRITERIA_FOOD_AGE_SEX -> {
-                if (foodDeviation >= 0.5) {
-                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanFoodDeviation = " + foodDeviation + "is too high");
+                if (foodDeviation > meanFoodDeviationMax[2]) {
+                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanFoodDeviation is = " + foodDeviation + "but should be lower than " + meanFoodDeviationMax[2]);
                     return true;
                 }
-                else if (ageDeviation >= 1) {
-                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanAgeDeviation = " + ageDeviation + "is too high");
+                else if (ageDeviation > meanAgeDeviationMax[1]) {
+                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanAgeDeviation is = " + ageDeviation + "but should be lower than " + meanAgeDeviationMax[1]);
                     return true;
                 }
             }
             case CRITERIA_FOOD_SEX_AGE -> {
-                if(foodDeviation >= 0.5){
-                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanFoodDeviation = " + foodDeviation + "is too high");
+                if(foodDeviation > meanFoodDeviationMax[2]){
+                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanFoodDeviation is = " + foodDeviation + "but should be lower than " + meanFoodDeviationMax[2]);
                     return true;
                 }
-                else if(genderDeviation >= 0.5){
-                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanGenderDeviation = " + genderDeviation + "is too high");
+                else if(genderDeviation < meanGenderDeviationMin[1]){
+                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanGenderDeviation is = " + genderDeviation + "but should be higher than " + meanGenderDeviationMin[1]);
                     return true;
                 }
             }
             case CRITERIA_AGE_FOOD_SEX -> {
-                if(ageDeviation >= 1){
-                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanAgeDeviation = " + ageDeviation + "is too high");
+                if(ageDeviation > meanAgeDeviationMax[2]){
+                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanAgeDeviation is = " + ageDeviation + "but should be lower than " + meanAgeDeviationMax[2]);
                     return true;
                 }
-                else if(foodDeviation >= 0.5){
-                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanFoodDeviation = " + foodDeviation + "is too high");
+                else if(foodDeviation > meanFoodDeviationMax[1]){
+                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanFoodDeviation is = " + foodDeviation + "but should be lower than " + meanFoodDeviationMax[1]);
                     return true;
                 }
             }
             case CRITERIA_AGE_SEX_FOOD -> {
-                if(ageDeviation >= 1){
-                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanAgeDeviation = " + ageDeviation + "is too high");
+                if(ageDeviation > meanAgeDeviationMax[2]){
+                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanAgeDeviation is = " + ageDeviation + "but should be lower than " + meanAgeDeviationMax[2]);
                     return true;
                 }
-                else if(genderDeviation >= 0.5){
-                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanGenderDeviation = " + genderDeviation + "is too high");
+                else if(genderDeviation < meanGenderDeviationMin[1]){
+                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanGenderDeviation is = " + genderDeviation + "but should be higher than " + meanGenderDeviationMin[1]);
                     return true;
                 }
             }
             case CRITERIA_SEX_AGE_FOOD -> {
-                if (genderDeviation >= 0.5) {
-                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanGenderDeviation = " + genderDeviation + "is too high");
+                if (genderDeviation < meanGenderDeviationMin[2]) {
+                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanGenderDeviation is = "+ genderDeviation + "but should be higher than " + meanGenderDeviationMin[2]);
                     return true;
                 }
-                else if (ageDeviation >= 1) {
-                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanAgeDeviation = " + ageDeviation + "is too high");
+                else if (ageDeviation > meanAgeDeviationMax[1]) {
+                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanAgeDeviation is = " + ageDeviation + "but should be lower than " + meanAgeDeviationMax[1]);
                     return true;
                 }
             }
             case CRITERIA_SEX_FOOD_AGE -> {
-                if(genderDeviation >= 0.5){
-                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanGenderDeviation = " + genderDeviation + "is too high");
+                if(genderDeviation < meanGenderDeviationMin[2]){
+                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanGenderDeviation is = " + genderDeviation + "but should be lower than " + meanGenderDeviationMin[2]);
                     return true;
                 }
-                else if(foodDeviation >= 0.5){
-                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanFoodDeviation = " + foodDeviation + "is too high");
+                else if(foodDeviation > meanFoodDeviationMax[1]){
+                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanFoodDeviation is = " + foodDeviation + "but should be lower than " + meanFoodDeviationMax[1]);
                     return true;
                 }
             }
