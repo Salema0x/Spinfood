@@ -84,19 +84,8 @@ public class Pair {
         return foodPreference;
     }
 
-    public byte getAgeDifference() {
-        return ageDifference;
-    }
-
-    public byte getPreferenceDeviation() {
-        return preferenceDeviation;
-    }
-
     public int getPathLength() {
         return pathLength;
     }
 
-    public double getGenderDiversityScore() {
-        return genderDiversityScore;
-    }
 }

@@ -35,7 +35,7 @@ class PairListFactoryTest {
     @org.junit.jupiter.api.Test
     void PairListFactory() throws URISyntaxException {
 
-        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/pairfactorytestlists/testliste0.csv")).toURI()));
+        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/teilnehmerliste.csv")).toURI()));
         participantList = participantFactory.getParticipantList();
         List<Object> criteria = new ArrayList<>();
         initializeCriteria();
@@ -65,7 +65,6 @@ class PairListFactoryTest {
             }
             pairListFactory = new PairListFactory(participantFactory.getParticipantList(), participantFactory.getRegisteredPairs(), criteria);
             List<Pair> pairList = pairListFactory.pairList;
-            pairListFactory.showPairs();
 
             //searches for participants who are in multiple pairs
             Assertions.assertFalse(checkMultiplePairs(pairList));
@@ -74,12 +73,12 @@ class PairListFactoryTest {
             for (Pair p : pairList) {
                 Assertions.assertFalse(checkNoGoPair(p));
             }
-            pairListFactory.showPairs();
             System.out.println("CriteriaOrder " + c.toString() + " MeanFoodDeviation = " + calculateMeanFoodDeviation(pairList));
             System.out.println("CriteriaOrder " + c.toString() + " MeanAgeDeviation = " + calculateAgeDeviation(pairList));
             System.out.println("CriteriaOrder " + c.toString() + " MeanGenderDeviation = " + calculateGenderDeviation(pairList));
 
             //checks if generated pairs fulfill deviation restrictions, given by the criteria Order
+            //TODO add correct bounds for deviation
             Assertions.assertFalse(checkDeviationToHigh(pairList,c));
 
 
@@ -231,8 +230,10 @@ class PairListFactoryTest {
         for (int i = 0; i < pairList.size(); i++) {
             Pair pair = pairList.remove(i);
             String[] pairIDs = new String[]{pair.getParticipant1().getId(), pair.getParticipant2().getId()};
-            if (pairList.stream().anyMatch(p -> p.getParticipant1().getId().equals(pairIDs[0]) || p.getParticipant2().getId().equals(pairIDs[0])) || pair.getParticipant1().getId().equals(pairIDs[1]) || pair.getParticipant2().getId().equals(pairIDs[1])) {
+            if (pairList.stream().anyMatch(p -> p.getParticipant1().getId().equals(pairIDs[0]) || p.getParticipant2().getId().equals(pairIDs[0]))) {
+                System.out.println("Participant " + pair.getParticipant1().getName() + " is in multiple Pairs");
                 return true;
+
             }
         }
         return false;

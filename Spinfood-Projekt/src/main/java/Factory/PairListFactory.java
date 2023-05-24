@@ -381,6 +381,9 @@ public class PairListFactory {
             }
         }
     }
+    public List<Pair> getRegisteredPairs() {
+        return registeredPairs;
+    }
 
     /**
      * Makes the list of second participants modifiable and generates the pairs and sets fields.
