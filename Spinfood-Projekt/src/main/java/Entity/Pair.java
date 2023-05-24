@@ -17,9 +17,15 @@ public class Pair {
         this.participant1 = participant1;
         this.participant2 = participant2;
 
+        this.foodPreference = decideFoodPreference();
+
         calculateAgeDifference();
         calculateGenderDiversityScore();
         calculatePreferenceDeviation();
+    }
+
+    private String decideFoodPreference() {
+        return "";
     }
 
     /**
@@ -72,5 +78,25 @@ public class Pair {
     }
     public Participant getParticipant2() {
         return participant2;
+    }
+
+    public String getFoodPreference() {
+        return foodPreference;
+    }
+
+    public byte getAgeDifference() {
+        return ageDifference;
+    }
+
+    public byte getPreferenceDeviation() {
+        return preferenceDeviation;
+    }
+
+    public int getPathLength() {
+        return pathLength;
+    }
+
+    public double getGenderDiversityScore() {
+        return genderDiversityScore;
     }
 }
