@@ -90,4 +90,8 @@ public class Pair {
     public double getGenderDiversityScore() {
         return genderDiversityScore;
     }
+
+    public Double[][] getPlaceOfCooking() {
+        return placeOfCooking;
+    }
 }

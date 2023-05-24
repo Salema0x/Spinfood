@@ -426,4 +426,8 @@ public class PairListFactory {
 
         System.out.format("+---------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
     }
+
+    public List<Pair> getRegisteredPairs() {
+        return registeredPairs;
+    }
 }
