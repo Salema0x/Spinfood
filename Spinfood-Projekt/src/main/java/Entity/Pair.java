@@ -66,4 +66,11 @@ public class Pair {
     public void setPlaceOfCooking(Double[][] placeOfCooking) {
         this.placeOfCooking = placeOfCooking;
     }
+
+    public Participant getParticipant1() {
+        return participant1;
+    }
+    public Participant getParticipant2() {
+        return participant2;
+    }
 }

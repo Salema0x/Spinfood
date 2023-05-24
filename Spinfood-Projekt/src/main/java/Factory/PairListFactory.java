@@ -58,8 +58,9 @@ public class PairListFactory {
 
     /**
      * Creates a List of Participants with specific attributes.
+     *
      * @param kitchenIdentification Indicates the kitchen situation of the Participants which should be in the list.
-     * @param foodIdentification Indicates the food preference of the Participants which should be in the list.
+     * @param foodIdentification    Indicates the food preference of the Participants which should be in the list.
      * @return a List of participants with the specified attributes.
      */
     private List<Participant> createList(String kitchenIdentification, String foodIdentification) {
@@ -107,6 +108,7 @@ public class PairListFactory {
 
     /**
      * Starts the sorter Method. With the three main lists.
+     *
      * @param methods A Function Interface showing which functions should be used for comparing.
      */
     @SafeVarargs
@@ -118,8 +120,9 @@ public class PairListFactory {
 
     /**
      * Sorts the Lists contained in the given list with the given functions.
+     *
      * @param kitchenParticipants the list of lists which should get sorted.
-     * @param methods The functions which should be used for sorting.
+     * @param methods             The functions which should be used for sorting.
      */
     @SafeVarargs
     private void sorter(List<List<Participant>> kitchenParticipants, Function<Participant, Integer>... methods) {
@@ -173,10 +176,11 @@ public class PairListFactory {
 
     /**
      * Starts with making restPairs. If one category is not fully paired it will get paired with the none eaters.
-     * @param noneParticipantsYesKitchen The participants with no preference and yes kitchen.
-     * @param meatParticipantsYesKitchen The participants with meat preference and yes kitchen.
-     * @param noneParticipantsNoKitchen The participants with no preference and no kitchen.
-     * @param meatParticipantsNoKitchen The participants with meat preference and no kitchen.
+     *
+     * @param noneParticipantsYesKitchen   The participants with no preference and yes kitchen.
+     * @param meatParticipantsYesKitchen   The participants with meat preference and yes kitchen.
+     * @param noneParticipantsNoKitchen    The participants with no preference and no kitchen.
+     * @param meatParticipantsNoKitchen    The participants with meat preference and no kitchen.
      * @param noneParticipantsMaybeKitchen The participants with no preference and maybe kitchen.
      * @param meatParticipantsMaybeKitchen The participants with meat preference and maybe kitchen.
      */
@@ -207,6 +211,7 @@ public class PairListFactory {
 
     /**
      * Makes pairs out of the leftover participants from other categories (meat or veggie/vegan) with the no preference eaters
+     *
      * @param noneParticipants List of Lists with participants with no preference
      * @param restParticipants List of Lists with the leftover participants
      */
@@ -221,9 +226,10 @@ public class PairListFactory {
 
     /**
      * Starts the makePairs() Method which makes the actual pairs.
-     * @param yesKitchen Participants which have a kitchen.
+     *
+     * @param yesKitchen   Participants which have a kitchen.
      * @param maybeKitchen Participants which maybe have a kitchen.
-     * @param noKitchen Participants which have no kitchen.
+     * @param noKitchen    Participants which have no kitchen.
      */
     private void makePairsStarter(List<Participant> yesKitchen, List<Participant> maybeKitchen, List<Participant> noKitchen) {
         makePairs(yesKitchen, noKitchen);
@@ -235,7 +241,8 @@ public class PairListFactory {
 
     /**
      * Generates the actual pairs and adds them to the pairList.
-     * @param participantList1 The firs list of participants.
+     *
+     * @param participantList1        The firs list of participants.
      * @param optionalParticipantList An optional second participant List. Is optional because we can also form pairs from one single list.
      */
     @SafeVarargs
@@ -261,6 +268,7 @@ public class PairListFactory {
 
     /**
      * Makes the list of second participants modifiable and generates the pairs and sets fields.
+     *
      * @param participantList1 First participant list.
      * @param participantList2 Second participant list.
      * @return a modifiable second participant list.
@@ -280,5 +288,27 @@ public class PairListFactory {
 
     public List<Pair> getRegisteredPairs() {
         return registeredPairs;
+    }
+
+
+    public void showPairs() {
+        String leftAlignFormat = "%-9s| %-36s | %-36s | %-20s | %-20s |%n";
+        int pairNr = 0;
+
+        System.out.format("+--------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+        System.out.format("|Pair Nr.| ID1                                  | ID2                                  | Name1                | Name2                |%n");
+        System.out.format("+--------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+
+        for (Pair pair : pairList) {
+            String id1 = pair.getParticipant1().getId();
+            String id2 = pair.getParticipant2().getId();
+            String name1 = pair.getParticipant1().getName();
+            String name2 = pair.getParticipant2().getName();
+            pairNr++;
+
+            System.out.format(leftAlignFormat, pairNr, id1, id2, name1, name2);
+        }
+
+        System.out.format("+---------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
     }
 }
