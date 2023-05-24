@@ -1,7 +1,5 @@
 package Entity;
 
-import java.util.Objects;
-
 public class Pair {
     private final Participant participant1;
     private final Participant participant2;
@@ -49,24 +47,23 @@ public class Pair {
         this.preferenceDeviation = (byte) Math.abs(participant1.getFoodPreferenceNumber() - participant2.getFoodPreferenceNumber());
     }
 
-    //pairs are equal when one participant has the same ID. Other participant is not checked.
-    public boolean isEqualTo(Pair pair) {
-        //checks equal ID´s in same order
-        if (participant1.getId().equals(pair.getParticipant1().getId()) && participant2.getId().equals(pair.getParticipant2().getId())) {
-            return true;
-        }
-        //checks equal ID´s in mixed order
-        else if(participant1.getId().equals(pair.getParticipant2().getId()) && participant2.getId().equals(pair.getParticipant1().getId())) {
-            return true;
-        }
-        return false;
+    public byte getAgeDifference() {
+        return ageDifference;
     }
 
-    public Participant getParticipant1() {
-        return participant1;
+    public byte getPreferenceDeviation() {
+        return preferenceDeviation;
     }
 
-    public Participant getParticipant2() {
-        return participant2;
+    public double getGenderDiversityScore() {
+        return genderDiversityScore;
+    }
+
+    public Double[][] getPlaceOfCooking() {
+        return placeOfCooking;
+    }
+
+    public void setPlaceOfCooking(Double[][] placeOfCooking) {
+        this.placeOfCooking = placeOfCooking;
     }
 }
