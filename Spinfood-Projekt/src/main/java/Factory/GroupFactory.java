@@ -48,6 +48,32 @@ public class GroupFactory {
         return groups;
     }
 
+    public void showGroups(List<Group> groups) {
+        String leftAlignFormat = "%-9s| %-36s | %-36s | %-20s | %-20s |%n";
+        int groupNr = 0;
+
+        System.out.format("+--------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+        System.out.format("|Group Nr| ID1                                  | ID2                                  | Name1                | Name2                |%n");
+        System.out.format("+--------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+
+        for (Group group: groups) {
+            groupNr++;
+            int pairNr = 0;
+            for (Pair pair : group.getPairs()) {
+                String id1 = pair.getParticipant1().getId();
+                String id2 = pair.getParticipant2().getId();
+                String name1 = pair.getParticipant1().getName();
+                String name2 = pair.getParticipant2().getName();
+                pairNr++;
+
+                System.out.format(leftAlignFormat, "Group "+groupNr+" Pair "+pairNr, id1, id2, name1, name2);
+            }
+        }
+
+        System.out.format("+---------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+    }
+
+
     /**
      * This method finds the closest Pair to a given Group based on a set of criteria like geographical distance,
      * age difference, preference deviation, and gender diversity score.
@@ -58,7 +84,16 @@ public class GroupFactory {
     private Pair findClosestPair(Group group) {
         Pair closestPair = null;
         double smallestDistance = Double.MAX_VALUE;
+
+        // Check if the group already contains a pair with foodPreference "0" (Fleischi)
+        boolean groupContainsPreferenceZero = group.getPairs().stream().anyMatch(pair -> pair.getFoodPreference().equals("0"));
+
         for (Pair pair : registeredPairs) {
+            // If the group already contains a pair with foodPreference "0" and the current pair also has foodPreference "0", skip this pair
+            if (groupContainsPreferenceZero && pair.getFoodPreference().equals("0")) {
+                continue;
+            }
+
             double distance = calculateGroupPairDeviation(group, pair);
             if (distance < smallestDistance) {
                 smallestDistance = distance;
@@ -67,6 +102,7 @@ public class GroupFactory {
         }
         return closestPair;
     }
+
 
     /**
      * This method calculates the total deviation between a Pair and a Group.
