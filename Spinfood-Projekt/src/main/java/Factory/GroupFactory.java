@@ -144,12 +144,12 @@ public class GroupFactory {
      * @param place2 The coordinates of the second place
      * @return The geographical distance between the two places
      */
-    private double calculateGeographicalDistance(Double[][] place1, Double[][] place2) {
-        double latitudeDifference = Math.toRadians(place2[0][0] - place1[0][0]);
-        double longitudeDifference = Math.toRadians(place2[0][1] - place1[0][1]);
+    private double calculateGeographicalDistance(Double[] place1, Double[] place2) {
+        double latitudeDifference = Math.toRadians(place2[0] - place1[0]);
+        double longitudeDifference = Math.toRadians(place2[1] - place1[1]);
 
         double a = Math.pow(Math.sin(latitudeDifference / 2), 2)
-                + Math.cos(Math.toRadians(place1[0][0])) * Math.cos(Math.toRadians(place2[0][0]))
+                + Math.cos(Math.toRadians(place1[0])) * Math.cos(Math.toRadians(place2[0]))
                 * Math.pow(Math.sin(longitudeDifference / 2), 2);
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));

@@ -10,8 +10,8 @@ public class Pair {
     private byte preferenceDeviation;
     private double genderDiversityScore;
     private Double[][] route;
-    private Double[][] placeOfCooking;
-    private String foodPreference;
+    private Double[] placeOfCooking = new Double[2];
+    private final String foodPreference;
     private int pathLength;
 
 
@@ -21,9 +21,26 @@ public class Pair {
 
         this.foodPreference = decideFoodPreference();
 
+        decidePlaceOfCooking();
         calculateAgeDifference();
         calculateGenderDiversityScore();
         calculatePreferenceDeviation();
+    }
+
+    private void decidePlaceOfCooking() {
+        if (participant1.getHasKitchen().equals("yes")) {
+            placeOfCooking[0] = participant1.getKitchenLatitude();
+            placeOfCooking[1] = participant1.getKitchenLongitude();
+        } else if (participant2.getHasKitchen().equals("yes")) {
+            placeOfCooking[0] = participant2.getKitchenLatitude();
+            placeOfCooking[1] = participant2.getKitchenLongitude();
+        } else if (participant1.getHasKitchen().equals("maybe")) {
+            placeOfCooking[0] = participant1.getKitchenLatitude();
+            placeOfCooking[1] = participant1.getKitchenLongitude();
+        } else if (participant2.getHasKitchen().equals("maybe")) {
+            placeOfCooking[0] = participant2.getKitchenLatitude();
+            placeOfCooking[1] = participant2.getKitchenLongitude();
+        }
     }
 
     private String decideFoodPreference() {
@@ -91,7 +108,7 @@ public class Pair {
         return genderDiversityScore;
     }
 
-    public Double[][] getPlaceOfCooking() {
+    public Double[] getPlaceOfCooking() {
         return placeOfCooking;
     }
 }
