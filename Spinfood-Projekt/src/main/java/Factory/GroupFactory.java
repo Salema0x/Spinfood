@@ -7,6 +7,7 @@ import java.util.*;
 
 public class GroupFactory {
     private final List<Pair> registeredPairs;
+    private final List<Pair> successorList;
     private final int maxGroupSize;
     private Double[] partyLocation;
     private final List<Group> groups;
@@ -19,6 +20,7 @@ public class GroupFactory {
      */
     public GroupFactory(PairListFactory pairListFactory, int maxGroupSize, Double[] partyLocation) {
         this.registeredPairs = pairListFactory.getRegisteredPairs();
+        this.successorList = new ArrayList<>();
         this.maxGroupSize = maxGroupSize;
         this.partyLocation = partyLocation;
         this.groups = new ArrayList<>();
@@ -43,18 +45,22 @@ public class GroupFactory {
                     break;
                 }
             }
-            groups.add(group);
+            if (group.getPairs().size() < 3) {
+                successorList.addAll(group.getPairs());
+            } else {
+                groups.add(group);
+            }
         }
         return groups;
     }
 
     public void showGroups(List<Group> groups) {
-        String leftAlignFormat = "%-9s| %-36s | %-36s | %-20s | %-20s |%n";
+        String leftAlignFormat = "%-9s| %-36s | %-36s | %-15s | %-15s | %-15s | %-15s |%n";
         int groupNr = 0;
 
-        System.out.format("+--------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
-        System.out.format("|Group Nr| ID1                                  | ID2                                  | Name1                | Name2                |%n");
-        System.out.format("+--------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+        System.out.format("+---------|--------------------------------------+--------------------------------------+-----------------+-----------------+-----------------+-----------------+%n");
+        System.out.format("|Group Nr | ID1                                  | ID2                                  | Name1           | Name2           | Pref1           | Pref2           |%n");
+        System.out.format("+---------|--------------------------------------+--------------------------------------+-----------------+-----------------+-----------------+-----------------+%n");
 
         for (Group group: groups) {
             groupNr++;
@@ -64,14 +70,17 @@ public class GroupFactory {
                 String id2 = pair.getParticipant2().getId();
                 String name1 = pair.getParticipant1().getName();
                 String name2 = pair.getParticipant2().getName();
+                String pref1 = pair.getParticipant1().getFoodPreference();
+                String pref2 = pair.getParticipant2().getFoodPreference();
                 pairNr++;
 
-                System.out.format(leftAlignFormat, "Group "+groupNr+" Pair "+pairNr, id1, id2, name1, name2);
+                System.out.format(leftAlignFormat, "Group "+groupNr+" Pair "+pairNr, id1, id2, name1, name2, pref1, pref2);
             }
         }
 
-        System.out.format("+---------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+        System.out.format("+---------|--------------------------------------+--------------------------------------+-----------------+-----------------+-----------------+-----------------+%n");
     }
+
 
 
     /**
