@@ -91,6 +91,8 @@ public class GroupFactory {
     public void ensureEachPairCooksOnce() {
         // This list stores all pairs that have already been set to cook
         List<Pair> pairsThatCooked = new ArrayList<>();
+        // Copy all registered pairs to a new list
+        List<Pair> pairsThatDidNotCook = new ArrayList<>(registeredPairs);
 
         // Loop over all dinner rounds
         for (DinnerRound round : dinnerRounds) {
@@ -102,6 +104,7 @@ public class GroupFactory {
                     if (!pairsThatCooked.contains(pair)) {
                         group.setCookingPair(pair);
                         pairsThatCooked.add(pair);
+                        pairsThatDidNotCook.remove(pair);
                         break;
                     }
                 }
@@ -109,10 +112,14 @@ public class GroupFactory {
         }
 
         // At this point, each pair should have cooked once. If not, throw an exception.
-        if (pairsThatCooked.size() != registeredPairs.size()) {
-            throw new IllegalStateException("Not all pairs have been set to cook.");
+        if (!pairsThatDidNotCook.isEmpty()) {
+            System.out.println("The following pairs did not cook:");
+            for (Pair pair : pairsThatDidNotCook) {
+                System.out.println(pair.toString());
+            }
         }
     }
+
 
 
     public void displayDinnerRounds() {
@@ -145,44 +152,46 @@ public class GroupFactory {
                 || pair.getParticipant2().getFoodPreference().toLowerCase().equals("none"));
     }
 
-    /**
-     * This method finds the closest Pair to a given Group based on a set of criteria like geographical distance,
-     * age difference, preference deviation, and gender diversity score.
-     *
-     * @param group The group to which we want to find the closest Pair
-     * @return The closest Pair to the Group
-     */
-    private Pair findClosestPair(Group group) {
+    public void updateGroupsWithClosestPairs() {
+        List<Pair> availablePairs = new ArrayList<>(registeredPairs);
+
+        for (DinnerRound round : dinnerRounds) {
+            for (Group group : round.getGroups()) {
+                Pair closestPair = findClosestPair(group, availablePairs);
+                if (closestPair != null) {
+                    group.setCookingPair(closestPair);
+                    availablePairs.remove(closestPair);
+                } else {
+                    System.out.println("No available pair found for group: " + group.toString());
+                }
+            }
+        }
+
+        if (!availablePairs.isEmpty()) {
+            System.out.println("Following pairs did not get assigned to cook:");
+            for (Pair pair : availablePairs) {
+                System.out.println(pair.toString());
+            }
+        }
+    }
+
+    private Pair findClosestPair(Group group, List<Pair> availablePairs) {
         Pair closestPair = null;
         double smallestDistance = Double.MAX_VALUE;
 
-        // Check if the group already contains a pair with foodPreference "0" (Fleischi), "meat" or "none"
-        boolean groupContainsNonVegPreference = group.getPairs().stream().anyMatch(pair -> pair.getParticipant1().getFoodPreference().equals("0")
-                || pair.getParticipant1().getFoodPreference().toLowerCase().equals("meat")
-                || pair.getParticipant1().getFoodPreference().toLowerCase().equals("none")
-                || pair.getParticipant2().getFoodPreference().equals("0")
-                || pair.getParticipant2().getFoodPreference().toLowerCase().equals("meat")
-                || pair.getParticipant2().getFoodPreference().toLowerCase().equals("none"));
-
-        for (Pair pair : registeredPairs) {
-            // If the group already contains a pair with foodPreference "0", "meat" or "none" and the current pair also has foodPreference "0", "meat" or "none", skip this pair
-            if (groupContainsNonVegPreference && (pair.getParticipant1().getFoodPreference().equals("0")
-                    || pair.getParticipant1().getFoodPreference().toLowerCase().equals("meat")
-                    || pair.getParticipant1().getFoodPreference().toLowerCase().equals("none")
-                    || pair.getParticipant2().getFoodPreference().equals("0")
-                    || pair.getParticipant2().getFoodPreference().toLowerCase().equals("meat")
-                    || pair.getParticipant2().getFoodPreference().toLowerCase().equals("none"))) {
-                continue;
-            }
-
-            double distance = calculateGroupPairDeviation(group, pair);
-            if (distance < smallestDistance) {
-                smallestDistance = distance;
-                closestPair = pair;
+        for (Pair pair : availablePairs) {
+            if (group.getPairs().contains(pair)) {
+                double distance = calculateGroupPairDeviation(group, pair);
+                if (distance < smallestDistance) {
+                    smallestDistance = distance;
+                    closestPair = pair;
+                }
             }
         }
+
         return closestPair;
     }
+
 
 
     /**
