@@ -1,17 +1,16 @@
 package Factory;
 
 import Entity.Group;
-import Entity.Pair;
 import Entity.Participant;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Cancelers {
-    private List<Participant> absences;
-    private List<Group> groupList;
-    private List<Group> backupGroupList;
-    private List<Participant> backupWaitingList;
+    private final List<Participant> absences;
+    private final List<Group> groupList;
+    private final List<Group> backupGroupList;
+    private final List<Participant> backupWaitingList;
 
     public Cancelers(List<Participant> absences, List<Group> groupList) {
         this.absences = absences;
@@ -25,6 +24,7 @@ public class Cancelers {
         updateWaitingList();
         completeGroups();
     }
+
     /**
      * Updates the group list based on the absences of participants.
      * If a participant is absent, the corresponding group is removed from the group list and added to the backup group list.
@@ -53,28 +53,29 @@ public class Cancelers {
      */
     private void updateWaitingList() {
         for (Group group : groupList) {
+            Participant participant1 = group.getParticipants().get(0);
+            Participant participant2 = group.getParticipants().get(1);
+            // if they are paired and both canceled, they will be removed and so the Group which they were in
             if (group.isPair() && group.getParticipants().size() == 2) {
-                Participant participant1 = group.getParticipants().get(0);
-                Participant participant2 = group.getParticipants().get(1);
-
                 if (absences.contains(participant1) && absences.contains(participant2)) {
                     groupList.remove(group);
                     backupGroupList.add(group);
-
-                    backupWaitingList.add(participant1);
-                    backupWaitingList.add(participant2);
                 }
-            } else if (!group.isPair() && group.getParticipants().size() == 1) {
-                Participant participant = group.getParticipants().get(0);
-                if (absences.contains(participant)) {
-                    groupList.remove(group);
-                    backupGroupList.add(group);
+                // if they are paired and one of them has canceled, then the other one will be added to the WaitingList, and the Group will be removed aswell from GroupList
+            } else if (group.isPair() && (absences.contains(participant1) || absences.contains(participant2))) {
+                groupList.remove(group);
+                backupGroupList.add(group);
 
-                    backupWaitingList.add(participant);
+                if (absences.contains(participant1)) {
+                    backupWaitingList.add(participant2);
+                } else {
+                    backupWaitingList.add(participant1);
                 }
             }
+
         }
     }
+
     /**
      * Completes a group by adding a pair of participants from the waiting list.
      * If there are at least two participants in the waiting list and there is at least one group in the group list,
@@ -88,7 +89,6 @@ public class Cancelers {
                 Group group = groupList.get(0);
                 group.addParticipant(pair.get(0));
                 group.addParticipant(pair.get(1));
-                group.addPair(new Pair(pair.get(0), pair.get(1)));
                 backupGroupList.add(group);
                 groupList.remove(group);
             }
