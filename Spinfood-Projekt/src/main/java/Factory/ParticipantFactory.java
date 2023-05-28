@@ -340,4 +340,8 @@ public class ParticipantFactory {
     public List<Pair> getRegisteredPairs() {
         return REGISTERED_PAIRS;
     }
+
+    public Double[] getPartyLocation() {
+        return partyLocation;
+    }
 }

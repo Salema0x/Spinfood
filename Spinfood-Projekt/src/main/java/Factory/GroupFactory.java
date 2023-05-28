@@ -8,7 +8,7 @@ import java.util.*;
 public class GroupFactory {
     private final List<Pair> registeredPairs;
     private final int maxGroupSize;
-    private double[][] partyLocation;
+    private Double[] partyLocation;
     private final List<Group> groups;
 
     /**
@@ -17,7 +17,7 @@ public class GroupFactory {
      * @param pairListFactory the list of pairs registered for the event from the PairListFactoryClass
      * @param partyLocation the location of the party
      */
-    public GroupFactory(PairListFactory pairListFactory, int maxGroupSize, double[][] partyLocation) {
+    public GroupFactory(PairListFactory pairListFactory, int maxGroupSize, Double[] partyLocation) {
         this.registeredPairs = pairListFactory.getRegisteredPairs();
         this.maxGroupSize = maxGroupSize;
         this.partyLocation = partyLocation;
