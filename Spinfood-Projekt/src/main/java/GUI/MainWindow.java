@@ -187,4 +187,5 @@ public class MainWindow implements ActionListener {
     public static void setCriteriaOrdered(boolean isCriteriaOrdered) {
         criteriaOrdered = isCriteriaOrdered;
     }
+
 }

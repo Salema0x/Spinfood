@@ -10,7 +10,7 @@ public class ParticipantFactory {
     private static final List<Participant> PARTICIPANT_LIST = new ArrayList<>();
     private static final List<Pair> REGISTERED_PAIRS = new ArrayList<>();
     private static final HashSet<String> IDS = new HashSet<>();
-    private static final int MAX_PARTICIPANTS = 300;
+    private static final int MAX_PARTICIPANTS = 236;
     private static final HashMap<String, List<Participant>> ADDRESS_PARTICIPANT_MAP = new HashMap<>();
     private static final HashMap<String, Participant> ID_PARTICIPANT_MAP = new HashMap<>();
     private int participantCounter = 0;

@@ -3,11 +3,10 @@ package Data;
 import Entity.Pair;
 import Entity.Participant;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PairList {
-    private List<Pair> pairList = new ArrayList<>();
+    private final List<Pair> pairList;
     private final int countPairs;
     private final int countSuccessors;
     private final double genderDiversityScore;

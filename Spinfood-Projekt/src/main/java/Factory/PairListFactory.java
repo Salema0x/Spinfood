@@ -459,4 +459,8 @@ public class PairListFactory {
     public List<Pair> getRegisteredPairs() {
         return registeredPairs;
     }
+
+    public List<Participant> getSuccessors() {
+        return successors;
+    }
 }

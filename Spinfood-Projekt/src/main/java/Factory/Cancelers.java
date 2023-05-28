@@ -1,6 +1,7 @@
 package Factory;
 
 import Entity.Group;
+import Entity.Pair;
 import Entity.Participant;
 
 import java.util.ArrayList;
@@ -11,10 +12,12 @@ public class Cancelers {
     private final List<Group> groupList;
     private final List<Group> backupGroupList;
     private final List<Participant> backupWaitingList;
+    private final PairListFactory pairListFactory;
 
-    public Cancelers(List<Participant> absences, List<Group> groupList) {
+    public Cancelers(List<Participant> absences, List<Group> groupList, PairListFactory pairListFactory) {
         this.absences = absences;
         this.groupList = groupList;
+        this.pairListFactory = pairListFactory;
         this.backupGroupList = new ArrayList<>(groupList);
         this.backupWaitingList = new ArrayList<>();
     }
@@ -94,8 +97,10 @@ public class Cancelers {
             }
         }
     }
-    // i cannot include the Algorithm from PairLestFactory
+
     public List<Participant> findPairFromWaitingList() {
+        List<Participant> successorsFromPairAlgorithm = pairListFactory.getSuccessors();
+        List<Pair> pairsFromPairAlgorithm = pairListFactory.pairList;
         return null;
     }
 }
