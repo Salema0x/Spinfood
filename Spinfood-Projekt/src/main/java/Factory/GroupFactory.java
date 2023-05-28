@@ -6,10 +6,23 @@ import Entity.Group;
 import java.util.*;
 
 public class GroupFactory {
+    /**
+     * A list that holds all pairs that have registered for the event.
+     * Each pair consists of two participants.
+     */
     private final List<Pair> registeredPairs;
+    /**
+     * A list that holds pairs that could not be assigned to a group.
+     * These pairs are to be reassigned in a subsequent process.
+     */
     private final List<Pair> successorList;
     private final int maxGroupSize;
     private Double[] partyLocation;
+
+    /**
+     * A list that holds all the groups that have been created.
+     * Each group consists of pairs that match certain criteria.
+     */
     private final List<Group> groups;
 
     /**
