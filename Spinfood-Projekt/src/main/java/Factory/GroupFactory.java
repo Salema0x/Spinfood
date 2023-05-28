@@ -113,7 +113,7 @@ public class GroupFactory {
 
         // At this point, each pair should have cooked once. If not, throw an exception.
         if (!pairsThatDidNotCook.isEmpty()) {
-            System.out.println("The following pairs did not cook:");
+            System.out.println("Folgende Paare kochen nicht:");
             for (Pair pair : pairsThatDidNotCook) {
                 System.out.println(pair.toString());
             }
@@ -138,6 +138,14 @@ public class GroupFactory {
                 System.out.println("    Kochendes Paar: " + group.getCookingPair().toString());
                 groupNumber++;
             }
+        }
+
+        // print of the SuccessorList
+        System.out.println("Nachrücker-Liste:");
+        int pairNumber = 1;
+        for (Pair pair : successorList) {
+            System.out.println("  Paar " + pairNumber + ": " + pair.toString());
+            pairNumber++;
         }
     }
 
