@@ -6,12 +6,15 @@ import java.util.List;
 public class Group {
     private final List<Pair> pairs;
     private final List<Participant> participants = new ArrayList<>();
+    private Pair cookingPair;
 
     public Group(Pair initialPair) {
         this.pairs = new ArrayList<>();
         pairs.add(initialPair);
+        this.cookingPair = initialPair; // Setzen des initialPair als Kochpaar
         createParticipants();
     }
+
 
     private void createParticipants() {
         for (Pair pair : pairs) {
@@ -48,5 +51,17 @@ public class Group {
 
     public void addParticipant(Participant participant) {
         this.participants.add(participant);
+    }
+
+    public Pair getCookingPair() {
+        return this.cookingPair;
+    }
+
+    public void setCookingPair(Pair pair) {
+        if (this.pairs.contains(pair)) {
+            this.cookingPair = pair;
+        } else {
+            throw new IllegalArgumentException("The provided pair is not part of this group.");
+        }
     }
 }

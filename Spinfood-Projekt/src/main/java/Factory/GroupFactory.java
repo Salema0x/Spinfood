@@ -40,6 +40,9 @@ public class GroupFactory {
         List<Pair> pairs = new ArrayList<>(registeredPairs);
         Collections.shuffle(pairs);
 
+        // Erstellen einer Queue aus den gemischten Paaren
+        Queue<Pair> cookingQueue = new LinkedList<>(pairs);
+
         // If registeredPairs is not a multiple of 3, move pairs to successorList until it is
         while (pairs.size() % 3 != 0) {
             Pair lastPair = pairs.remove(pairs.size() - 1);
@@ -49,7 +52,11 @@ public class GroupFactory {
         // Each pair cooks once
         for (int i = 0; i < pairs.size(); i++) {
             DinnerRound round = dinnerRounds.get(i % 3);
-            Group group = new Group(pairs.get(i));
+            // Holt das nächste Paar aus der Queue zum Kochen
+            Pair cookingPair = cookingQueue.poll();
+
+            Group group = new Group(cookingPair);
+            group.setCookingPair(cookingPair); // Setzt das kochende Paar für die Gruppe
             round.getGroups().add(group);
             groups.add(group);
         }
@@ -81,6 +88,33 @@ public class GroupFactory {
         return dinnerRounds;
     }
 
+    public void ensureEachPairCooksOnce() {
+        // This list stores all pairs that have already been set to cook
+        List<Pair> pairsThatCooked = new ArrayList<>();
+
+        // Loop over all dinner rounds
+        for (DinnerRound round : dinnerRounds) {
+            // Loop over all groups in each dinner round
+            for (Group group : round.getGroups()) {
+                // Loop over all pairs in each group
+                for (Pair pair : group.getPairs()) {
+                    // If this pair has not cooked yet, set it as the cooking pair for this group
+                    if (!pairsThatCooked.contains(pair)) {
+                        group.setCookingPair(pair);
+                        pairsThatCooked.add(pair);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // At this point, each pair should have cooked once. If not, throw an exception.
+        if (pairsThatCooked.size() != registeredPairs.size()) {
+            throw new IllegalStateException("Not all pairs have been set to cook.");
+        }
+    }
+
+
     public void displayDinnerRounds() {
         for (int i = 0; i < dinnerRounds.size(); i++) {
             DinnerRound round = dinnerRounds.get(i);
@@ -94,10 +128,12 @@ public class GroupFactory {
                     System.out.println("    Paar " + pairNumber + ": " + pair.toString());
                     pairNumber++;
                 }
+                System.out.println("    Kochendes Paar: " + group.getCookingPair().toString());
                 groupNumber++;
             }
         }
     }
+
 
 
     private boolean groupContainsNonVegPreference(Group group) {

@@ -149,6 +149,7 @@ public class MainWindow implements ActionListener {
             GroupFactory groupFactory = new GroupFactory(pairListFactory, 3, PARTICIPANT_FACTORY.getPartyLocation());
             groupFactory.createGroups();
             groupFactory.displayDinnerRounds();
+            groupFactory.ensureEachPairCooksOnce();
         }
     }
 
