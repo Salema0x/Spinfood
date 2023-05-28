@@ -94,12 +94,22 @@ public class GroupFactory {
         Pair closestPair = null;
         double smallestDistance = Double.MAX_VALUE;
 
-        // Check if the group already contains a pair with foodPreference "0" (Fleischi)
-        boolean groupContainsPreferenceZero = group.getPairs().stream().anyMatch(pair -> pair.getFoodPreference().equals("0"));
+        // Check if the group already contains a pair with foodPreference "0" (Fleischi), "meat" or "none"
+        boolean groupContainsNonVegPreference = group.getPairs().stream().anyMatch(pair -> pair.getParticipant1().getFoodPreference().equals("0")
+                || pair.getParticipant1().getFoodPreference().toLowerCase().equals("meat")
+                || pair.getParticipant1().getFoodPreference().toLowerCase().equals("none")
+                || pair.getParticipant2().getFoodPreference().equals("0")
+                || pair.getParticipant2().getFoodPreference().toLowerCase().equals("meat")
+                || pair.getParticipant2().getFoodPreference().toLowerCase().equals("none"));
 
         for (Pair pair : registeredPairs) {
-            // If the group already contains a pair with foodPreference "0" and the current pair also has foodPreference "0", skip this pair
-            if (groupContainsPreferenceZero && pair.getFoodPreference().equals("0")) {
+            // If the group already contains a pair with foodPreference "0", "meat" or "none" and the current pair also has foodPreference "0", "meat" or "none", skip this pair
+            if (groupContainsNonVegPreference && (pair.getParticipant1().getFoodPreference().equals("0")
+                    || pair.getParticipant1().getFoodPreference().toLowerCase().equals("meat")
+                    || pair.getParticipant1().getFoodPreference().toLowerCase().equals("none")
+                    || pair.getParticipant2().getFoodPreference().equals("0")
+                    || pair.getParticipant2().getFoodPreference().toLowerCase().equals("meat")
+                    || pair.getParticipant2().getFoodPreference().toLowerCase().equals("none"))) {
                 continue;
             }
 
@@ -111,6 +121,7 @@ public class GroupFactory {
         }
         return closestPair;
     }
+
 
 
     /**
