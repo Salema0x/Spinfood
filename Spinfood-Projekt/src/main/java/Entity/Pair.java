@@ -10,7 +10,7 @@ public class Pair {
     private byte preferenceDeviation;
     private double genderDiversityScore;
     private Double[][] route;
-    private Double[] placeOfCooking = new Double[2];
+    private final Double[] placeOfCooking = new Double[2];
     private final String foodPreference;
     private int pathLength;
 

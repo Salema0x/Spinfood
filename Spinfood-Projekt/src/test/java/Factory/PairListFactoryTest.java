@@ -206,6 +206,7 @@ class PairListFactoryTest {
      */
     private boolean checkMultiplePairs(List<Pair> pairList) {
         for (int i = 0; i < pairList.size(); i++) {
+            pairList = new ArrayList<>(pairList);
             Pair pair = pairList.remove(i);
             String[] pairIDs = new String[]{pair.getParticipant1().getId(), pair.getParticipant2().getId()};
             if (pairList.stream().anyMatch(p -> p.getParticipant1().getId().equals(pairIDs[0]) || p.getParticipant2().getId().equals(pairIDs[0]))) {

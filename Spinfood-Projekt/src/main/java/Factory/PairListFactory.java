@@ -62,8 +62,13 @@ public class PairListFactory {
 
         decideAlgorithm();
         makePairs();
+        concatWithRegisteredPairs();
         showPairs();
         System.out.println("Done!");
+    }
+
+    private void concatWithRegisteredPairs() {
+        pairList = Stream.concat(pairList.stream(), registeredPairs.stream()).toList();
     }
 
     /**
