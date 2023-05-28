@@ -18,7 +18,7 @@ public class ParticipantFactory {
     private boolean pairParticipant1Exists = false;
     private boolean pairParticipant2Exists = false;
     private byte sizeWGMembers = 0;
-    private Double[] partyLocation = new Double[2];
+    private final Double[] partyLocation = new Double[2];
 
     /**
      * Will extract all participants from the .csv file.

@@ -15,15 +15,17 @@ public class PairListFactory {
     public List<Pair> pairList = new ArrayList<>();
     private final List<Object> criteriaOrder;
     private final List<Participant> participantList;
-    private final List<List<Participant>> yesKitchenParticipants = new ArrayList<>();
-    private final List<List<Participant>> maybeKitchenParticipants = new ArrayList<>();
-    private final List<List<Participant>> noKitchenParticipants = new ArrayList<>();
+    private List<List<Participant>> yesKitchenParticipants = new ArrayList<>();
+    private List<List<Participant>> maybeKitchenParticipants = new ArrayList<>();
+    private List<List<Participant>> noKitchenParticipants = new ArrayList<>();
     private int sexFunctionIndex;
     private Function<Participant, Integer> firstMethod;
     private Function<Participant, Integer> secondMethod;
     private Function<Participant, Integer> thirdMethod;
     private final List<Participant> removements = new ArrayList<>();
     private final List<Participant> upperRemovements = new ArrayList<>();
+    private List<Participant> successors = new ArrayList<>();
+
 
     public PairListFactory(List<Participant> participantList, List<Pair> registeredPairs, List<Object> criteriaOrder) {
         this.registeredPairs = registeredPairs;
@@ -63,8 +65,30 @@ public class PairListFactory {
         decideAlgorithm();
         makePairs();
         concatWithRegisteredPairs();
+        identifySuccessors();
         showPairs();
         System.out.println("Done!");
+    }
+
+    private void identifySuccessors() {
+        yesKitchenParticipants = new ArrayList<>(yesKitchenParticipants);
+        noKitchenParticipants = new ArrayList<>(noKitchenParticipants);
+        maybeKitchenParticipants = new ArrayList<>(maybeKitchenParticipants);
+
+        successors = new ArrayList<>(successors);
+
+        successors.addAll(yesKitchenParticipants.get(0));
+        successors.addAll(yesKitchenParticipants.get(1));
+        successors.addAll(yesKitchenParticipants.get(2));
+
+        successors.addAll(maybeKitchenParticipants.get(0));
+        successors.addAll(maybeKitchenParticipants.get(1));
+        successors.addAll(maybeKitchenParticipants.get(2));
+
+        successors.addAll(noKitchenParticipants.get(0));
+        successors.addAll(noKitchenParticipants.get(1));
+        successors.addAll(noKitchenParticipants.get(2));
+
     }
 
     private void concatWithRegisteredPairs() {
@@ -85,7 +109,7 @@ public class PairListFactory {
      * Removes Participants which are already a successor from the participant List.
      */
     private void cleanParticipantListFromSuccessors() {
-        List<Participant> successors = participantList.stream()
+        successors = participantList.stream()
                 .filter(Participant::isSuccessor)
                 .toList();
 
