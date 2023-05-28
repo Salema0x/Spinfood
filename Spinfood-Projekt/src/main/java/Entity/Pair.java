@@ -71,7 +71,16 @@ public class Pair {
     private void calculatePreferenceDeviation() {
         this.preferenceDeviation = (byte) Math.abs(participant1.getFoodPreferenceNumber() - participant2.getFoodPreferenceNumber());
     }
-    
+
+    @Override
+    public String toString() {
+        return "Pair{" +
+                "Participant Namen: " + participant1.getName() + " | " + participant2.getName() +
+                ", Essensvorlieben: " + participant1.getFoodPreference() + " | " + participant2.getFoodPreference() +
+                '}';
+    }
+
+
     public boolean isEqualTo(Pair pair) {
         if (participant1.getId().equals(pair.getParticipant1().getId()) || participant1.getId().equals(pair.getParticipant2().getId())) {
             return true;

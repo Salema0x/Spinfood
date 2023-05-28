@@ -2,41 +2,32 @@ package Factory;
 
 import Entity.Pair;
 import Entity.Group;
+import Entity.DinnerRound;
 
 import java.util.*;
 
 public class GroupFactory {
-    /**
-     * A list that holds all pairs that have registered for the event.
-     * Each pair consists of two participants.
-     */
     private final List<Pair> registeredPairs;
-    /**
-     * A list that holds pairs that could not be assigned to a group.
-     * These pairs are to be reassigned in a subsequent process.
-     */
+    private final List<DinnerRound> dinnerRounds;
     private final List<Pair> successorList;
     private final int maxGroupSize;
     private Double[] partyLocation;
-
-    /**
-     * A list that holds all the groups that have been created.
-     * Each group consists of pairs that match certain criteria.
-     */
     private final List<Group> groups;
+    private final String[] roundNames = {"Vorspeise", "Hauptgang", "Dessert"}; // Name der DinnerRounds
 
-    /**
-     * Constructor for GroupFactory. It initializes the registeredPairs and partyLocation.
-     *
-     * @param pairListFactory the list of pairs registered for the event from the PairListFactoryClass
-     * @param partyLocation the location of the party
-     */
+
     public GroupFactory(PairListFactory pairListFactory, int maxGroupSize, Double[] partyLocation) {
         this.registeredPairs = pairListFactory.getRegisteredPairs();
         this.successorList = new ArrayList<>();
         this.maxGroupSize = maxGroupSize;
         this.partyLocation = partyLocation;
         this.groups = new ArrayList<>();
+
+        // Initialize dinner rounds
+        this.dinnerRounds = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            dinnerRounds.add(new DinnerRound());
+        }
     }
 
     /**
@@ -45,56 +36,78 @@ public class GroupFactory {
      *
      * @return a list of groups
      */
-    public List<Group> createGroups() {
-        while (!registeredPairs.isEmpty()) {
-            Pair initialPair = registeredPairs.remove(0);
-            Group group = new Group(initialPair);
-            while (group.getPairs().size() < maxGroupSize) {
-                Pair closestPair = findClosestPair(group);
-                if (closestPair != null) {
-                    group.addPair(closestPair);
-                    registeredPairs.remove(closestPair);
-                } else {
-                    break;
+    public List<DinnerRound> createGroups() {
+        List<Pair> pairs = new ArrayList<>(registeredPairs);
+        Collections.shuffle(pairs);
+
+        // If registeredPairs is not a multiple of 3, move pairs to successorList until it is
+        while (pairs.size() % 3 != 0) {
+            Pair lastPair = pairs.remove(pairs.size() - 1);
+            successorList.add(lastPair);
+        }
+
+        // Each pair cooks once
+        for (int i = 0; i < pairs.size(); i++) {
+            DinnerRound round = dinnerRounds.get(i % 3);
+            Group group = new Group(pairs.get(i));
+            round.getGroups().add(group);
+            groups.add(group);
+        }
+
+        // Each pair is in a group with different pairs in each round
+        for (int i = 0; i < pairs.size(); i++) {
+            Pair pair = pairs.get(i);
+            for (int j = 0; j < 3; j++) {
+                DinnerRound round = dinnerRounds.get(j);
+                Group group = groups.get((i + j) % groups.size());
+                if (!group.getPairs().contains(pair) && group.getPairs().size() < 3) {
+                    group.getPairs().add(pair);
                 }
             }
-            if (group.getPairs().size() < 3) {
-                successorList.addAll(group.getPairs());
-            } else {
-                groups.add(group);
-            }
         }
-        return groups;
-    }
 
-    public void showGroups(List<Group> groups) {
-        String leftAlignFormat = "%-9s| %-36s | %-36s | %-15s | %-15s | %-15s | %-15s |%n";
-        int groupNr = 0;
-
-        System.out.format("+---------|--------------------------------------+--------------------------------------+-----------------+-----------------+-----------------+-----------------+%n");
-        System.out.format("|Group Nr | ID1                                  | ID2                                  | Name1           | Name2           | Pref1           | Pref2           |%n");
-        System.out.format("+---------|--------------------------------------+--------------------------------------+-----------------+-----------------+-----------------+-----------------+%n");
-
-        for (Group group: groups) {
-            groupNr++;
-            int pairNr = 0;
-            for (Pair pair : group.getPairs()) {
-                String id1 = pair.getParticipant1().getId();
-                String id2 = pair.getParticipant2().getId();
-                String name1 = pair.getParticipant1().getName();
-                String name2 = pair.getParticipant2().getName();
-                String pref1 = pair.getParticipant1().getFoodPreference();
-                String pref2 = pair.getParticipant2().getFoodPreference();
-                pairNr++;
-
-                System.out.format(leftAlignFormat, "Group "+groupNr+" Pair "+pairNr, id1, id2, name1, name2, pref1, pref2);
+        // If a group does not have enough pairs, move the pairs to successorList
+        for (DinnerRound round : dinnerRounds) {
+            Iterator<Group> groupIterator = round.getGroups().iterator();
+            while (groupIterator.hasNext()) {
+                Group group = groupIterator.next();
+                if (group.getPairs().size() < maxGroupSize) {
+                    successorList.addAll(group.getPairs());
+                    groupIterator.remove();
+                }
             }
         }
 
-        System.out.format("+---------|--------------------------------------+--------------------------------------+-----------------+-----------------+-----------------+-----------------+%n");
+        return dinnerRounds;
+    }
+
+    public void displayDinnerRounds() {
+        for (int i = 0; i < dinnerRounds.size(); i++) {
+            DinnerRound round = dinnerRounds.get(i);
+            System.out.println(roundNames[i] + ":");
+
+            int groupNumber = 1;
+            for (Group group : round.getGroups()) {
+                System.out.println("  Gruppe " + groupNumber + ":");
+                int pairNumber = 1;
+                for (Pair pair : group.getPairs()) {
+                    System.out.println("    Paar " + pairNumber + ": " + pair.toString());
+                    pairNumber++;
+                }
+                groupNumber++;
+            }
+        }
     }
 
 
+    private boolean groupContainsNonVegPreference(Group group) {
+        return group.getPairs().stream().anyMatch(pair -> pair.getParticipant1().getFoodPreference().equals("0")
+                || pair.getParticipant1().getFoodPreference().toLowerCase().equals("meat")
+                || pair.getParticipant1().getFoodPreference().toLowerCase().equals("none")
+                || pair.getParticipant2().getFoodPreference().equals("0")
+                || pair.getParticipant2().getFoodPreference().toLowerCase().equals("meat")
+                || pair.getParticipant2().getFoodPreference().toLowerCase().equals("none"));
+    }
 
     /**
      * This method finds the closest Pair to a given Group based on a set of criteria like geographical distance,
@@ -134,7 +147,6 @@ public class GroupFactory {
         }
         return closestPair;
     }
-
 
 
     /**

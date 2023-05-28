@@ -147,7 +147,8 @@ public class MainWindow implements ActionListener {
             createFileChooser();
         } else if (e.getActionCommand().equals("Gruppen bilden")) {
             GroupFactory groupFactory = new GroupFactory(pairListFactory, 3, PARTICIPANT_FACTORY.getPartyLocation());
-            groupFactory.showGroups(groupFactory.createGroups());
+            groupFactory.createGroups();
+            groupFactory.displayDinnerRounds();
         }
     }
 
