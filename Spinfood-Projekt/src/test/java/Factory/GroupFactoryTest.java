@@ -18,25 +18,41 @@ class GroupFactoryTest {
     double[][] partyLocationCoordinates;
     File partyLocation;
 
+    private enum Criteria {
+        FOOD_PREFERENCE,
+        AGE_DIFFERENCE,
+        GENDER_DIVERSITY,
+        GEOGRAPHICAL_DISTANCE,
+        MAX_PARTICIPANTS
+    }
 
 
     @BeforeEach
     void setUp() throws URISyntaxException {
-        /**
-
         partyLocation = new File(Objects.requireNonNull(getClass().getResource("partylocation.csv").toURI()));
         partyLocationCoordinates = partyLocationReader(partyLocation);
         participantFactory = new ParticipantFactory();
         participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("participants.csv").toURI())));
         pairListFactory = new PairListFactory(participantFactory.getParticipantList(), participantFactory.getRegisteredPairs(), );
         groupFactory = new GroupFactory(pairListFactory, 3, partyLocationCoordinates);
-        */
+
 
     }
 
     @org.junit.jupiter.api.Test
     void GroupFactory() {
 
+    }
+    //Testmethoden
+
+    /**
+     * Test if each Pair cooks exactly once
+     *
+     * @return
+     */
+    private boolean checkFalseCooking() {
+        //TODO
+        return false;
     }
 
 
@@ -77,7 +93,7 @@ class GroupFactoryTest {
      * @return partyLocation
      */
     private double[][] partyLocationReader(File file) {
-        double[][] coordinates = new double[][]{new double[] {-1}, new double[] {-1}};
+        double[][] coordinates = new double[][]{new double[]{-1}, new double[]{-1}};
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             while (br.readLine() != null) {

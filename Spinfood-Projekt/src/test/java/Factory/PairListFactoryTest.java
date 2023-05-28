@@ -81,6 +81,9 @@ class PairListFactoryTest {
             //checks if generated pairs fulfill deviation restrictions, given by the criteria Order
             Assertions.assertFalse(checkDeviationToHigh(pairList,c));
 
+            //checks if generated pairList contains 3 or more pairs who plan to use the same Kitchen
+            Assertions.assertFalse(checkWgNoGo(pairList));
+
 
         }
 
@@ -266,6 +269,18 @@ class PairListFactoryTest {
     private boolean checkKitchenNoGo(String kitchen1, String kitchen2) {
         if (kitchen1.equals("no")) {
             return kitchen2.equals("no");
+        }
+        return false;
+    }
+
+    //TODO: check if this Works(Specification 5.4)
+    private boolean checkWgNoGo(List<Pair> pairs) {
+        for(Pair p : pairs){
+            Participant p1 = p.getParticipant1();
+            Participant p2 = p.getParticipant2();
+            if(p1.getCountWg() > 4 || p2.getCountWg() > 4){
+                return true;
+            }
         }
         return false;
     }
