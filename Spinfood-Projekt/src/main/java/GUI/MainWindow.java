@@ -26,7 +26,9 @@ public class MainWindow implements ActionListener {
     private static List<Object> CRITERIA_ORDER = new ArrayList<>();
     private static final CriteriaArranger CRITERIA_WINDOW = new CriteriaArranger();
     private static boolean participantsRead = false;
+    private static boolean partyLocationRead = false;
     private static boolean criteriaOrdered = false;
+    private static boolean participantsAreRead = true;
 
 
     /**
@@ -59,6 +61,10 @@ public class MainWindow implements ActionListener {
         JMenuItem readParticipants = new JMenuItem("Teilnehmer einlesen");
         readParticipants.addActionListener(this);
         startMenu.add(readParticipants);
+
+        JMenuItem readPartyLocation = new JMenuItem("Party Location einlesen");
+        readPartyLocation.addActionListener(this);
+        startMenu.add(readPartyLocation);
 
         START_PAIRS.addActionListener(this);
         START_PAIRS.setEnabled(criteriaOrdered);
@@ -97,10 +103,20 @@ public class MainWindow implements ActionListener {
             //TODO: Methode (checkFileValidity) um zu überprüfen ob die .csv Datei die richtigen Header hat.
 
             SHOW_TEXT.setText("Es wurde die Datei: " + csvFile.getName() + " eingelesen.");
-            participantsRead = true;
-            updateJMenu();
 
-            PARTICIPANT_FACTORY.readCSV(csvFile);
+            if (participantsAreRead) {
+                participantsRead = true;
+                updateJMenu();
+
+                PARTICIPANT_FACTORY.readCSV(csvFile);
+            } else {
+                partyLocationRead = true;
+                updateJMenu();
+
+                PARTICIPANT_FACTORY.readPartyLocation(csvFile);
+            }
+
+
         }
     }
 
@@ -113,12 +129,13 @@ public class MainWindow implements ActionListener {
         } else if (e.getActionCommand().equals("Wichtigkeit der Kriterien")) {
             CRITERIA_WINDOW.display();
         } else if (e.getActionCommand().equals("Paare bilden")) {
-
-            PairListFactory pairListFactory = new PairListFactory(
+            new PairListFactory(
                     PARTICIPANT_FACTORY.getParticipantList(),
                     PARTICIPANT_FACTORY.getRegisteredPairs(),
                     CRITERIA_ORDER);
-
+        } else if (e.getActionCommand().equals("Party Location einlesen")) {
+            participantsAreRead = false;
+            createFileChooser();
         }
     }
 
@@ -128,6 +145,9 @@ public class MainWindow implements ActionListener {
     public static void updateJMenu() {
         if (participantsRead) {
             SHOW_PARTICIPANTS.setEnabled(true);
+        }
+
+        if (participantsRead && partyLocationRead) {
             SET_CRITERIA.setEnabled(true);
         }
 

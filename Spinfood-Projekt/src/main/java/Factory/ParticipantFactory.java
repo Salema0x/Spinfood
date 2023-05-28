@@ -18,6 +18,7 @@ public class ParticipantFactory {
     private boolean pairParticipant1Exists = false;
     private boolean pairParticipant2Exists = false;
     private byte sizeWGMembers = 0;
+    private Double[] partyLocation = new Double[2];
 
     /**
      * Will extract all participants from the .csv file.
@@ -272,6 +273,18 @@ public class ParticipantFactory {
         PARTICIPANT_LIST.add(participant2);
         REGISTERED_PAIRS.add(new Pair(participant1, participant2));
         return participant2;
+    }
+
+    public void readPartyLocation(File csvFile) {
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+            br.readLine();
+            String line = br.readLine();
+            String[] values = line.split(",");
+            partyLocation[0] = Double.parseDouble(values[0]);
+            partyLocation[1] = Double.parseDouble(values[1]);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

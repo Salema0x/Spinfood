@@ -38,7 +38,6 @@ class PairListFactoryTest {
 
     @org.junit.jupiter.api.Test
     void PairListFactory() throws URISyntaxException {
-
         participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/teilnehmerliste.csv")).toURI()));
         participantList = participantFactory.getParticipantList();
         List<Object> criteria = new ArrayList<>();
@@ -46,26 +45,14 @@ class PairListFactoryTest {
 
         for (Criteria c : Criteria.values()) {
             switch (c) {
-                case CRITERIA_FOOD_AGE_SEX -> {
-                    criteria = criteriaOrder.get(0);
-                }
-                case CRITERIA_FOOD_SEX_AGE -> {
-                    criteria = criteriaOrder.get(1);
-                }
-                case CRITERIA_AGE_FOOD_SEX -> {
-                    criteria = criteriaOrder.get(2);
-                }
-                case CRITERIA_AGE_SEX_FOOD -> {
-                    criteria = criteriaOrder.get(3);
-                }
-                case CRITERIA_SEX_FOOD_AGE -> {
-                    criteria = criteriaOrder.get(4);
-                }
-                case CRITERIA_SEX_AGE_FOOD -> {
-                    criteria = criteriaOrder.get(5);
-                }
-
+                case CRITERIA_FOOD_AGE_SEX -> criteria = criteriaOrder.get(0);
+                case CRITERIA_FOOD_SEX_AGE -> criteria = criteriaOrder.get(1);
+                case CRITERIA_AGE_FOOD_SEX -> criteria = criteriaOrder.get(2);
+                case CRITERIA_AGE_SEX_FOOD -> criteria = criteriaOrder.get(3);
+                case CRITERIA_SEX_FOOD_AGE -> criteria = criteriaOrder.get(4);
+                case CRITERIA_SEX_AGE_FOOD -> criteria = criteriaOrder.get(5);
             }
+
             pairListFactory = new PairListFactory(participantFactory.getParticipantList(), participantFactory.getRegisteredPairs(), criteria);
             List<Pair> pairList = pairListFactory.pairList;
 
@@ -116,7 +103,6 @@ class PairListFactoryTest {
         }});
     }
 
-
     /**
      * checks if a pair is a noGoPair (no kitchen / bad food preference)
      *
@@ -133,7 +119,6 @@ class PairListFactoryTest {
             return true;
         }
         return false;
-
     }
 
     /**
@@ -209,7 +194,6 @@ class PairListFactoryTest {
                     return true;
                 }
             }
-
         }
         return false;
     }
@@ -227,7 +211,6 @@ class PairListFactoryTest {
             if (pairList.stream().anyMatch(p -> p.getParticipant1().getId().equals(pairIDs[0]) || p.getParticipant2().getId().equals(pairIDs[0]))) {
                 System.out.println("Participant " + pair.getParticipant1().getName() + " is in multiple Pairs");
                 return true;
-
             }
         }
         return false;
