@@ -71,11 +71,28 @@ public class Group {
         return this.pairs.contains(pair);
     }
 
+    /**
+     * builds String of Pairs for printing
+     * @return
+     */
     public String toString() {
         String result = "";
         for (Pair pair : pairs) {
             result += pair.toString() + " ";
         }
         return result;
+    }
+
+    /**
+     * calculates genderDiversityScore of a Group
+     * @return
+     */
+    public double getGenderDiversityScore() {
+        double score = 0.0;
+        for(Pair pair : pairs) {
+            score += pair.getGenderDiversityScore();
+
+        }
+        return score/pairs.size();
     }
 }

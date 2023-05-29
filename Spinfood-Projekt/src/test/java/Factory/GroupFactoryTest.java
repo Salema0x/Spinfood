@@ -16,11 +16,12 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GroupFactoryTest {
-    GroupFactory groupFactory;
-    PairListFactory pairListFactory;
-    ParticipantFactory participantFactory;
-    Double[] partyLocationCoordinates;
-    File partyLocation;
+    private GroupFactory groupFactory;
+    private PairListFactory pairListFactory;
+    private ParticipantFactory participantFactory;
+    private Double[] partyLocationCoordinates;
+    private File partyLocation;
+    private final double genderDiversityThreshold = 0.4;
 
 
     @BeforeEach
@@ -37,6 +38,8 @@ class GroupFactoryTest {
         Assertions.assertFalse(checkGroupsContainAllPairs(groupFactory));
         Assertions.assertFalse(checkFalseCooking(groupFactory));
         Assertions.assertTrue(checkNewPairsEachDinnerRound(groupFactory));
+        Assertions.assertTrue(checkMixedGroupsBadFoodPref(groupFactory));
+        Assertions.assertTrue(checkGenderDiversityScore(groupFactory, genderDiversityThreshold));
 
 
 
@@ -147,6 +150,51 @@ class GroupFactoryTest {
             }
         }
         return true;
+    }
+
+    /**
+     * checks if mixed groups with vegans/veggies contain max one pair with meat/no preference
+     * @param groupFactory
+     * @return
+     */
+    private boolean checkMixedGroupsBadFoodPref(GroupFactory groupFactory) {
+        for(DinnerRound dinnerRound : groupFactory.getDinnerRounds()) {
+            for(Group group : dinnerRound.getGroups()) {
+                int noMeatPrefCount = 0;
+                int noPrefCount = 0;
+                for(Pair pair : group.getPairs()) {
+                    String foodPreference = pair.getFoodPreference();
+                    if(foodPreference.equals("vegetarisch") || foodPreference.equals("vegan")) {
+                        noMeatPrefCount++;
+                    }
+                    if(foodPreference.equals("none") || foodPreference.equals("meat")) {
+                        noPrefCount++;
+                    }
+                }
+                if(noPrefCount > 1 || noMeatPrefCount > 0) {
+                    System.out.println("Mixed Group: " + group.toString() + " has more than one meat preference");
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * calculates the GenderDiversityScore of all generated Groups and checks if its higher than given threshold
+     * @param groupFactory
+     * @return
+     */
+    private boolean checkGenderDiversityScore(GroupFactory groupFactory, double threshold) {
+        double score = 0.0;
+        for(DinnerRound dinnerRound : groupFactory.getDinnerRounds()) {
+            for(Group group : dinnerRound.getGroups()) {
+                score += group.getGenderDiversityScore();
+            }
+        }
+        score = score / (groupFactory.getDinnerRounds().size() * groupFactory.getDinnerRounds().get(0).getGroups().size());
+        System.out.println("GenderDiversity Score: " + score + " (should be > 0.4)");
+        return score < threshold;
     }
 
 
