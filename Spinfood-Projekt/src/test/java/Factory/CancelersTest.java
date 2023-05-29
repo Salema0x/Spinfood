@@ -22,6 +22,7 @@ class CancelersTest {
     private File participantFile;
     private ParticipantFactory participantFactory;
     private Cancelers cancelers;
+    private int initialDinnerRoundSize;
 
 
     @BeforeEach
@@ -40,11 +41,11 @@ class CancelersTest {
         //TODO cancelers only works with groups, should work with dinnerRounds
         //TODO cancelers only works with participants, should also work with pairs
         cancelers = new Cancelers(absences, dinnerRounds, pairListFactory);
+        initialDinnerRoundSize = dinnerRounds.size();
 
     }
 
-    @org.junit.jupiter.api.Test
-    void
+    @
 
 
     @org.junit.jupiter.api.Test
@@ -70,6 +71,7 @@ class CancelersTest {
      */
     @org.junit.jupiter.api.Test
     void updateWaitingList() {
+        cancelers.updateGroupList();
         cancelers.updateWaitingList();
         testIfGroupsWithAbsentParticipantsAreRemoved();
     }
@@ -79,6 +81,8 @@ class CancelersTest {
      */
     @org.junit.jupiter.api.Test
     void completeGroups() {
+        cancelers.updateGroupList();
+        cancelers.updateWaitingList();
         cancelers.completeGroups();
         testIfGroupsAreRefilled();
         testIfUpdatedGroupsAreFine();
@@ -114,6 +118,11 @@ class CancelersTest {
      * tests if groups are refilled with matching pairs
      */
     private void testIfUpdatedGroupsAreFine() {
+        for(DinnerRound dinnerRound : dinnerRounds) {
+            for(Group group : dinnerRound.getGroups()) {
+                Assertions.assertTrue();
+            }
+        }
     }
 
     /**
@@ -123,6 +132,12 @@ class CancelersTest {
     }
 
     public void testIfGroupsAreRefilled() {
+        for(DinnerRound dinnerRound : dinnerRounds) {
+            Assertions.assertTrue(dinnerRound.getGroups().size() == initialDinnerRoundSize);
+            for(Group group : dinnerRound.getGroups()) {
+                Assertions.assertEquals(3, group.getParticipants().size());
+            }
+        }
 
     }
 
