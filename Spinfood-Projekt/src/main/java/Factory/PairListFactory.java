@@ -1,5 +1,6 @@
 package Factory;
 
+import Data.PairList;
 import Entity.Pair;
 import Entity.Participant;
 import Misc.ParticipantComparator;
@@ -67,6 +68,8 @@ public class PairListFactory {
         concatWithRegisteredPairs();
         identifySuccessors();
         showPairs();
+        PairList pairList1 = new PairList(pairList, successors);
+        System.out.println(pairList1.getCountPairs() + " " + pairList1.getPreferenceDeviation() + " " + pairList1.getAgeDifference() + " " + pairList1.getGenderDiversityScore());
         System.out.println("Done!");
     }
 

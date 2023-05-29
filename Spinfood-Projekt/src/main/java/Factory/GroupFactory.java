@@ -2,7 +2,7 @@ package Factory;
 
 import Entity.Pair;
 import Entity.Group;
-import Entity.DinnerRound;
+import Misc.DinnerRound;
 
 import java.util.*;
 

@@ -1,4 +1,6 @@
-package Entity;
+package Misc;
+
+import Entity.Group;
 
 import java.util.ArrayList;
 import java.util.List;
