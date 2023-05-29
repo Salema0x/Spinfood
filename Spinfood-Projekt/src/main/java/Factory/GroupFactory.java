@@ -153,11 +153,11 @@ public class GroupFactory {
 
     private boolean groupContainsNonVegPreference(Group group) {
         return group.getPairs().stream().anyMatch(pair -> pair.getParticipant1().getFoodPreference().equals("0")
-                || pair.getParticipant1().getFoodPreference().toLowerCase().equals("meat")
-                || pair.getParticipant1().getFoodPreference().toLowerCase().equals("none")
+                || pair.getParticipant1().getFoodPreference().equalsIgnoreCase("meat")
+                || pair.getParticipant1().getFoodPreference().equalsIgnoreCase("none")
                 || pair.getParticipant2().getFoodPreference().equals("0")
-                || pair.getParticipant2().getFoodPreference().toLowerCase().equals("meat")
-                || pair.getParticipant2().getFoodPreference().toLowerCase().equals("none"));
+                || pair.getParticipant2().getFoodPreference().equalsIgnoreCase("meat")
+                || pair.getParticipant2().getFoodPreference().equalsIgnoreCase("none"));
     }
 
     public void updateGroupsWithClosestPairs() {
