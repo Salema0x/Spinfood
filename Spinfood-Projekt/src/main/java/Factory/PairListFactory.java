@@ -80,6 +80,25 @@ public class PairListFactory {
 
         successors = new ArrayList<>(successors);
 
+        for (int i = 0; i < 3; i++) {
+            for (Participant participant : yesKitchenParticipants.get(i)) {
+                participant.setSuccessor(true);
+            }
+        }
+
+        for (int i = 0; i < 3; i++) {
+            for (Participant participant : maybeKitchenParticipants.get(i)) {
+                participant.setSuccessor(true);
+            }
+        }
+
+        for (int i = 0; i < 3; i++) {
+            for (Participant participant : noKitchenParticipants.get(i)) {
+                participant.setSuccessor(true);
+            }
+        }
+
+
         successors.addAll(yesKitchenParticipants.get(0));
         successors.addAll(yesKitchenParticipants.get(1));
         successors.addAll(yesKitchenParticipants.get(2));
