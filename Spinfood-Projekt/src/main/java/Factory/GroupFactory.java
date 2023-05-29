@@ -10,6 +10,9 @@ public class GroupFactory {
     private final int maxGroupSize;
     private final List<Group> groups;
     private final List<DinnerRound> dinnerRounds;
+
+
+
     private final List<Pair> successorList;
     private Double[] partyLocation;
     private final String[] roundNames = {"Vorspeise", "Hauptgang", "Dessert"}; // Name der DinnerRounds
@@ -171,16 +174,6 @@ public class GroupFactory {
     }
 
 
-
-    private boolean groupContainsNonVegPreference(Group group) {
-        return group.getPairs().stream().anyMatch(pair -> pair.getParticipant1().getFoodPreference().equals("0")
-                || pair.getParticipant1().getFoodPreference().equalsIgnoreCase("meat")
-                || pair.getParticipant1().getFoodPreference().equalsIgnoreCase("none")
-                || pair.getParticipant2().getFoodPreference().equals("0")
-                || pair.getParticipant2().getFoodPreference().equalsIgnoreCase("meat")
-                || pair.getParticipant2().getFoodPreference().equalsIgnoreCase("none"));
-    }
-
     public void updateGroupsWithClosestPairs() {
         List<Pair> availablePairs = new ArrayList<>(registeredPairs);
 
@@ -288,5 +281,9 @@ public class GroupFactory {
 
     public List<Pair> getRegisteredPairs() {
         return registeredPairs;
+    }
+
+    public List<Pair> getSuccessorList() {
+        return successorList;
     }
 }

@@ -31,16 +31,6 @@ class GroupFactoryTest {
         participantFactory = new ParticipantFactory();
         participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/teilnehmerliste.csv").toURI())));
         pairListFactory = new PairListFactory(participantFactory.getParticipantList(), participantFactory.getRegisteredPairs(), new ArrayList<>());
-        groupFactory = new GroupFactory(pairListFactory, 3, partyLocationCoordinates);
-        groupFactory.createGroups();
-
-
-        Assertions.assertFalse(checkGroupsContainAllPairs(groupFactory));
-        Assertions.assertFalse(checkFalseCooking(groupFactory));
-        Assertions.assertTrue(checkNewPairsEachDinnerRound(groupFactory));
-        Assertions.assertTrue(checkMixedGroupsBadFoodPref(groupFactory));
-        Assertions.assertTrue(checkGenderDiversityScore(groupFactory, genderDiversityThreshold));
-
 
 
     }
@@ -48,8 +38,16 @@ class GroupFactoryTest {
 
     @org.junit.jupiter.api.Test
     void GroupFactory() {
+        groupFactory = new GroupFactory(pairListFactory, 3, partyLocationCoordinates);
+        groupFactory.createGroups();
+        Assertions.assertFalse(checkGroupsContainAllPairs(groupFactory));
+        Assertions.assertFalse(checkFalseCooking(groupFactory));
+        Assertions.assertTrue(checkNewPairsEachDinnerRound(groupFactory));
+        Assertions.assertTrue(checkMixedGroupsBadFoodPref(groupFactory));
+        Assertions.assertTrue(checkGenderDiversityScore(groupFactory, genderDiversityThreshold));
 
     }
+
     //Testmethoden
 
 
@@ -198,7 +196,8 @@ class GroupFactoryTest {
     }
 
 
-    //helper Methods
+
+
 
     /**
      * checks if all Pairs in group have access to a kitchen
@@ -215,6 +214,7 @@ class GroupFactoryTest {
 
     private boolean checkGeographicalDistance(Group group) {
         for (Pair pair : group.getPairs()) {
+            pair.getPlaceOfCooking();
 
         }
         return false;
@@ -226,6 +226,34 @@ class GroupFactoryTest {
 
     private boolean checkPreferenceDeviation(Group group) {
         return true;
+    }
+    //Helper Methods
+
+    private double calculateGeographicalDistance(Double[] firstCoordinates, Double[] secondCoordinates) {
+        Double distance = 0.0;
+        double firstLatitude = firstCoordinates[0];
+        double firstLongitude = firstCoordinates[1];
+        double secondLatitude = secondCoordinates[0];
+        double secondLongitude = secondCoordinates[1];
+
+        double earthRadius = 6371.0;
+
+        double latitudeDistance = Math.toRadians(secondLatitude - firstLatitude);
+        double longitudeDistance = Math.toRadians(secondLongitude - firstLongitude);
+
+        double a = Math.sin(latitudeDistance / 2) * Math.sin(latitudeDistance / 2)
+                + Math.cos(Math.toRadians(firstLatitude)) * Math.cos(Math.toRadians(secondLatitude))
+                * Math.sin(longitudeDistance / 2) * Math.sin(longitudeDistance / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        distance = earthRadius * c;
+
+        return distance;
+    }
+
+    private double distanceToPartyLocation(Double[] coordinates) {
+        return calculateGeographicalDistance(coordinates, partyLocationCoordinates);
     }
 
     /**
