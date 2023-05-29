@@ -4,6 +4,7 @@ import Entity.Pair;
 import Entity.Participant;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -21,6 +22,9 @@ class PairListFactoryTest {
         CRITERIA_SEX_FOOD_AGE,
         CRITERIA_SEX_AGE_FOOD,
     }
+    byte[] expectedAgeDifference = new byte[] {2, 2, 1, 1, 2};
+    byte[] expectedPreferenceDeviation = new byte[] {0, 0, 1, 1, 0};
+    double[] expectedGenderDiversityScore = new double[] {0.5, 0.5, 0.5, 0.5, 0.0};
 
     double[] meanFoodDeviationMax = new double[] {7, 1.5, 0.7};
     double[] meanAgeDeviationMax = new double[] {5, 3, 2.5};
@@ -89,6 +93,86 @@ class PairListFactoryTest {
 
 
     }
+
+    /**
+     * testet ob die AltersKennzahl richtig berechnet wird
+     */
+    @org.junit.jupiter.api.Test
+    void calculateAgeDifference() throws URISyntaxException {
+        int index = 0;
+        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/pairfactorytestlists/testliste0.csv")).toURI()));
+        participantList = participantFactory.getParticipantList();
+        ArrayList<Object> criteria = new ArrayList<>();
+        criteria.add("Essensvorlieben");
+        criteria.add("Altersdifferenz");
+        criteria.add("Geschlechterdiversität");
+
+        PairListFactory pairListFactory = new PairListFactory(participantList, participantFactory.getRegisteredPairs(), criteria);
+        List<Pair> generatedPairs = pairListFactory.pairList;
+        pairListFactory.showPairs();
+
+        while(!generatedPairs.isEmpty()) {
+            Pair p = generatedPairs.remove(0);
+            byte ageDifference = p.getAgeDifference();
+            System.out.println("AgeDifference should be: " + expectedAgeDifference[index] + " and is: " + ageDifference);
+            Assertions.assertTrue(ageDifference == expectedAgeDifference[index]);
+            index++;
+        }
+    }
+
+    /**
+     * testet ob die EssensKennzahl richtig berechnet wird
+     */
+    @org.junit.jupiter.api.Test
+    void calculatePreferenceDeviation() throws URISyntaxException {
+        int index = 0;
+        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/pairfactorytestlists/testliste0.csv")).toURI()));
+        participantList = participantFactory.getParticipantList();
+        ArrayList<Object> criteria = new ArrayList<>();
+        criteria.add("Essensvorlieben");
+        criteria.add("Altersdifferenz");
+        criteria.add("Geschlechterdiversität");
+
+        PairListFactory pairListFactory = new PairListFactory(participantList, participantFactory.getRegisteredPairs(), criteria);
+        List<Pair> generatedPairs = pairListFactory.pairList;
+        pairListFactory.showPairs();
+
+        while(!generatedPairs.isEmpty()) {
+            Pair p = generatedPairs.remove(0);
+            byte preferenceDeviation = p.getPreferenceDeviation();
+            System.out.println("PreferenceDeviation should be: " + expectedPreferenceDeviation[index] + " and is: " + preferenceDeviation);
+            Assertions.assertTrue(preferenceDeviation == expectedPreferenceDeviation[index]);
+            index++;
+        }
+    }
+
+    /**
+     * testet ob die GeschlechterKennzahl richtig berechnet wird
+     */
+    @org.junit.jupiter.api.Test
+    void calculateGenderDiversityScore() throws URISyntaxException {
+        int index = 0;
+        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/pairfactorytestlists/testliste0.csv")).toURI()));
+        participantList = participantFactory.getParticipantList();
+        ArrayList<Object> criteria = new ArrayList<>();
+        criteria.add("Essensvorlieben");
+        criteria.add("Altersdifferenz");
+        criteria.add("Geschlechterdiversität");
+
+        PairListFactory pairListFactory = new PairListFactory(participantList, participantFactory.getRegisteredPairs(), criteria);
+        List<Pair> generatedPairs = pairListFactory.pairList;
+        pairListFactory.showPairs();
+
+        while(!generatedPairs.isEmpty()) {
+            Pair p = generatedPairs.remove(0);
+            double genderDiversityScore = p.getGenderDiversityScore();
+            System.out.println("GenderDiversityScore should be: " + expectedGenderDiversityScore[index] + " and is: " + genderDiversityScore);
+            Assertions.assertTrue(genderDiversityScore == expectedGenderDiversityScore[index]);
+            index++;
+        }
+    }
+
+
 
 
     private void initializeCriteria() {

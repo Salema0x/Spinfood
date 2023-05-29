@@ -3,7 +3,7 @@ package Entity;
 public class Pair {
     private final Participant participant1;
     private final Participant participant2;
-    private byte course;
+    private Course course;
     private byte ageDifference;
     private byte preferenceDeviation;
     private double genderDiversityScore;

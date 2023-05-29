@@ -1,5 +1,10 @@
 package Entity;
 
 public enum Criteria {
+    FOOD_PREFERENCE,
+    AGE_DIFFERENCE,
+    GENDER_DIVERSITY,
+    GEOGRAPHICAL_DISTANCE,
+    MAX_PARTICIPANTS
 
 }

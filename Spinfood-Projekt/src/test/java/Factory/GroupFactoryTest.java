@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 import java.io.*;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,7 +34,7 @@ class GroupFactoryTest {
         partyLocationCoordinates = partyLocationReader(partyLocation);
         participantFactory = new ParticipantFactory();
         participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("participants.csv").toURI())));
-        pairListFactory = new PairListFactory(participantFactory.getParticipantList(), participantFactory.getRegisteredPairs(), );
+        pairListFactory = new PairListFactory(participantFactory.getParticipantList(), participantFactory.getRegisteredPairs(),new ArrayList<>());
         groupFactory = new GroupFactory(pairListFactory, 3, partyLocationCoordinates);
 
 
@@ -44,6 +45,8 @@ class GroupFactoryTest {
 
     }
     //Testmethoden
+
+
 
     /**
      * Test if each Pair cooks exactly once
