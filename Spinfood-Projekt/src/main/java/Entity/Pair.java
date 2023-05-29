@@ -3,14 +3,12 @@ package Entity;
 public class Pair {
     private final Participant participant1;
     private final Participant participant2;
-    private Course course;
     private byte ageDifference;
     private byte preferenceDeviation;
     private double genderDiversityScore;
     private Double[][] route;
     private  Double[] placeOfCooking = new Double[2];
     private String foodPreference;
-    private int pathLength;
 
 
     public Pair(Participant participant1, Participant participant2) {
@@ -132,14 +130,6 @@ public class Pair {
         return placeOfCooking;
     }
 
-    public void setPlaceOfCooking(Double[] placeOfCooking) {
-        this.placeOfCooking = placeOfCooking;
-    }
-
-
-    public int getPathLength() {
-        return pathLength;
-    }
 
 
 }

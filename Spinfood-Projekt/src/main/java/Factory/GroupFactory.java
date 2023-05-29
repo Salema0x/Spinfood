@@ -263,7 +263,7 @@ public class GroupFactory {
      * @param place2 The coordinates of the second place
      * @return The geographical distance between the two places
      */
-    
+
     private double calculateGeographicalDistance(Double[] place1, Double[] place2) {
         double latitudeDifference = Math.toRadians(place2[0] - place1[0]);
         double longitudeDifference = Math.toRadians(place2[1] - place1[1]);
@@ -278,5 +278,15 @@ public class GroupFactory {
         final int EARTH_RADIUS = 6371;
 
         return EARTH_RADIUS * c;
+    }
+
+    //HelperMethods
+
+    public List<DinnerRound> getDinnerRounds() {
+        return dinnerRounds;
+    }
+
+    public List<Pair> getRegisteredPairs() {
+        return registeredPairs;
     }
 }

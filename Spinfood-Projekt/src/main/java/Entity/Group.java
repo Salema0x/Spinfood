@@ -1,5 +1,6 @@
 package Entity;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,5 +65,17 @@ public class Group {
         } else {
             throw new IllegalArgumentException("The provided pair is not part of this group.");
         }
+    }
+
+    public boolean containsPair(Pair pair) {
+        return this.pairs.contains(pair);
+    }
+
+    public String toString() {
+        String result = "";
+        for (Pair pair : pairs) {
+            result += pair.toString() + " ";
+        }
+        return result;
     }
 }
