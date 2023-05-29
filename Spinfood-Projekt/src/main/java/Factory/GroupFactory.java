@@ -13,6 +13,8 @@ public class GroupFactory {
     private final int maxGroupSize;
     private Double[] partyLocation;
     private final List<Group> groups;
+    private final Map<Pair, Set<Pair>> pairMeetings;
+
     private final String[] roundNames = {"Vorspeise", "Hauptgang", "Dessert"}; // Name der DinnerRounds
 
 
@@ -28,6 +30,12 @@ public class GroupFactory {
         for (int i = 0; i < 3; i++) {
             dinnerRounds.add(new DinnerRound());
         }
+
+        this.pairMeetings = new HashMap<>();
+        for (Pair pair : registeredPairs) {
+            pairMeetings.put(pair, new HashSet<>());
+        }
+
     }
 
     /**
@@ -121,6 +129,50 @@ public class GroupFactory {
     }
 
 
+    public void ensureUniquePairMeetings() {
+        // Durchlaufe jede DinnerRound
+        for (DinnerRound round : dinnerRounds) {
+            // Durchlaufe jede Gruppe in der DinnerRound
+            for (Group group : round.getGroups()) {
+                // Erstelle eine Kopie der Paare in der Gruppe
+                List<Pair> groupPairs = new ArrayList<>(group.getPairs());
+
+                // Durchlaufe jedes Paar in der Kopie
+                for (Pair pair : groupPairs) {
+                    // Durchlaufe jedes andere Paar in der Kopie
+                    for (Pair otherPair : groupPairs) {
+                        // Wenn das Paar sich bereits mit dem anderen Paar getroffen hat, finde ein neues Paar zum Tauschen
+                        if (!pair.equals(otherPair) && pairMeetings.get(pair).contains(otherPair)) {
+                            for (DinnerRound swapRound : dinnerRounds) {
+                                if (swapRound != round) {
+                                    for (Group swapGroup : swapRound.getGroups()) {
+                                        // Finde ein Paar zum Tauschen, das sich nicht bereits mit den anderen Paaren in der Gruppe getroffen hat
+                                        for (Pair swapPair : swapGroup.getPairs()) {
+                                            if (!pairMeetings.get(pair).contains(swapPair) && !pairMeetings.get(otherPair).contains(swapPair)) {
+                                                // Tausche die Paare
+                                                group.getPairs().remove(pair);
+                                                group.getPairs().add(swapPair);
+                                                swapGroup.getPairs().remove(swapPair);
+                                                swapGroup.getPairs().add(pair);
+
+                                                // Aktualisiere das pairMeetings Map
+                                                pairMeetings.get(pair).remove(otherPair);
+                                                pairMeetings.get(pair).add(swapPair);
+                                                pairMeetings.get(swapPair).remove(swapPair);
+                                                pairMeetings.get(swapPair).add(pair);
+
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     public void displayDinnerRounds() {
         for (int i = 0; i < dinnerRounds.size(); i++) {
