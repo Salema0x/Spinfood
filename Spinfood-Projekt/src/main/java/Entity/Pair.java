@@ -8,7 +8,7 @@ public class Pair {
     private byte preferenceDeviation;
     private double genderDiversityScore;
     private Double[][] route;
-    private Double[][] placeOfCooking;
+    private  Double[] placeOfCooking = new Double[2];
     private String foodPreference;
     private int pathLength;
 
@@ -17,15 +17,48 @@ public class Pair {
         this.participant1 = participant1;
         this.participant2 = participant2;
 
-        this.foodPreference = decideFoodPreference();
-
+        decideFoodPreference();
+        decidePlaceOfCooking();
         calculateAgeDifference();
         calculateGenderDiversityScore();
         calculatePreferenceDeviation();
     }
 
-    private String decideFoodPreference() {
-        return "";
+    private void decidePlaceOfCooking() {
+        if (participant1.getHasKitchen().equals("yes")) {
+            placeOfCooking[0] = participant1.getKitchenLatitude();
+            placeOfCooking[1] = participant1.getKitchenLongitude();
+        } else if (participant2.getHasKitchen().equals("yes")) {
+            placeOfCooking[0] = participant2.getKitchenLatitude();
+            placeOfCooking[1] = participant2.getKitchenLongitude();
+        } else if (participant1.getHasKitchen().equals("maybe")) {
+            placeOfCooking[0] = participant1.getKitchenLatitude();
+            placeOfCooking[1] = participant1.getKitchenLongitude();
+        } else if (participant2.getHasKitchen().equals("maybe")) {
+            placeOfCooking[0] = participant2.getKitchenLatitude();
+            placeOfCooking[1] = participant2.getKitchenLongitude();
+        }
+    }
+
+    private void decideFoodPreference() {
+        String part1Pref = participant1.getFoodPreference();
+        String part2Pref = participant2.getFoodPreference();
+
+        if (part1Pref.equals(part2Pref)) {
+            this.foodPreference = part1Pref;
+        } else if ((part1Pref.equals("meat") && part2Pref.equals("none")) || (part1Pref.equals("none") && part2Pref.equals("meat"))) {
+            this.foodPreference = part1Pref;
+        } else if (part1Pref.equals("meat") || part2Pref.equals("meat")) {
+            if (part2Pref.equals("veggie") || part2Pref.equals("vegan")) {
+                this.foodPreference = part2Pref;
+            } else if (part1Pref.equals("veggie") || part1Pref.equals("vegan")) {
+                this.foodPreference = part1Pref;
+            }
+        } else if (part1Pref.equals("veggie") && part2Pref.equals("vegan")) {
+            this.foodPreference = part2Pref;
+        } else if (part1Pref.equals("vegan") && part2Pref.equals("veggie")) {
+            this.foodPreference = part1Pref;
+        }
     }
 
     /**
@@ -53,6 +86,36 @@ public class Pair {
         this.preferenceDeviation = (byte) Math.abs(participant1.getFoodPreferenceNumber() - participant2.getFoodPreferenceNumber());
     }
 
+    @Override
+    public String toString() {
+        return "Pair{" +
+                "Participant Namen: " + participant1.getName() + " | " + participant2.getName() +
+                ", Essensvorlieben: " + participant1.getFoodPreference() + " | " + participant2.getFoodPreference() +
+                '}';
+    }
+
+
+    public boolean isEqualTo(Pair pair) {
+        if (participant1.getId().equals(pair.getParticipant1().getId()) || participant1.getId().equals(pair.getParticipant2().getId())) {
+            return true;
+        } else {
+            return participant2.getId().equals(pair.getParticipant1().getId()) || participant2.getId().equals(pair.getParticipant2().getId());
+        }
+    }
+
+    public Participant getParticipant1() {
+        return participant1;
+    }
+
+    public Participant getParticipant2() {
+        return participant2;
+    }
+
+    public String getFoodPreference() {
+        return foodPreference;
+    }
+
+
     public byte getAgeDifference() {
         return ageDifference;
     }
@@ -65,27 +128,18 @@ public class Pair {
         return genderDiversityScore;
     }
 
-    public Double[][] getPlaceOfCooking() {
+    public Double[] getPlaceOfCooking() {
         return placeOfCooking;
     }
 
-    public void setPlaceOfCooking(Double[][] placeOfCooking) {
+    public void setPlaceOfCooking(Double[] placeOfCooking) {
         this.placeOfCooking = placeOfCooking;
     }
 
-    public Participant getParticipant1() {
-        return participant1;
-    }
-    public Participant getParticipant2() {
-        return participant2;
-    }
-
-    public String getFoodPreference() {
-        return foodPreference;
-    }
 
     public int getPathLength() {
         return pathLength;
     }
+
 
 }

@@ -10,7 +10,7 @@ public class ParticipantFactory {
     private static final List<Participant> PARTICIPANT_LIST = new ArrayList<>();
     private static final List<Pair> REGISTERED_PAIRS = new ArrayList<>();
     private static final HashSet<String> IDS = new HashSet<>();
-    private static final int MAX_PARTICIPANTS = 300;
+    private static final int MAX_PARTICIPANTS = 400;
     private static final HashMap<String, List<Participant>> ADDRESS_PARTICIPANT_MAP = new HashMap<>();
     private static final HashMap<String, Participant> ID_PARTICIPANT_MAP = new HashMap<>();
     private int participantCounter = 0;
@@ -18,6 +18,7 @@ public class ParticipantFactory {
     private boolean pairParticipant1Exists = false;
     private boolean pairParticipant2Exists = false;
     private byte sizeWGMembers = 0;
+    private final Double[] partyLocation = new Double[2];
 
     /**
      * Will extract all participants from the .csv file.
@@ -274,6 +275,18 @@ public class ParticipantFactory {
         return participant2;
     }
 
+    public void readPartyLocation(File csvFile) {
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+            br.readLine();
+            String line = br.readLine();
+            String[] values = line.split(",");
+            partyLocation[0] = Double.parseDouble(values[0]);
+            partyLocation[1] = Double.parseDouble(values[1]);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Will display all participants in a table on the console.
      */
@@ -327,5 +340,9 @@ public class ParticipantFactory {
 
     public List<Pair> getRegisteredPairs() {
         return REGISTERED_PAIRS;
+    }
+
+    public Double[] getPartyLocation() {
+        return partyLocation;
     }
 }

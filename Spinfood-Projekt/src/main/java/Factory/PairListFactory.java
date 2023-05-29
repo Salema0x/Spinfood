@@ -1,5 +1,6 @@
 package Factory;
 
+import Data.PairList;
 import Entity.Pair;
 import Entity.Participant;
 import Misc.ParticipantComparator;
@@ -15,15 +16,17 @@ public class PairListFactory {
     public List<Pair> pairList = new ArrayList<>();
     private final List<Object> criteriaOrder;
     private final List<Participant> participantList;
-    private final List<List<Participant>> yesKitchenParticipants = new ArrayList<>();
-    private final List<List<Participant>> maybeKitchenParticipants = new ArrayList<>();
-    private final List<List<Participant>> noKitchenParticipants = new ArrayList<>();
+    private List<List<Participant>> yesKitchenParticipants = new ArrayList<>();
+    private List<List<Participant>> maybeKitchenParticipants = new ArrayList<>();
+    private List<List<Participant>> noKitchenParticipants = new ArrayList<>();
     private int sexFunctionIndex;
     private Function<Participant, Integer> firstMethod;
     private Function<Participant, Integer> secondMethod;
     private Function<Participant, Integer> thirdMethod;
     private final List<Participant> removements = new ArrayList<>();
     private final List<Participant> upperRemovements = new ArrayList<>();
+    private List<Participant> successors = new ArrayList<>();
+
 
     public PairListFactory(List<Participant> participantList, List<Pair> registeredPairs, List<Object> criteriaOrder) {
         this.registeredPairs = registeredPairs;
@@ -62,8 +65,56 @@ public class PairListFactory {
 
         decideAlgorithm();
         makePairs();
+        concatWithRegisteredPairs();
+        identifySuccessors();
         showPairs();
+        PairList pairList1 = new PairList(pairList, successors);
+        System.out.println(pairList1.getCountPairs() + " " + pairList1.getPreferenceDeviation() + " " + pairList1.getAgeDifference() + " " + pairList1.getGenderDiversityScore());
         System.out.println("Done!");
+    }
+
+    private void identifySuccessors() {
+        yesKitchenParticipants = new ArrayList<>(yesKitchenParticipants);
+        noKitchenParticipants = new ArrayList<>(noKitchenParticipants);
+        maybeKitchenParticipants = new ArrayList<>(maybeKitchenParticipants);
+
+        successors = new ArrayList<>(successors);
+
+        for (int i = 0; i < 3; i++) {
+            for (Participant participant : yesKitchenParticipants.get(i)) {
+                participant.setSuccessor(true);
+            }
+        }
+
+        for (int i = 0; i < 3; i++) {
+            for (Participant participant : maybeKitchenParticipants.get(i)) {
+                participant.setSuccessor(true);
+            }
+        }
+
+        for (int i = 0; i < 3; i++) {
+            for (Participant participant : noKitchenParticipants.get(i)) {
+                participant.setSuccessor(true);
+            }
+        }
+
+
+        successors.addAll(yesKitchenParticipants.get(0));
+        successors.addAll(yesKitchenParticipants.get(1));
+        successors.addAll(yesKitchenParticipants.get(2));
+
+        successors.addAll(maybeKitchenParticipants.get(0));
+        successors.addAll(maybeKitchenParticipants.get(1));
+        successors.addAll(maybeKitchenParticipants.get(2));
+
+        successors.addAll(noKitchenParticipants.get(0));
+        successors.addAll(noKitchenParticipants.get(1));
+        successors.addAll(noKitchenParticipants.get(2));
+
+    }
+
+    private void concatWithRegisteredPairs() {
+        pairList = Stream.concat(pairList.stream(), registeredPairs.stream()).toList();
     }
 
     /**
@@ -80,7 +131,7 @@ public class PairListFactory {
      * Removes Participants which are already a successor from the participant List.
      */
     private void cleanParticipantListFromSuccessors() {
-        List<Participant> successors = participantList.stream()
+        successors = participantList.stream()
                 .filter(Participant::isSuccessor)
                 .toList();
 
@@ -381,9 +432,6 @@ public class PairListFactory {
             }
         }
     }
-    public List<Pair> getRegisteredPairs() {
-        return registeredPairs;
-    }
 
     /**
      * Makes the list of second participants modifiable and generates the pairs and sets fields.
@@ -410,12 +458,12 @@ public class PairListFactory {
      * Prints the pairs onto the console
      */
     public void showPairs() {
-        String leftAlignFormat = "%-9s| %-36s | %-36s | %-20s | %-20s |%n";
+        String leftAlignFormat = "| %-9s| %-36s | %-36s | %-20s | %-20s |%n";
         int pairNr = 0;
 
-        System.out.format("+--------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
-        System.out.format("|Pair Nr.| ID1                                  | ID2                                  | Name1                | Name2                |%n");
-        System.out.format("+--------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+        System.out.format("+----------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+        System.out.format("| Pair Nr. | ID1                                  | ID2                                  | Name1                | Name2                |%n");
+        System.out.format("+----------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
 
         for (Pair pair: pairList ) {
             String id1 = pair.getParticipant1().getId();
@@ -427,6 +475,14 @@ public class PairListFactory {
             System.out.format(leftAlignFormat,pairNr, id1, id2, name1, name2);
         }
 
-        System.out.format("+---------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+        System.out.format("+----------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+    }
+
+    public List<Pair> getRegisteredPairs() {
+        return registeredPairs;
+    }
+
+    public List<Participant> getSuccessors() {
+        return successors;
     }
 }

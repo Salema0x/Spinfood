@@ -3,16 +3,15 @@ package Data;
 import Entity.Pair;
 import Entity.Participant;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PairList {
-    private List<Pair> pairList = new ArrayList<>();
+    private final List<Pair> pairList;
     private final int countPairs;
     private final int countSuccessors;
     private final double genderDiversityScore;
     private final double ageDifference;
-    private final int preferenceDeviation;
+    private final double preferenceDeviation;
 
     public PairList(List<Pair> pairList, List<Participant> successors) {
         this.pairList = pairList;
@@ -43,8 +42,14 @@ public class PairList {
         return sumAgeDifference/countPairs;
     }
 
-    private int calculatePreferenceDeviation() {
-        return -1;
+    private double calculatePreferenceDeviation() {
+        double sumPreferenceDeviation = 0.0d;
+
+        for (Pair pair : pairList) {
+            sumPreferenceDeviation += pair.getPreferenceDeviation();
+        }
+
+        return sumPreferenceDeviation/countPairs;
     }
 
     public double getAgeDifference() {
@@ -53,5 +58,13 @@ public class PairList {
 
     public double getGenderDiversityScore() {
         return genderDiversityScore;
+    }
+
+    public int getCountPairs() {
+        return countPairs;
+    }
+
+    public double getPreferenceDeviation() {
+        return preferenceDeviation;
     }
 }

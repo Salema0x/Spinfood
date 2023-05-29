@@ -22,13 +22,15 @@ class PairListFactoryTest {
         CRITERIA_SEX_FOOD_AGE,
         CRITERIA_SEX_AGE_FOOD,
     }
-    byte[] expectedAgeDifference = new byte[] {2, 2, 1, 1, 2};
-    byte[] expectedPreferenceDeviation = new byte[] {0, 0, 1, 1, 0};
-    double[] expectedGenderDiversityScore = new double[] {0.5, 0.5, 0.5, 0.5, 0.0};
 
-    double[] meanFoodDeviationMax = new double[] {7, 1.5, 0.7};
-    double[] meanAgeDeviationMax = new double[] {5, 3, 2.5};
-    double[] meanGenderDeviationMin = new double[] {0.3, 0.35, 0.39};
+    byte[] expectedAgeDifference = new byte[]{2, 2, 1, 1, 2};
+    byte[] expectedPreferenceDeviation = new byte[]{0, 0, 1, 1, 0};
+    double[] expectedGenderDiversityScore = new double[]{0.5, 0.5, 0.5, 0.5, 0.0};
+
+    double[] meanFoodDeviationMax = new double[]{7, 1.5, 0.7};
+    double[] meanAgeDeviationMax = new double[]{5, 3, 2.5};
+    double[] meanGenderDeviationMin = new double[]{0.3, 0.35, 0.39};
+
 
     PairListFactory pairListFactory;
     ParticipantFactory participantFactory;
@@ -48,29 +50,16 @@ class PairListFactoryTest {
         List<Object> criteria = new ArrayList<>();
         initializeCriteria();
 
-
         for (Criteria c : Criteria.values()) {
             switch (c) {
-                case CRITERIA_FOOD_AGE_SEX -> {
-                    criteria = criteriaOrder.get(0);
-                }
-                case CRITERIA_FOOD_SEX_AGE -> {
-                    criteria = criteriaOrder.get(1);
-                }
-                case CRITERIA_AGE_FOOD_SEX -> {
-                    criteria = criteriaOrder.get(2);
-                }
-                case CRITERIA_AGE_SEX_FOOD -> {
-                    criteria = criteriaOrder.get(3);
-                }
-                case CRITERIA_SEX_FOOD_AGE -> {
-                    criteria = criteriaOrder.get(4);
-                }
-                case CRITERIA_SEX_AGE_FOOD -> {
-                    criteria = criteriaOrder.get(5);
-                }
-
+                case CRITERIA_FOOD_AGE_SEX -> criteria = criteriaOrder.get(0);
+                case CRITERIA_FOOD_SEX_AGE -> criteria = criteriaOrder.get(1);
+                case CRITERIA_AGE_FOOD_SEX -> criteria = criteriaOrder.get(2);
+                case CRITERIA_AGE_SEX_FOOD -> criteria = criteriaOrder.get(3);
+                case CRITERIA_SEX_FOOD_AGE -> criteria = criteriaOrder.get(4);
+                case CRITERIA_SEX_AGE_FOOD -> criteria = criteriaOrder.get(5);
             }
+
             pairListFactory = new PairListFactory(participantFactory.getParticipantList(), participantFactory.getRegisteredPairs(), criteria);
             List<Pair> pairList = pairListFactory.pairList;
 
@@ -83,15 +72,11 @@ class PairListFactoryTest {
             }
 
             //checks if generated pairs fulfill deviation restrictions, given by the criteria Order
-            Assertions.assertFalse(checkDeviationToHigh(pairList,c));
+            Assertions.assertFalse(checkDeviationToHigh(pairList, c));
 
             //checks if generated pairList contains 3 or more pairs who plan to use the same Kitchen
             Assertions.assertFalse(checkWgNoGo(pairList));
-
-
         }
-
-
     }
 
     /**
@@ -111,7 +96,7 @@ class PairListFactoryTest {
         List<Pair> generatedPairs = pairListFactory.pairList;
         pairListFactory.showPairs();
 
-        while(!generatedPairs.isEmpty()) {
+        while (!generatedPairs.isEmpty()) {
             Pair p = generatedPairs.remove(0);
             byte ageDifference = p.getAgeDifference();
             System.out.println("AgeDifference should be: " + expectedAgeDifference[index] + " and is: " + ageDifference);
@@ -137,7 +122,7 @@ class PairListFactoryTest {
         List<Pair> generatedPairs = pairListFactory.pairList;
         pairListFactory.showPairs();
 
-        while(!generatedPairs.isEmpty()) {
+        while (!generatedPairs.isEmpty()) {
             Pair p = generatedPairs.remove(0);
             byte preferenceDeviation = p.getPreferenceDeviation();
             System.out.println("PreferenceDeviation should be: " + expectedPreferenceDeviation[index] + " and is: " + preferenceDeviation);
@@ -163,7 +148,7 @@ class PairListFactoryTest {
         List<Pair> generatedPairs = pairListFactory.pairList;
         pairListFactory.showPairs();
 
-        while(!generatedPairs.isEmpty()) {
+        while (!generatedPairs.isEmpty()) {
             Pair p = generatedPairs.remove(0);
             double genderDiversityScore = p.getGenderDiversityScore();
             System.out.println("GenderDiversityScore should be: " + expectedGenderDiversityScore[index] + " and is: " + genderDiversityScore);
@@ -171,8 +156,6 @@ class PairListFactoryTest {
             index++;
         }
     }
-
-
 
 
     private void initializeCriteria() {
@@ -214,7 +197,10 @@ class PairListFactoryTest {
      * checks if a pair is a noGoPair (no kitchen / bad food preference)
      *
      * @param p
-     * @return
+     * @param p the pair that should be checked for a noGoPair
+     * @return /**
+     * checks if a pair is a noGoPair (no kitchen / bad food preference)
+     * @return a boolean indicating if the pair is a noGoPair
      */
     private boolean checkNoGoPair(Pair p) {
         if (checkKitchenNoGo(p.getParticipant1().getHasKitchen(), p.getParticipant2().getHasKitchen())) {
@@ -246,58 +232,52 @@ class PairListFactoryTest {
                 if (foodDeviation > meanFoodDeviationMax[2]) {
                     System.out.println("CriteriaOrder " + criteria.toString() + " MeanFoodDeviation is = " + foodDeviation + "but should be lower than " + meanFoodDeviationMax[2]);
                     return true;
-                }
-                else if (ageDeviation > meanAgeDeviationMax[1]) {
+                } else if (ageDeviation > meanAgeDeviationMax[1]) {
                     System.out.println("CriteriaOrder " + criteria.toString() + " MeanAgeDeviation is = " + ageDeviation + "but should be lower than " + meanAgeDeviationMax[1]);
                     return true;
                 }
             }
             case CRITERIA_FOOD_SEX_AGE -> {
-                if(foodDeviation > meanFoodDeviationMax[2]){
+                if (foodDeviation > meanFoodDeviationMax[2]) {
                     System.out.println("CriteriaOrder " + criteria.toString() + " MeanFoodDeviation is = " + foodDeviation + "but should be lower than " + meanFoodDeviationMax[2]);
                     return true;
-                }
-                else if(genderDeviation < meanGenderDeviationMin[1]){
+                } else if (genderDeviation < meanGenderDeviationMin[1]) {
                     System.out.println("CriteriaOrder " + criteria.toString() + " MeanGenderDeviation is = " + genderDeviation + "but should be higher than " + meanGenderDeviationMin[1]);
                     return true;
                 }
             }
             case CRITERIA_AGE_FOOD_SEX -> {
-                if(ageDeviation > meanAgeDeviationMax[2]){
+                if (ageDeviation > meanAgeDeviationMax[2]) {
                     System.out.println("CriteriaOrder " + criteria.toString() + " MeanAgeDeviation is = " + ageDeviation + "but should be lower than " + meanAgeDeviationMax[2]);
                     return true;
-                }
-                else if(foodDeviation > meanFoodDeviationMax[1]){
+                } else if (foodDeviation > meanFoodDeviationMax[1]) {
                     System.out.println("CriteriaOrder " + criteria.toString() + " MeanFoodDeviation is = " + foodDeviation + "but should be lower than " + meanFoodDeviationMax[1]);
                     return true;
                 }
             }
             case CRITERIA_AGE_SEX_FOOD -> {
-                if(ageDeviation > meanAgeDeviationMax[2]){
+                if (ageDeviation > meanAgeDeviationMax[2]) {
                     System.out.println("CriteriaOrder " + criteria.toString() + " MeanAgeDeviation is = " + ageDeviation + "but should be lower than " + meanAgeDeviationMax[2]);
                     return true;
-                }
-                else if(genderDeviation < meanGenderDeviationMin[1]){
+                } else if (genderDeviation < meanGenderDeviationMin[1]) {
                     System.out.println("CriteriaOrder " + criteria.toString() + " MeanGenderDeviation is = " + genderDeviation + "but should be higher than " + meanGenderDeviationMin[1]);
                     return true;
                 }
             }
             case CRITERIA_SEX_AGE_FOOD -> {
                 if (genderDeviation < meanGenderDeviationMin[2]) {
-                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanGenderDeviation is = "+ genderDeviation + "but should be higher than " + meanGenderDeviationMin[2]);
+                    System.out.println("CriteriaOrder " + criteria.toString() + " MeanGenderDeviation is = " + genderDeviation + "but should be higher than " + meanGenderDeviationMin[2]);
                     return true;
-                }
-                else if (ageDeviation > meanAgeDeviationMax[1]) {
+                } else if (ageDeviation > meanAgeDeviationMax[1]) {
                     System.out.println("CriteriaOrder " + criteria.toString() + " MeanAgeDeviation is = " + ageDeviation + "but should be lower than " + meanAgeDeviationMax[1]);
                     return true;
                 }
             }
             case CRITERIA_SEX_FOOD_AGE -> {
-                if(genderDeviation < meanGenderDeviationMin[2]){
+                if (genderDeviation < meanGenderDeviationMin[2]) {
                     System.out.println("CriteriaOrder " + criteria.toString() + " MeanGenderDeviation is = " + genderDeviation + "but should be lower than " + meanGenderDeviationMin[2]);
                     return true;
-                }
-                else if(foodDeviation > meanFoodDeviationMax[1]){
+                } else if (foodDeviation > meanFoodDeviationMax[1]) {
                     System.out.println("CriteriaOrder " + criteria.toString() + " MeanFoodDeviation is = " + foodDeviation + "but should be lower than " + meanFoodDeviationMax[1]);
                     return true;
                 }
@@ -320,11 +300,12 @@ class PairListFactoryTest {
             if (pairList.stream().anyMatch(p -> p.getParticipant1().getId().equals(pairIDs[0]) || p.getParticipant2().getId().equals(pairIDs[0]))) {
                 System.out.println("Participant " + pair.getParticipant1().getName() + " is in multiple Pairs");
                 return true;
-
             }
         }
         return false;
     }
+
+
 
     /**
      * checks if a pair is a bad match in food preferences (vegan with meat/veggie with meat)
@@ -359,15 +340,17 @@ class PairListFactoryTest {
 
     //TODO: check if this Works(Specification 5.4)
     private boolean checkWgNoGo(List<Pair> pairs) {
-        for(Pair p : pairs){
+        for (Pair p : pairs) {
             Participant p1 = p.getParticipant1();
             Participant p2 = p.getParticipant2();
-            if(p1.getCountWg() > 4 || p2.getCountWg() > 4){
+            if (p1.getCountWg() > 4 || p2.getCountWg() > 4) {
                 return true;
             }
         }
         return false;
     }
+
+
 
 
     /**
@@ -413,6 +396,5 @@ class PairListFactoryTest {
         }
         return genderDeviation / (double) pairList.size();
     }
-
 
 }

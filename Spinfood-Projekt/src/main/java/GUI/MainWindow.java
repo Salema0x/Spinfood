@@ -1,5 +1,6 @@
 package GUI;
 
+import Factory.GroupFactory;
 import Factory.PairListFactory;
 import Factory.ParticipantFactory;
 
@@ -20,13 +21,18 @@ public class MainWindow implements ActionListener {
     private static final JMenuItem SHOW_PARTICIPANTS = new JMenuItem("Teilnehmerliste anzeigen");
     private static final JMenuItem SET_CRITERIA = new JMenuItem("Wichtigkeit der Kriterien");
     private static final JMenuItem START_PAIRS = new JMenuItem("Paare bilden");
+    private static final JMenuItem START_GROUPS = new JMenuItem("Gruppen bilden");
     private static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory();
+    private static PairListFactory pairListFactory;
     private static final JLabel SHOW_TEXT = new JLabel(
             "Starten Sie indem Sie unter 'Start' den Punkt 'Teilnehmer einlesen' auswählen.");
     private static List<Object> CRITERIA_ORDER = new ArrayList<>();
     private static final CriteriaArranger CRITERIA_WINDOW = new CriteriaArranger();
     private static boolean participantsRead = false;
+    private static boolean pairsGenerated = false;
+    private static boolean partyLocationRead = false;
     private static boolean criteriaOrdered = false;
+    private static boolean participantsAreRead = true;
 
 
     /**
@@ -51,7 +57,7 @@ public class MainWindow implements ActionListener {
         JMenuBar menuBar = new JMenuBar();
 
         JMenu startMenu = new JMenu("Start");
-        JMenu pairMenu = new JMenu("Paare");
+        JMenu pairMenu = new JMenu("Algorithmus");
 
         menuBar.add(startMenu);
         menuBar.add(pairMenu);
@@ -60,17 +66,26 @@ public class MainWindow implements ActionListener {
         readParticipants.addActionListener(this);
         startMenu.add(readParticipants);
 
+        JMenuItem readPartyLocation = new JMenuItem("Party Location einlesen");
+        readPartyLocation.addActionListener(this);
+        startMenu.add(readPartyLocation);
+
         START_PAIRS.addActionListener(this);
         START_PAIRS.setEnabled(criteriaOrdered);
+
+        START_GROUPS.addActionListener(this);
+        START_GROUPS.setEnabled(pairsGenerated);
 
         SET_CRITERIA.addActionListener(this);
         SET_CRITERIA.setEnabled(participantsRead);
         pairMenu.add(SET_CRITERIA);
         pairMenu.add(START_PAIRS);
 
+
         SHOW_PARTICIPANTS.addActionListener(this);
         SHOW_PARTICIPANTS.setEnabled(participantsRead);
         startMenu.add(SHOW_PARTICIPANTS);
+        pairMenu.add(START_GROUPS);
 
         return menuBar;
     }
@@ -97,10 +112,18 @@ public class MainWindow implements ActionListener {
             //TODO: Methode (checkFileValidity) um zu überprüfen ob die .csv Datei die richtigen Header hat.
 
             SHOW_TEXT.setText("Es wurde die Datei: " + csvFile.getName() + " eingelesen.");
-            participantsRead = true;
-            updateJMenu();
 
-            PARTICIPANT_FACTORY.readCSV(csvFile);
+            if (participantsAreRead) {
+                participantsRead = true;
+                updateJMenu();
+
+                PARTICIPANT_FACTORY.readCSV(csvFile);
+            } else {
+                partyLocationRead = true;
+                updateJMenu();
+
+                PARTICIPANT_FACTORY.readPartyLocation(csvFile);
+            }
         }
     }
 
@@ -113,12 +136,21 @@ public class MainWindow implements ActionListener {
         } else if (e.getActionCommand().equals("Wichtigkeit der Kriterien")) {
             CRITERIA_WINDOW.display();
         } else if (e.getActionCommand().equals("Paare bilden")) {
-
-            PairListFactory pairListFactory = new PairListFactory(
+            pairListFactory = new PairListFactory(
                     PARTICIPANT_FACTORY.getParticipantList(),
                     PARTICIPANT_FACTORY.getRegisteredPairs(),
                     CRITERIA_ORDER);
-
+            pairsGenerated = true;
+            updateJMenu();
+        } else if (e.getActionCommand().equals("Party Location einlesen")) {
+            participantsAreRead = false;
+            createFileChooser();
+        } else if (e.getActionCommand().equals("Gruppen bilden")) {
+            GroupFactory groupFactory = new GroupFactory(pairListFactory, 3, PARTICIPANT_FACTORY.getPartyLocation());
+            groupFactory.createGroups();
+            groupFactory.updateGroupsWithClosestPairs();
+            groupFactory.displayDinnerRounds();
+            groupFactory.ensureEachPairCooksOnce();
         }
     }
 
@@ -128,11 +160,18 @@ public class MainWindow implements ActionListener {
     public static void updateJMenu() {
         if (participantsRead) {
             SHOW_PARTICIPANTS.setEnabled(true);
+        }
+
+        if (participantsRead && partyLocationRead) {
             SET_CRITERIA.setEnabled(true);
         }
 
         if (criteriaOrdered) {
             START_PAIRS.setEnabled(true);
+        }
+
+        if (pairsGenerated) {
+            START_GROUPS.setEnabled(true);
         }
     }
 
@@ -151,4 +190,5 @@ public class MainWindow implements ActionListener {
     public static void setCriteriaOrdered(boolean isCriteriaOrdered) {
         criteriaOrdered = isCriteriaOrdered;
     }
+
 }
