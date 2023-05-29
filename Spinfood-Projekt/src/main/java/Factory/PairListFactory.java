@@ -436,12 +436,12 @@ public class PairListFactory {
      * Prints the pairs onto the console
      */
     public void showPairs() {
-        String leftAlignFormat = "%-9s| %-36s | %-36s | %-20s | %-20s |%n";
+        String leftAlignFormat = "| %-9s| %-36s | %-36s | %-20s | %-20s |%n";
         int pairNr = 0;
 
-        System.out.format("+--------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
-        System.out.format("|Pair Nr.| ID1                                  | ID2                                  | Name1                | Name2                |%n");
-        System.out.format("+--------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+        System.out.format("+----------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+        System.out.format("| Pair Nr. | ID1                                  | ID2                                  | Name1                | Name2                |%n");
+        System.out.format("+----------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
 
         for (Pair pair: pairList ) {
             String id1 = pair.getParticipant1().getId();
@@ -453,7 +453,7 @@ public class PairListFactory {
             System.out.format(leftAlignFormat,pairNr, id1, id2, name1, name2);
         }
 
-        System.out.format("+---------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+        System.out.format("+----------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
     }
 
     public List<Pair> getRegisteredPairs() {

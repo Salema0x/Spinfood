@@ -1,7 +1,5 @@
 package Entity;
 
-import java.util.Objects;
-
 public class Pair {
     private final Participant participant1;
     private final Participant participant2;
@@ -11,7 +9,7 @@ public class Pair {
     private double genderDiversityScore;
     private Double[][] route;
     private final Double[] placeOfCooking = new Double[2];
-    private final String foodPreference;
+    private String foodPreference;
     private int pathLength;
 
 
@@ -19,8 +17,7 @@ public class Pair {
         this.participant1 = participant1;
         this.participant2 = participant2;
 
-        this.foodPreference = decideFoodPreference();
-
+        decideFoodPreference();
         decidePlaceOfCooking();
         calculateAgeDifference();
         calculateGenderDiversityScore();
@@ -43,8 +40,25 @@ public class Pair {
         }
     }
 
-    private String decideFoodPreference() {
-        return "";
+    private void decideFoodPreference() {
+        String part1Pref = participant1.getFoodPreference();
+        String part2Pref = participant2.getFoodPreference();
+
+        if (part1Pref.equals(part2Pref)) {
+            this.foodPreference = part1Pref;
+        } else if ((part1Pref.equals("meat") && part2Pref.equals("none")) || (part1Pref.equals("none") && part2Pref.equals("meat"))) {
+            this.foodPreference = part1Pref;
+        } else if (part1Pref.equals("meat") || part2Pref.equals("meat")) {
+            if (part2Pref.equals("veggie") || part2Pref.equals("vegan")) {
+                this.foodPreference = part2Pref;
+            } else if (part1Pref.equals("veggie") || part1Pref.equals("vegan")) {
+                this.foodPreference = part1Pref;
+            }
+        } else if (part1Pref.equals("veggie") && part2Pref.equals("vegan")) {
+            this.foodPreference = part2Pref;
+        } else if (part1Pref.equals("vegan") && part2Pref.equals("veggie")) {
+            this.foodPreference = part1Pref;
+        }
     }
 
     /**
