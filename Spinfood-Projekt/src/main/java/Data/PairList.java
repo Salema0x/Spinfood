@@ -35,7 +35,12 @@ public class PairList {
             sumDiversityScores += method.apply(pair);
         }
 
-        return sumDiversityScores/countPairs;
+        if (countPairs != 0) {
+            return sumDiversityScores / countPairs;
+        }
+
+        return 0;
+
     }
 
     public double getAgeDifference() {

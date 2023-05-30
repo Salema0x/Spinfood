@@ -29,7 +29,7 @@ class GroupFactoryTest {
         partyLocationCoordinates = partyLocationReader(partyLocation);
         participantFactory = new ParticipantFactory(100);
         participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/teilnehmerliste.csv").toURI())));
-        pairListFactory = new PairListFactory(participantFactory.getParticipantList(), participantFactory.getRegisteredPairs(), new ArrayList<>());
+        pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>());
 
 
     }

@@ -72,8 +72,10 @@ public class Pair {
      * Calculates the genderDiversityScore of a pair.
      */
     private void calculateGenderDiversityScore() {
-        if (participant1.getSex().equals("female") || participant2.getSex().equals("female")) {
+        if (!participant1.getSex().equals(participant2.getSex()) || !participant2.getSex().equals(participant1.getSex())) {
             this.genderDiversityScore = 0.5;
+        } else if (participant1.getSex().equals(participant2.getSex()) && participant1.getSex().equals("female")) {
+            this.genderDiversityScore = 1;
         } else {
             this.genderDiversityScore = 0;
         }

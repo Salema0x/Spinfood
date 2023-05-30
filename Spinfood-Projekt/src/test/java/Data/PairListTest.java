@@ -1,6 +1,5 @@
 package Data;
 
-import Entity.Participant;
 import Factory.PairListFactory;
 import Factory.ParticipantFactory;
 import org.junit.jupiter.api.Assertions;
@@ -34,22 +33,120 @@ class PairListTest {
         pairList = pairListFactory.getPairListObject();
         Assertions.assertEquals(0, pairList.getAgeDifference());
 
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste1.csv")).toURI()));
+        pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        pairList = pairListFactory.getPairListObject();
+        Assertions.assertEquals(1, pairList.getAgeDifference());
+
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste2.csv")).toURI()));
+        pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        pairList = pairListFactory.getPairListObject();
+        Assertions.assertEquals(0, pairList.getAgeDifference());
+
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste3.csv")).toURI()));
+        participantFactory.showCSV();
+        pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        pairList = pairListFactory.getPairListObject();
+        Assertions.assertEquals((double) 10 / 3, pairList.getAgeDifference());
+    }
+
+    @Test
+    void getGenderDiversityScore() throws URISyntaxException {
+        ParticipantFactory participantFactory = new ParticipantFactory(10);
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste0.csv")).toURI()));
+        PairListFactory pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        pairList = pairListFactory.getPairListObject();
+        Assertions.assertEquals(0, pairList.getGenderDiversityScore());
+
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste1.csv")).toURI()));
+        pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        pairList = pairListFactory.getPairListObject();
+        Assertions.assertEquals(0.5, pairList.getGenderDiversityScore());
+
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste2.csv")).toURI()));
+        pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        pairList = pairListFactory.getPairListObject();
+        Assertions.assertEquals(0, pairList.getGenderDiversityScore());
+
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste3.csv")).toURI()));
+        participantFactory.showCSV();
+        pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        pairList = pairListFactory.getPairListObject();
+        Assertions.assertEquals((double) 1 / 3, pairList.getGenderDiversityScore());
+
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste4.csv")).toURI()));
+        participantFactory.showCSV();
+        pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        pairList = pairListFactory.getPairListObject();
+        Assertions.assertEquals(1, pairList.getGenderDiversityScore());
+    }
+
+    @Test
+    void getCountPairs() throws URISyntaxException {
+        ParticipantFactory participantFactory = new ParticipantFactory(10);
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste0.csv")).toURI()));
+        PairListFactory pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        pairList = pairListFactory.getPairListObject();
+        Assertions.assertEquals(1, pairList.getCountPairs());
+
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste3.csv")).toURI()));
+        participantFactory.showCSV();
+        pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        pairList = pairListFactory.getPairListObject();
+        Assertions.assertEquals(3, pairList.getCountPairs());
+
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste5.csv")).toURI()));
+        participantFactory.showCSV();
+        pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        pairList = pairListFactory.getPairListObject();
+        Assertions.assertEquals(0, pairList.getCountPairs());
 
     }
 
     @Test
-    void getGenderDiversityScore() {
+    void getPreferenceDeviation() throws URISyntaxException {
+        ParticipantFactory participantFactory = new ParticipantFactory(10);
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste0.csv")).toURI()));
+        PairListFactory pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        pairList = pairListFactory.getPairListObject();
+        Assertions.assertEquals(0, pairList.getPreferenceDeviation());
+
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste1.csv")).toURI()));
+        pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        pairList = pairListFactory.getPairListObject();
+        Assertions.assertEquals(1, pairList.getPreferenceDeviation());
+
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste2.csv")).toURI()));
+        pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        pairList = pairListFactory.getPairListObject();
+        Assertions.assertEquals(0, pairList.getPreferenceDeviation());
+
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste3.csv")).toURI()));
+        participantFactory.showCSV();
+        pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        pairList = pairListFactory.getPairListObject();
+        Assertions.assertEquals((double) 1 / 3, pairList.getPreferenceDeviation());
+
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste4.csv")).toURI()));
+        participantFactory.showCSV();
+        pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        pairList = pairListFactory.getPairListObject();
+        Assertions.assertEquals(0, pairList.getPreferenceDeviation());
     }
 
     @Test
-    void getCountPairs() {
-    }
+    void getCountSuccessors() throws URISyntaxException {
+        ParticipantFactory participantFactory = new ParticipantFactory(10);
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste0.csv")).toURI()));
+        PairListFactory pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        pairList = pairListFactory.getPairListObject();
+        Assertions.assertEquals(0, pairList.getCountSuccessors());
 
-    @Test
-    void getPreferenceDeviation() {
-    }
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste5.csv")).toURI()));
+        participantFactory.showCSV();
+        pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        pairList = pairListFactory.getPairListObject();
+        Assertions.assertEquals(2, pairList.getCountSuccessors());
 
-    @Test
-    void getCountSuccessors() {
     }
 }
