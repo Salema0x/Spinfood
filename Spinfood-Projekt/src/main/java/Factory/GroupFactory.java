@@ -3,7 +3,6 @@ package Factory;
 import Entity.Pair;
 import Entity.Group;
 import Misc.DinnerRound;
-
 import java.util.*;
 
 public class GroupFactory {
@@ -15,6 +14,12 @@ public class GroupFactory {
     private final List<Group> groups;
     private final String[] roundNames = {"Vorspeise", "Hauptgang", "Dessert"}; // Name der DinnerRounds
 
+    /**
+     * Constructor for GroupFactory. It initializes the registeredPairs and partyLocation.
+     *
+     * @param pairListFactory the list of pairs registered for the event from the PairListFactoryClass
+     * @param partyLocation the location of the party
+     */
 
     public GroupFactory(PairListFactory pairListFactory, int maxGroupSize, Double[] partyLocation) {
         this.registeredPairs = pairListFactory.getRegisteredPairs();
@@ -30,12 +35,21 @@ public class GroupFactory {
         }
     }
 
-    /**
-     * This method generates the groups based on the provided list of pairs and the location of the party.
-     * It tries to ensure that the pairs in the same group live close to each other and that the total distance traveled by all pairs in a group is as small as possible.
-     *
-     * @return a list of groups
-     */
+
+    private Pair findClosestPair(Group group) {
+        Pair closestPair = null;
+        double smallestDistance = Double.MAX_VALUE;
+        for (Pair pair : registeredPairs) {
+            double distance = calculateGroupPairDeviation(group, pair);
+            if (distance < smallestDistance) {
+                smallestDistance = distance;
+                closestPair = pair;
+            }
+        }
+        return closestPair;
+    }
+
+
     public List<DinnerRound> createGroups() {
         List<Pair> pairs = new ArrayList<>(registeredPairs);
         Collections.shuffle(pairs);
@@ -120,6 +134,8 @@ public class GroupFactory {
         }
     }
 
+
+
     public void displayDinnerRounds() {
         for (int i = 0; i < dinnerRounds.size(); i++) {
             DinnerRound round = dinnerRounds.get(i);
@@ -147,14 +163,6 @@ public class GroupFactory {
         }
     }
 
-    private boolean groupContainsNonVegPreference(Group group) {
-        return group.getPairs().stream().anyMatch(pair -> pair.getParticipant1().getFoodPreference().equals("0")
-                || pair.getParticipant1().getFoodPreference().equalsIgnoreCase("meat")
-                || pair.getParticipant1().getFoodPreference().equalsIgnoreCase("none")
-                || pair.getParticipant2().getFoodPreference().equals("0")
-                || pair.getParticipant2().getFoodPreference().equalsIgnoreCase("meat")
-                || pair.getParticipant2().getFoodPreference().equalsIgnoreCase("none"));
-    }
 
     public void updateGroupsWithClosestPairs() {
         List<Pair> availablePairs = new ArrayList<>(registeredPairs);
@@ -252,5 +260,19 @@ public class GroupFactory {
         final int EARTH_RADIUS = 6371;
 
         return EARTH_RADIUS * c;
+    }
+
+    //HelperMethods
+
+    public List<DinnerRound> getDinnerRounds() {
+        return dinnerRounds;
+    }
+
+    public List<Pair> getRegisteredPairs() {
+        return registeredPairs;
+    }
+
+    public List<Pair> getSuccessorList() {
+        return successorList;
     }
 }

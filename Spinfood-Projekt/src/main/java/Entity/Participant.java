@@ -224,4 +224,8 @@ public class Participant {
     public int getSexNumber() {
         return sexNumber;
     }
+
+    public boolean getIsSuccessor() {
+        return isSuccessor;
+    }
 }

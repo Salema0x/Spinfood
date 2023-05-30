@@ -3,14 +3,11 @@ package Entity;
 public class Pair {
     private final Participant participant1;
     private final Participant participant2;
-    private byte course;
     private double ageDifference;
     private double preferenceDeviation;
     private double genderDiversityScore;
-    private Double[][] route;
     private final Double[] placeOfCooking = new Double[2];
     private String foodPreference;
-    private int pathLength;
 
 
     public Pair(Participant participant1, Participant participant2) {
@@ -22,6 +19,8 @@ public class Pair {
         calculateAgeDifference();
         calculateGenderDiversityScore();
         calculatePreferenceDeviation();
+
+
     }
 
     private void decidePlaceOfCooking() {
@@ -39,6 +38,7 @@ public class Pair {
             placeOfCooking[1] = participant2.getKitchenLongitude();
         }
     }
+
 
     private void decideFoodPreference() {
         String part1Pref = participant1.getFoodPreference();
@@ -65,7 +65,7 @@ public class Pair {
      * Calculates the ageDifference of a pair.
      */
     private void calculateAgeDifference() {
-       this.ageDifference = (byte) Math.abs(participant1.getAgeRange() - participant2.getAgeRange());
+        this.ageDifference = Math.abs(participant1.getAgeRange() - participant2.getAgeRange());
     }
 
     /**
@@ -83,7 +83,7 @@ public class Pair {
      * Calculates the preferenceDeviation of a pair.
      */
     private void calculatePreferenceDeviation() {
-        this.preferenceDeviation = (byte) Math.abs(participant1.getFoodPreferenceNumber() - participant2.getFoodPreferenceNumber());
+        this.preferenceDeviation = Math.abs(participant1.getFoodPreferenceNumber() - participant2.getFoodPreferenceNumber());
     }
 
     @Override
@@ -102,6 +102,7 @@ public class Pair {
             return participant2.getId().equals(pair.getParticipant1().getId()) || participant2.getId().equals(pair.getParticipant2().getId());
         }
     }
+
 
     public Participant getParticipant1() {
         return participant1;
@@ -123,10 +124,6 @@ public class Pair {
         return preferenceDeviation;
     }
 
-    public int getPathLength() {
-        return pathLength;
-    }
-
     public double getGenderDiversityScore() {
         return genderDiversityScore;
     }
@@ -134,4 +131,5 @@ public class Pair {
     public Double[] getPlaceOfCooking() {
         return placeOfCooking;
     }
+
 }
