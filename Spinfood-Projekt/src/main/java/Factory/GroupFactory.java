@@ -35,21 +35,6 @@ public class GroupFactory {
         }
     }
 
-
-    private Pair findClosestPair(Group group) {
-        Pair closestPair = null;
-        double smallestDistance = Double.MAX_VALUE;
-        for (Pair pair : registeredPairs) {
-            double distance = calculateGroupPairDeviation(group, pair);
-            if (distance < smallestDistance) {
-                smallestDistance = distance;
-                closestPair = pair;
-            }
-        }
-        return closestPair;
-    }
-
-
     public List<DinnerRound> createGroups() {
         List<Pair> pairs = new ArrayList<>(registeredPairs);
         Collections.shuffle(pairs);
@@ -203,8 +188,6 @@ public class GroupFactory {
 
         return closestPair;
     }
-
-
 
     /**
      * This method calculates the total deviation between a Pair and a Group.
