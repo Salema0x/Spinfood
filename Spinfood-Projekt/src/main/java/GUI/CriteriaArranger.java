@@ -78,8 +78,10 @@ public class CriteriaArranger extends JPanel {
             MainWindow.setCriteriaOrder(CRITERIA_ORDER);
             MainWindow.setCriteriaOrdered(true);
             MainWindow.updateJMenu();
-        } else if (e.getActionCommand().equals("explanation")) {
+        } /*
+            else if (e.getActionCommand().equals("explanation")) {
             //TODO: Include a JOptionPane.showMessageDialog() explaining all the criteria
         }
+        */
     }
 }

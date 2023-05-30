@@ -33,7 +33,7 @@ class PairListFactoryTest {
 
     @BeforeEach
     void setUp() {
-        participantFactory = new ParticipantFactory(500);
+        participantFactory = new ParticipantFactory(1000);
     }
 
     @org.junit.jupiter.api.Test
@@ -53,7 +53,7 @@ class PairListFactoryTest {
                 case CRITERIA_SEX_AGE_FOOD -> criteria = criteriaOrder.get(5);
             }
 
-            pairListFactory = new PairListFactory(participantFactory.getParticipantList(), participantFactory.getRegisteredPairs(), criteria);
+            pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
             List<Pair> pairList = pairListFactory.pairList;
 
             //searches for participants who are in multiple pairs
@@ -273,7 +273,7 @@ class PairListFactoryTest {
     private double calculateAgeDeviation(List<Pair> pairList) {
         double ageDifference = 0;
         for (Pair p : pairList) {
-            double pairAgeDifference = Math.abs((double) p.getParticipant1().getAge() - (double) p.getParticipant2().getAge());
+            double pairAgeDifference = Math.abs((double) p.getParticipant1().getAgeRange() - (double) p.getParticipant2().getAgeRange());
             ageDifference += pairAgeDifference;
         }
         return ageDifference / (double) pairList.size();

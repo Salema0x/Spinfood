@@ -137,9 +137,9 @@ public class MainWindow implements ActionListener {
             CRITERIA_WINDOW.display();
         } else if (e.getActionCommand().equals("Paare bilden")) {
             pairListFactory = new PairListFactory(
-                    PARTICIPANT_FACTORY.getParticipantList(),
-                    PARTICIPANT_FACTORY.getRegisteredPairs(),
-                    CRITERIA_ORDER);
+                    new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
+                    new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
+                    new ArrayList<>(CRITERIA_ORDER));
             pairsGenerated = true;
             updateJMenu();
         } else if (e.getActionCommand().equals("Party Location einlesen")) {
