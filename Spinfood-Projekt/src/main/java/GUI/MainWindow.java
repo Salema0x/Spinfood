@@ -148,7 +148,6 @@ public class MainWindow implements ActionListener {
         } else if (e.getActionCommand().equals("Gruppen bilden")) {
             GroupFactory groupFactory = new GroupFactory(pairListFactory, 3, PARTICIPANT_FACTORY.getPartyLocation());
             groupFactory.createGroups();
-            //groupFactory.ensureUniquePairMeetings();
             groupFactory.updateGroupsWithClosestPairs();
             groupFactory.displayDinnerRounds();
             groupFactory.ensureEachPairCooksOnce();
