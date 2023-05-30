@@ -5,6 +5,10 @@ import Entity.Group;
 import Misc.DinnerRound;
 import java.util.*;
 
+
+/**
+ * The GroupFactory class is responsible for creating and managing dinner rounds and groups for the dinner event.
+ */
 public class GroupFactory {
     private final List<Pair> registeredPairs;
     private final List<DinnerRound> dinnerRounds;
@@ -15,12 +19,11 @@ public class GroupFactory {
     private final String[] roundNames = {"Vorspeise", "Hauptgang", "Dessert"}; // Name der DinnerRounds
 
     /**
-     * Constructor for GroupFactory. It initializes the registeredPairs and partyLocation.
-     *
-     * @param pairListFactory the list of pairs registered for the event from the PairListFactoryClass
-     * @param partyLocation the location of the party
+     * Constructor for GroupFactory. Initializes registeredPairs and partyLocation.
+     * @param pairListFactory The list of pairs registered for the event from the PairListFactoryClass.
+     * @param maxGroupSize The maximum size of a group.
+     * @param partyLocation The location of the party.
      */
-
     public GroupFactory(PairListFactory pairListFactory, int maxGroupSize, Double[] partyLocation) {
         this.registeredPairs = pairListFactory.getRegisteredPairs();
         this.successorList = new ArrayList<>();
@@ -35,21 +38,11 @@ public class GroupFactory {
         }
     }
 
-
-    private Pair findClosestPair(Group group) {
-        Pair closestPair = null;
-        double smallestDistance = Double.MAX_VALUE;
-        for (Pair pair : registeredPairs) {
-            double distance = calculateGroupPairDeviation(group, pair);
-            if (distance < smallestDistance) {
-                smallestDistance = distance;
-                closestPair = pair;
-            }
-        }
-        return closestPair;
-    }
-
-
+    /**
+     * Creates groups for dinner rounds. Each pair cooks once and is in a group with different pairs in each round.
+     * If a group does not have enough pairs, move the pairs to successorList.
+     * @return List of dinner rounds.
+     */
     public List<DinnerRound> createGroups() {
         List<Pair> pairs = new ArrayList<>(registeredPairs);
         Collections.shuffle(pairs);
@@ -102,6 +95,9 @@ public class GroupFactory {
         return dinnerRounds;
     }
 
+    /**
+     * Ensures that each pair cooks once. Prints all pairs that are not assigned to cook.
+     */
     public void ensureEachPairCooksOnce() {
         // This list stores all pairs that have already been set to cook
         List<Pair> pairsThatCooked = new ArrayList<>();
@@ -134,8 +130,9 @@ public class GroupFactory {
         }
     }
 
-
-
+    /**
+     * Prints the details of each dinner round and the successorList.
+     */
     public void displayDinnerRounds() {
         for (int i = 0; i < dinnerRounds.size(); i++) {
             DinnerRound round = dinnerRounds.get(i);
@@ -163,7 +160,10 @@ public class GroupFactory {
         }
     }
 
-
+    /**
+     * Updates each group by setting the closest pair to the group's location as the cooking pair.
+     * Prints a message if a pair does not get assigned to cook.
+     */
     public void updateGroupsWithClosestPairs() {
         List<Pair> availablePairs = new ArrayList<>(registeredPairs);
 
@@ -187,6 +187,12 @@ public class GroupFactory {
         }
     }
 
+    /**
+     * Finds the closest pair to a group based on geographical distance and group deviation.
+     * @param group The group for which we want to find the closest pair.
+     * @param availablePairs The list of pairs available to be assigned for cooking.
+     * @return The pair closest to the group. Returns null if no pair can be found.
+     */
     private Pair findClosestPair(Group group, List<Pair> availablePairs) {
         Pair closestPair = null;
         double smallestDistance = Double.MAX_VALUE;
@@ -203,8 +209,6 @@ public class GroupFactory {
 
         return closestPair;
     }
-
-
 
     /**
      * This method calculates the total deviation between a Pair and a Group.
