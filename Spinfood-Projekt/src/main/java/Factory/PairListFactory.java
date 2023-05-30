@@ -27,7 +27,6 @@ public class PairListFactory {
     private final List<Participant> upperRemovements = new ArrayList<>();
     private List<Participant> successors = new ArrayList<>();
 
-
     public PairListFactory(List<Participant> participantList, List<Pair> registeredPairs, List<Object> criteriaOrder) {
         this.registeredPairs = registeredPairs;
         this.criteriaOrder = criteriaOrder;
@@ -66,53 +65,15 @@ public class PairListFactory {
         decideAlgorithm();
         makePairs();
         concatWithRegisteredPairs();
-        identifySuccessors();
         showPairs();
+        identifySuccessors();
         PairList pairList1 = new PairList(pairList, successors);
-        System.out.println(pairList1.getCountPairs() + " " + pairList1.getPreferenceDeviation() + " " + pairList1.getAgeDifference() + " " + pairList1.getGenderDiversityScore());
-        System.out.println("Done!");
+        System.out.println(pairList1.getCountPairs() + " " + pairList1.getCountSuccessors() + " " + pairList1.getPreferenceDeviation() + " " + pairList1.getAgeDifference() + " " + pairList1.getGenderDiversityScore());
     }
 
-    private void identifySuccessors() {
-        yesKitchenParticipants = new ArrayList<>(yesKitchenParticipants);
-        noKitchenParticipants = new ArrayList<>(noKitchenParticipants);
-        maybeKitchenParticipants = new ArrayList<>(maybeKitchenParticipants);
-
-        successors = new ArrayList<>(successors);
-
-        for (int i = 0; i < 3; i++) {
-            for (Participant participant : yesKitchenParticipants.get(i)) {
-                participant.setSuccessor(true);
-            }
-        }
-
-        for (int i = 0; i < 3; i++) {
-            for (Participant participant : maybeKitchenParticipants.get(i)) {
-                participant.setSuccessor(true);
-            }
-        }
-
-        for (int i = 0; i < 3; i++) {
-            for (Participant participant : noKitchenParticipants.get(i)) {
-                participant.setSuccessor(true);
-            }
-        }
-
-
-        successors.addAll(yesKitchenParticipants.get(0));
-        successors.addAll(yesKitchenParticipants.get(1));
-        successors.addAll(yesKitchenParticipants.get(2));
-
-        successors.addAll(maybeKitchenParticipants.get(0));
-        successors.addAll(maybeKitchenParticipants.get(1));
-        successors.addAll(maybeKitchenParticipants.get(2));
-
-        successors.addAll(noKitchenParticipants.get(0));
-        successors.addAll(noKitchenParticipants.get(1));
-        successors.addAll(noKitchenParticipants.get(2));
-
-    }
-
+    /**
+     * Concatenates the pair list after the pair algorithm with pairs from the registration.
+     */
     private void concatWithRegisteredPairs() {
         pairList = Stream.concat(pairList.stream(), registeredPairs.stream()).toList();
     }
@@ -131,7 +92,7 @@ public class PairListFactory {
      * Removes Participants which are already a successor from the participant List.
      */
     private void cleanParticipantListFromSuccessors() {
-        successors = participantList.stream()
+        List<Participant> successors = participantList.stream()
                 .filter(Participant::isSuccessor)
                 .toList();
 
@@ -216,7 +177,7 @@ public class PairListFactory {
 
     /**
      * Starts the sorter Method. With the three main lists.
-     *
+     * @param sexFunctionIndex the importance of the get Sex method.
      * @param methods A Function Interface showing which functions should be used for comparing.
      */
     @SafeVarargs
@@ -228,8 +189,8 @@ public class PairListFactory {
 
     /**
      * Sorts the Lists contained in the given list with the given functions.
-     *
      * @param kitchenParticipants the list of lists which should get sorted.
+     * @param sexFunctionIndex the importance of the get Sex method.
      * @param methods The functions which should be used for sorting.
      */
     @SafeVarargs
@@ -391,6 +352,9 @@ public class PairListFactory {
         females = splitListForSex(yesKitchen).get(0);
         males = splitListForSex(yesKitchen).get(1);
 
+        females = new ArrayList<>(females);
+        males = new ArrayList<>(males);
+
         makePairs(females, males);
     }
 
@@ -458,12 +422,12 @@ public class PairListFactory {
      * Prints the pairs onto the console
      */
     public void showPairs() {
-        String leftAlignFormat = "| %-9s| %-36s | %-36s | %-20s | %-20s |%n";
+        String leftAlignFormat = "%-9s| %-36s | %-36s | %-20s | %-20s |%n";
         int pairNr = 0;
 
-        System.out.format("+----------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
-        System.out.format("| Pair Nr. | ID1                                  | ID2                                  | Name1                | Name2                |%n");
-        System.out.format("+----------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+        System.out.format("+--------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+        System.out.format("|Pair Nr.| ID1                                  | ID2                                  | Name1                | Name2                |%n");
+        System.out.format("+--------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
 
         for (Pair pair: pairList ) {
             String id1 = pair.getParticipant1().getId();
@@ -475,14 +439,51 @@ public class PairListFactory {
             System.out.format(leftAlignFormat,pairNr, id1, id2, name1, name2);
         }
 
-        System.out.format("+----------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+        System.out.format("+---------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
     }
 
     public List<Pair> getRegisteredPairs() {
         return registeredPairs;
     }
 
-    public List<Participant> getSuccessors() {
-        return successors;
+    /**
+     * Identifies the successors after the pairs have been created.
+     */
+    private void identifySuccessors() {
+        yesKitchenParticipants = new ArrayList<>(yesKitchenParticipants);
+        noKitchenParticipants = new ArrayList<>(noKitchenParticipants);
+        maybeKitchenParticipants = new ArrayList<>(maybeKitchenParticipants);
+
+        successors = new ArrayList<>(successors);
+
+        for (int i = 0; i < 3; i++) {
+            for (Participant participant : yesKitchenParticipants.get(i)) {
+                participant.setSuccessor(true);
+            }
+        }
+
+        for (int i = 0; i < 3; i++) {
+            for (Participant participant : maybeKitchenParticipants.get(i)) {
+                participant.setSuccessor(true);
+            }
+        }
+
+        for (int i = 0; i < 3; i++) {
+            for (Participant participant : noKitchenParticipants.get(i)) {
+                participant.setSuccessor(true);
+            }
+        }
+
+        successors.addAll(yesKitchenParticipants.get(0));
+        successors.addAll(yesKitchenParticipants.get(1));
+        successors.addAll(yesKitchenParticipants.get(2));
+
+        successors.addAll(maybeKitchenParticipants.get(0));
+        successors.addAll(maybeKitchenParticipants.get(1));
+        successors.addAll(maybeKitchenParticipants.get(2));
+
+        successors.addAll(noKitchenParticipants.get(0));
+        successors.addAll(noKitchenParticipants.get(1));
+        successors.addAll(noKitchenParticipants.get(2));
     }
 }

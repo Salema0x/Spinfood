@@ -4,8 +4,8 @@ public class Pair {
     private final Participant participant1;
     private final Participant participant2;
     private byte course;
-    private byte ageDifference;
-    private byte preferenceDeviation;
+    private double ageDifference;
+    private double preferenceDeviation;
     private double genderDiversityScore;
     private Double[][] route;
     private final Double[] placeOfCooking = new Double[2];
@@ -115,11 +115,11 @@ public class Pair {
         return foodPreference;
     }
 
-    public byte getAgeDifference() {
+    public double getAgeDifference() {
         return ageDifference;
     }
 
-    public byte getPreferenceDeviation() {
+    public double getPreferenceDeviation() {
         return preferenceDeviation;
     }
 

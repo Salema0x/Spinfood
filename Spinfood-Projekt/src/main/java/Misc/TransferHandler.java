@@ -1,4 +1,4 @@
-package GUI;
+package Misc;
 
 import javax.swing.*;
 import java.awt.datatransfer.DataFlavor;

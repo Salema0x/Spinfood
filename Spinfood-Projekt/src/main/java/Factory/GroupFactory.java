@@ -120,8 +120,6 @@ public class GroupFactory {
         }
     }
 
-
-
     public void displayDinnerRounds() {
         for (int i = 0; i < dinnerRounds.size(); i++) {
             DinnerRound round = dinnerRounds.get(i);
@@ -148,8 +146,6 @@ public class GroupFactory {
             pairNumber++;
         }
     }
-
-
 
     private boolean groupContainsNonVegPreference(Group group) {
         return group.getPairs().stream().anyMatch(pair -> pair.getParticipant1().getFoodPreference().equals("0")

@@ -22,7 +22,7 @@ public class MainWindow implements ActionListener {
     private static final JMenuItem SET_CRITERIA = new JMenuItem("Wichtigkeit der Kriterien");
     private static final JMenuItem START_PAIRS = new JMenuItem("Paare bilden");
     private static final JMenuItem START_GROUPS = new JMenuItem("Gruppen bilden");
-    private static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory();
+    private static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory(1000);
     private static PairListFactory pairListFactory;
     private static final JLabel SHOW_TEXT = new JLabel(
             "Starten Sie indem Sie unter 'Start' den Punkt 'Teilnehmer einlesen' auswählen.");
