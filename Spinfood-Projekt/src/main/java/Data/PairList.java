@@ -4,6 +4,7 @@ import Entity.Pair;
 import Entity.Participant;
 
 import java.util.List;
+import java.util.function.Function;
 
 public class PairList {
     private final List<Pair> pairList;
@@ -17,39 +18,24 @@ public class PairList {
         this.pairList = pairList;
         this.countPairs = pairList.size();
         this.countSuccessors = successors.size();
-        this.genderDiversityScore = calculateGenderDiversityScore();
-        this.ageDifference = calculateAgeDifference();
-        this.preferenceDeviation = calculatePreferenceDeviation();
+        this.genderDiversityScore = calculateAverageScores(Pair::getGenderDiversityScore);
+        this.ageDifference = calculateAverageScores(Pair::getAgeDifference);
+        this.preferenceDeviation = calculateAverageScores(Pair::getPreferenceDeviation);
     }
 
-    private double calculateGenderDiversityScore() {
+    /**
+     * Calculates the average scores of the PairList.
+     * @param method the method the gather the data from the pairs
+     * @return the average key identification of the list.
+     */
+    private double calculateAverageScores(Function<Pair, Double> method) {
         double sumDiversityScores = 0.0d;
 
         for (Pair pair : pairList) {
-            sumDiversityScores += pair.getGenderDiversityScore();
+            sumDiversityScores += method.apply(pair);
         }
 
         return sumDiversityScores/countPairs;
-    }
-
-    private double calculateAgeDifference() {
-        double sumAgeDifference = 0.0d;
-
-        for (Pair pair : pairList) {
-            sumAgeDifference += pair.getAgeDifference();
-        }
-
-        return sumAgeDifference/countPairs;
-    }
-
-    private double calculatePreferenceDeviation() {
-        double sumPreferenceDeviation = 0.0d;
-
-        for (Pair pair : pairList) {
-            sumPreferenceDeviation += pair.getPreferenceDeviation();
-        }
-
-        return sumPreferenceDeviation/countPairs;
     }
 
     public double getAgeDifference() {
@@ -66,5 +52,9 @@ public class PairList {
 
     public double getPreferenceDeviation() {
         return preferenceDeviation;
+    }
+
+    public int getCountSuccessors() {
+        return countSuccessors;
     }
 }

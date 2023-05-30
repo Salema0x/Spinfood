@@ -7,14 +7,11 @@ import java.util.*;
 
 public class GroupFactory {
     private final List<Pair> registeredPairs;
-    private final int maxGroupSize;
-    private final List<Group> groups;
     private final List<DinnerRound> dinnerRounds;
-
-
-
     private final List<Pair> successorList;
+    private final int maxGroupSize;
     private Double[] partyLocation;
+    private final List<Group> groups;
     private final String[] roundNames = {"Vorspeise", "Hauptgang", "Dessert"}; // Name der DinnerRounds
 
     /**
@@ -39,13 +36,6 @@ public class GroupFactory {
     }
 
 
-    /**
-     * This method finds the closest Pair to a given Group based on a set of criteria like geographical distance,
-     * age difference, preference deviation, and gender diversity score.
-     *
-     * @param group The group to which we want to find the closest Pair
-     * @return The closest Pair to the Group
-     */
     private Pair findClosestPair(Group group) {
         Pair closestPair = null;
         double smallestDistance = Double.MAX_VALUE;
@@ -256,7 +246,6 @@ public class GroupFactory {
      * @param place2 The coordinates of the second place
      * @return The geographical distance between the two places
      */
-
     private double calculateGeographicalDistance(Double[] place1, Double[] place2) {
         double latitudeDifference = Math.toRadians(place2[0] - place1[0]);
         double longitudeDifference = Math.toRadians(place2[1] - place1[1]);

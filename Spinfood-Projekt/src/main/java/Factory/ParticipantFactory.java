@@ -10,7 +10,7 @@ public class ParticipantFactory {
     private static final List<Participant> PARTICIPANT_LIST = new ArrayList<>();
     private static final List<Pair> REGISTERED_PAIRS = new ArrayList<>();
     private static final HashSet<String> IDS = new HashSet<>();
-    private static final int MAX_PARTICIPANTS = 400;
+    private final int maxParticipants;
     private static final HashMap<String, List<Participant>> ADDRESS_PARTICIPANT_MAP = new HashMap<>();
     private static final HashMap<String, Participant> ID_PARTICIPANT_MAP = new HashMap<>();
     private int participantCounter = 0;
@@ -19,6 +19,10 @@ public class ParticipantFactory {
     private boolean pairParticipant2Exists = false;
     private byte sizeWGMembers = 0;
     private final Double[] partyLocation = new Double[2];
+
+    public ParticipantFactory(int maxParticipants) {
+        this.maxParticipants = maxParticipants;
+    }
 
     /**
      * Will extract all participants from the .csv file.
@@ -51,7 +55,7 @@ public class ParticipantFactory {
                     continue;
                 }
 
-                if (participantCounter > MAX_PARTICIPANTS) {
+                if (participantCounter > maxParticipants) {
                     isSuccessor = true;
                 }
 

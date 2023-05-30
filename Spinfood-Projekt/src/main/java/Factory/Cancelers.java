@@ -99,7 +99,7 @@ public class Cancelers {
     }
 
     public List<Participant> findPairFromWaitingList() {
-        List<Participant> successorsFromPairAlgorithm = pairListFactory.getSuccessors();
+        //List<Participant> successorsFromPairAlgorithm = pairListFactory.getSuccessors();
         List<Pair> pairsFromPairAlgorithm = pairListFactory.pairList;
         return null;
     }

@@ -7,7 +7,7 @@ public class Pair {
     private byte preferenceDeviation;
     private double genderDiversityScore;
     private Double[][] route;
-    private  Double[] placeOfCooking = new Double[2];
+    private final Double[] placeOfCooking = new Double[2];
     private String foodPreference;
 
 
@@ -113,7 +113,6 @@ public class Pair {
         return foodPreference;
     }
 
-
     public byte getAgeDifference() {
         return ageDifference;
     }
@@ -129,7 +128,4 @@ public class Pair {
     public Double[] getPlaceOfCooking() {
         return placeOfCooking;
     }
-
-
-
 }

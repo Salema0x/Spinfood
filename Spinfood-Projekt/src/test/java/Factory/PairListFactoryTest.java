@@ -39,7 +39,7 @@ class PairListFactoryTest {
 
     @BeforeEach
     void setUp() {
-        participantFactory = new ParticipantFactory();
+        participantFactory = new ParticipantFactory(500);
     }
 
     @org.junit.jupiter.api.Test
