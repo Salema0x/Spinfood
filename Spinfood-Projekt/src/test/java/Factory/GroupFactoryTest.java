@@ -28,7 +28,7 @@ class GroupFactoryTest {
     void setUp() throws URISyntaxException {
         partyLocation = new File(Objects.requireNonNull(getClass().getResource("/partylocation.csv").toURI()));
         partyLocationCoordinates = partyLocationReader(partyLocation);
-        participantFactory = new ParticipantFactory();
+        participantFactory = new ParticipantFactory(100);
         participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/teilnehmerliste.csv").toURI())));
         pairListFactory = new PairListFactory(participantFactory.getParticipantList(), participantFactory.getRegisteredPairs(), new ArrayList<>());
 
@@ -45,6 +45,9 @@ class GroupFactoryTest {
         Assertions.assertTrue(checkNewPairsEachDinnerRound(groupFactory));
         Assertions.assertTrue(checkMixedGroupsBadFoodPref(groupFactory));
         Assertions.assertTrue(checkGenderDiversityScore(groupFactory, genderDiversityThreshold));
+        Assertions.assertFalse(checkGenderDiversityScore(groupFactory, 0.5));
+        Assertions.assertFalse(checkAgeDifferenceScore(groupFactory, 10));
+        Assertions.assertFalse(checkPreferenceDeviationScore(groupFactory, 0.5));
 
     }
 
@@ -183,7 +186,7 @@ class GroupFactoryTest {
      * @param groupFactory
      * @return
      */
-    private boolean checkGenderDiversityScore(GroupFactory groupFactory, double threshold) {
+    private boolean checkGenderDiversityScore(GroupFactory groupFactory, double genderDiversityThreshold) {
         double score = 0.0;
         for(DinnerRound dinnerRound : groupFactory.getDinnerRounds()) {
             for(Group group : dinnerRound.getGroups()) {
@@ -191,8 +194,39 @@ class GroupFactoryTest {
             }
         }
         score = score / (groupFactory.getDinnerRounds().size() * groupFactory.getDinnerRounds().get(0).getGroups().size());
-        System.out.println("GenderDiversity Score: " + score + " (should be > 0.4)");
-        return score < threshold;
+        System.out.println("GenderDiversity Score: " + score + " (should be > "+  genderDiversityThreshold +")");
+        return score < genderDiversityThreshold;
+    }
+
+    /**
+     * calculates the AgeDifferenceScore of all generated Groups and checks if its higher than given threshold
+     */
+    private boolean checkAgeDifferenceScore(GroupFactory groupFactory, double ageDifferenceThreshold) {
+        double score = 0.0;
+        for(DinnerRound dinnerRound : groupFactory.getDinnerRounds()) {
+            for(Group group : dinnerRound.getGroups()) {
+                score += group.getAgeRangeDeviationScore();
+            }
+        }
+        score = score / (groupFactory.getDinnerRounds().size() * groupFactory.getDinnerRounds().get(0).getGroups().size());
+        System.out.println("AgeDifference Score: " + score + " (should be > "+  ageDifferenceThreshold +")");
+        return score > ageDifferenceThreshold;
+
+    }
+
+    /**
+     * calculates the PreferenceDeviationScore of all generated Groups and checks if its higher than given threshold
+     */
+    private boolean checkPreferenceDeviationScore(GroupFactory groupFactory, double preferenceDeviationThreshold) {
+        double score = 0.0;
+        for(DinnerRound dinnerRound : groupFactory.getDinnerRounds()) {
+            for(Group group : dinnerRound.getGroups()) {
+                score += group.getFoodPreferenceDeviationScore();
+            }
+        }
+        score = score / (groupFactory.getDinnerRounds().size() * groupFactory.getDinnerRounds().get(0).getGroups().size());
+        System.out.println("PreferenceDeviation Score: " + score + " (should be > "+  preferenceDeviationThreshold +")");
+        return score > preferenceDeviationThreshold;
     }
 
 

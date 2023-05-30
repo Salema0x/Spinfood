@@ -8,13 +8,20 @@ public class Group {
     private final List<Pair> pairs;
     private final List<Participant> participants = new ArrayList<>();
     private Pair cookingPair;
-
+    private double foodPreference;
+    private double foodPreferenceDeviationScore;
+    private double ageRange;
+    private double ageRangeDeviationScore;
 
     public Group(Pair initialPair) {
         this.pairs = new ArrayList<>();
         pairs.add(initialPair);
         this.cookingPair = initialPair; // Setzen des initialPair als Kochpaar
         createParticipants();
+        calculateFoodPreference();
+        calculateAgeRange();
+        calculateFoodPreferenceDeviationScore();
+        calculateAgeRangeDeviationScore();
     }
 
 
@@ -94,5 +101,56 @@ public class Group {
 
         }
         return score/pairs.size();
+    }
+
+    /**
+     * calculates ageRange of a Group
+     */
+    public void calculateAgeRange() {
+        for (Pair pair : pairs) {
+            ageRange += pair.getMeanAgeRange();
+        }
+        ageRange = ageRange / pairs.size();
+    }
+
+    /**
+     * calculates the mean deviation in ageRange of the pairs to the ageRange of the group
+     */
+    private void calculateAgeRangeDeviationScore() {
+        double score = 0.0;
+        for (Pair pair : pairs) {
+            score += Math.abs(pair.getMeanAgeRange() - ageRange);
+        }
+        ageRangeDeviationScore = score / pairs.size();
+    }
+
+    /**
+     * calculates the mean deviation of the pairs to the foodPreference of the group
+     * @return
+     */
+    private void calculateFoodPreferenceDeviationScore() {
+        double score = 0.0;
+        for (Pair pair : pairs) {
+            score += Math.abs(pair.getFoodPreferenceNumber() - foodPreference);
+        }
+        foodPreferenceDeviationScore = score / pairs.size();
+    }
+
+    /**
+     * calculates foodPreference of a Group
+     */
+    private void calculateFoodPreference() {
+        for(Pair pair : pairs) {
+            foodPreference += pair.getFoodPreferenceNumber();
+        }
+        foodPreference = foodPreference/pairs.size();
+    }
+
+    public double getFoodPreferenceDeviationScore() {
+        return foodPreferenceDeviationScore;
+    }
+
+    public double getAgeRangeDeviationScore() {
+        return ageRangeDeviationScore;
     }
 }

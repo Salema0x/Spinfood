@@ -3,12 +3,14 @@ package Entity;
 public class Pair {
     private final Participant participant1;
     private final Participant participant2;
+    private byte meanAgeRange;
     private byte ageDifference;
     private byte preferenceDeviation;
     private double genderDiversityScore;
     private Double[][] route;
     private final Double[] placeOfCooking = new Double[2];
     private String foodPreference;
+    private int foodPreferenceNumber;
 
 
     public Pair(Participant participant1, Participant participant2) {
@@ -16,10 +18,13 @@ public class Pair {
         this.participant2 = participant2;
 
         decideFoodPreference();
+        parseFoodPreferenceToNumber();
         decidePlaceOfCooking();
         calculateAgeDifference();
         calculateGenderDiversityScore();
         calculatePreferenceDeviation();
+        calculateMeanAge();
+
     }
 
     private void decidePlaceOfCooking() {
@@ -35,6 +40,21 @@ public class Pair {
         } else if (participant2.getHasKitchen().equals("maybe")) {
             placeOfCooking[0] = participant2.getKitchenLatitude();
             placeOfCooking[1] = participant2.getKitchenLongitude();
+        }
+    }
+
+    /**
+     * parses the food preference to a number ("for deviation calculation")
+     */
+    private void parseFoodPreferenceToNumber() {
+        if (foodPreference.equals("none")) {
+            foodPreferenceNumber = 0;
+        } else if (foodPreference.equals("meat")) {
+            foodPreferenceNumber = 1;
+        } else if (foodPreference.equals("veggie")) {
+            foodPreferenceNumber = 2;
+        } else if (foodPreference.equals("vegan")) {
+            foodPreferenceNumber = 3;
         }
     }
 
@@ -63,7 +83,7 @@ public class Pair {
      * Calculates the ageDifference of a pair.
      */
     private void calculateAgeDifference() {
-       this.ageDifference = (byte) Math.abs(participant1.getAgeRange() - participant2.getAgeRange());
+        this.ageDifference = (byte) Math.abs(participant1.getAgeRange() - participant2.getAgeRange());
     }
 
     /**
@@ -101,6 +121,35 @@ public class Pair {
         }
     }
 
+
+    /**
+     * Calculates the meanAgeRange of a pair.
+     */
+    private void calculateMeanAge() {
+        double meanAge = ((double) (participant1.getAgeRange() + participant2.getAgeRange()))/ 2;
+        if (meanAge >= 0 && meanAge <= 17) {
+            this.meanAgeRange = 0;
+        } else if (meanAge >= 18 && meanAge <= 23) {
+            this.meanAgeRange = 1;
+        } else if (meanAge >= 24 && meanAge <= 27) {
+            this.meanAgeRange = 2;
+        } else if (meanAge >= 28 && meanAge <= 30) {
+            this.meanAgeRange = 3;
+        } else if (meanAge >= 31 && meanAge <= 35) {
+            this.meanAgeRange = 4;
+        } else if (meanAge >= 36 && meanAge <= 41) {
+            this.meanAgeRange = 5;
+        } else if (meanAge >= 42 && meanAge <= 46) {
+            this.meanAgeRange = 6;
+        } else if (meanAge >= 47 && meanAge <= 56) {
+            this.meanAgeRange = 7;
+        } else {
+            this.meanAgeRange = 8;
+        }
+
+    }
+
+
     public Participant getParticipant1() {
         return participant1;
     }
@@ -128,4 +177,11 @@ public class Pair {
     public Double[] getPlaceOfCooking() {
         return placeOfCooking;
     }
+
+    public int getFoodPreferenceNumber() {
+        return foodPreferenceNumber;
+    }
+
+    public byte getMeanAgeRange() {
+        return meanAgeRange;
 }
