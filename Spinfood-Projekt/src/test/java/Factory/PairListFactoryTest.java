@@ -60,7 +60,7 @@ class PairListFactoryTest {
                 case CRITERIA_SEX_AGE_FOOD -> criteria = criteriaOrder.get(5);
             }
 
-            pairListFactory = new PairListFactory(participantFactory.getParticipantList(), participantFactory.getRegisteredPairs(), criteria);
+            pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
             List<Pair> pairList = pairListFactory.pairList;
 
             //searches for participants who are in multiple pairs
@@ -89,7 +89,7 @@ class PairListFactoryTest {
         criteria.add("Altersdifferenz");
         criteria.add("Geschlechterdiversität");
 
-        PairListFactory pairListFactory = new PairListFactory(participantList, participantFactory.getRegisteredPairs(), criteria);
+        PairListFactory pairListFactory = new PairListFactory(new ArrayList<>(participantList), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
         List<Pair> generatedPairs = pairListFactory.pairList;
         pairListFactory.showPairs();
 
@@ -115,7 +115,7 @@ class PairListFactoryTest {
         criteria.add("Altersdifferenz");
         criteria.add("Geschlechterdiversität");
 
-        PairListFactory pairListFactory = new PairListFactory(participantList, participantFactory.getRegisteredPairs(), criteria);
+        PairListFactory pairListFactory = new PairListFactory(new ArrayList<>(participantList), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
         List<Pair> generatedPairs = pairListFactory.pairList;
         pairListFactory.showPairs();
 
@@ -141,7 +141,7 @@ class PairListFactoryTest {
         criteria.add("Altersdifferenz");
         criteria.add("Geschlechterdiversität");
 
-        PairListFactory pairListFactory = new PairListFactory(participantList, participantFactory.getRegisteredPairs(), criteria);
+        PairListFactory pairListFactory = new PairListFactory(new ArrayList<>(participantList), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
         List<Pair> generatedPairs = pairListFactory.pairList;
         pairListFactory.showPairs();
 
@@ -149,7 +149,7 @@ class PairListFactoryTest {
             Pair p = generatedPairs.remove(0);
             double genderDiversityScore = p.getGenderDiversityScore();
             System.out.println("GenderDiversityScore should be: " + expectedGenderDiversityScore[index] + " and is: " + genderDiversityScore);
-            Assertions.assertTrue(genderDiversityScore == expectedGenderDiversityScore[index]);
+            Assertions.assertEquals(genderDiversityScore, expectedGenderDiversityScore[index]);
             index++;
         }
     }

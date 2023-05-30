@@ -32,26 +32,24 @@ class CancelersTest {
         ParticipantFactory participantFactory = new ParticipantFactory(100);
         participantFactory.readCSV(participantFile);
         initializeAbsencesList(participantFactory.getParticipantList());
-        PairListFactory pairListFactory = new PairListFactory(participantFactory.getParticipantList(), participantFactory.getRegisteredPairs(), criteria);
+        PairListFactory pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
 
         GroupFactory groupFactory = new GroupFactory(pairListFactory, 3, new Double[]{8.6746166676233, 50.5909317660173});
         groupFactory.createGroups();
         dinnerRounds = groupFactory.getDinnerRounds();
-        absences = groupFactory.getSuccessorList();
+        //absences = groupFactory.getSuccessorList();
         //TODO cancelers only works with groups, should work with dinnerRounds
         //TODO cancelers only works with participants, should also work with pairs
-        cancelers = new Cancelers(absences, dinnerRounds, pairListFactory);
+        //cancelers = new Cancelers(absences, dinnerRounds, pairListFactory);
         initialDinnerRoundSize = dinnerRounds.size();
 
     }
-
 
     @org.junit.jupiter.api.Test
 
     void performAdjustment() {
         cancelers.performAdjustment();
         testIfAbsentParticipantsAreRemoved();
-
     }
 
     /**
@@ -118,7 +116,7 @@ class CancelersTest {
     private void testIfUpdatedGroupsAreFine() {
         for(DinnerRound dinnerRound : dinnerRounds) {
             for(Group group : dinnerRound.getGroups()) {
-                Assertions.assertTrue();
+                //Assertions.assertTrue();
             }
         }
     }

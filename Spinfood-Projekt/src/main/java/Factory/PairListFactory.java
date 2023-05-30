@@ -505,4 +505,8 @@ public class PairListFactory {
     public PairList getPairListObject() {
         return pairListObject;
     }
+
+    public ArrayList<Participant> getSuccessors() {
+        return successors;
+    }
 }

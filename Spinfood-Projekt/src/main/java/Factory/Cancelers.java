@@ -3,24 +3,29 @@ package Factory;
 import Entity.Group;
 import Entity.Pair;
 import Entity.Participant;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class Cancelers {
     private final List<Participant> absences;
+    private List<Participant> successorsInWaitingList;
+
+    public Cancelers(List<Participant> absences, List<Participant> successorsInWaitingList, List<Group> groupList, List<Group> backupGroupList, List<Participant> backupWaitingList, PairListFactory pairListFactory) {
+        this.absences = absences;
+        this.successorsInWaitingList = successorsInWaitingList;
+        this.groupList = groupList;
+        this.backupGroupList = backupGroupList;
+        this.backupWaitingList = backupWaitingList;
+
+    }
     private final List<Group> groupList;
     private final List<Group> backupGroupList;
     private final List<Participant> backupWaitingList;
-    private final PairListFactory pairListFactory;
+    private       PairListFactory pairListFactory;
+    private final List<Participant> participantList = new ArrayList<>();
+    private final List<Pair> successorPairList = new ArrayList<>();
 
-    public Cancelers(List<Participant> absences, List<Group> groupList, PairListFactory pairListFactory) {
-        this.absences = absences;
-        this.groupList = groupList;
-        this.pairListFactory = pairListFactory;
-        this.backupGroupList = new ArrayList<>(groupList);
-        this.backupWaitingList = new ArrayList<>();
-    }
+
 
     public void performAdjustment() {
         updateGroupList();
@@ -32,7 +37,7 @@ public class Cancelers {
      * Updates the group list based on the absences of participants.
      * If a participant is absent, the corresponding group is removed from the group list and added to the backup group list.
      */
-    private void updateGroupList() {
+    void updateGroupList() {
         for (Participant absence : absences) {
             Group groupToRemove = null;
             for (Group group : groupList) {
@@ -52,32 +57,49 @@ public class Cancelers {
      * Updates the waiting list based on the absences of participants in the group list.
      * If a participant is absent and belongs to a pair group, the group is removed from the group list and added to the backup group list.
      * If a participant is absent and belongs to a non-pair group, the group is removed from the group list and added to the backup group list.
-     * Absent participants are added to the backup waiting list.
      */
-    private void updateWaitingList() {
+    void updateWaitingList() {
+        for (Participant participant : participantList) {
+            if (!participant.hasPartner() && absences.contains(participant)) {
+                System.out.println("The participant signed up alone and has canceled.");
+                Participant successor = successorsInWaitingList.remove(0);
+                participantList.add(successor);
+            }
+        }
         for (Group group : groupList) {
-            Participant participant1 = group.getParticipants().get(0);
-            Participant participant2 = group.getParticipants().get(1);
-            // if they are paired and both canceled, they will be removed and so the Group which they were in
-            if (group.isPair() && group.getParticipants().size() == 2) {
-                if (absences.contains(participant1) && absences.contains(participant2)) {
-                    groupList.remove(group);
-                    backupGroupList.add(group);
-                }
-                // if they are paired and one of them has canceled, then the other one will be added to the WaitingList, and the Group will be removed aswell from GroupList
-            } else if (group.isPair() && (absences.contains(participant1) || absences.contains(participant2))) {
+            List<Participant> participants = group.getParticipants();
+            Participant participant1 = participants.get(0);
+            Participant participant2 = participants.get(1);
+
+            if (!participant1.hasPartner() || !participant2.hasPartner() && absences.contains(participant1) || absences.contains(participant2)) {
                 groupList.remove(group);
                 backupGroupList.add(group);
-
                 if (absences.contains(participant1)) {
-                    backupWaitingList.add(participant2);
+                    successorsInWaitingList.add(participant2);
+
                 } else {
-                    backupWaitingList.add(participant1);
+                    successorsInWaitingList.add(participant1);
+
+                }
+                // if both has signed up together
+                if (group.isPair() && participants.size() == 2) {
+                    if (absences.contains(participant1) && absences.contains(participant2)) {
+                        groupList.remove(group);
+                        backupGroupList.add(group);
+                        // Check if there are successors available in the waiting list and replace them
+                        if (!successorsInWaitingList.isEmpty()) {
+                            Participant successor1 = successorsInWaitingList.remove(0);
+                            Participant successor2 = successorsInWaitingList.remove(0);
+                            successorPairList.add(new Pair(successor1,successor2));
+                            backupWaitingList.add((Participant) successorPairList);
+                        }
+                    }
                 }
             }
-
+            backupWaitingList.add((Participant) successorsInWaitingList) ;
         }
     }
+
 
     /**
      * Completes a group by adding a pair of participants from the waiting list.
@@ -85,7 +107,7 @@ public class Cancelers {
      * a pair of participants is selected from the waiting list and added to the first group in the group list.
      * The completed group is added to the backup group list, and the group is removed from the group list.
      */
-    private void completeGroups() {
+    void completeGroups() {
         if (backupWaitingList.size() >= 2 && groupList.size() > 0) {
             List<Participant> pair = findPairFromWaitingList();
             if (pair != null) {
@@ -97,10 +119,11 @@ public class Cancelers {
             }
         }
     }
-
+    // pairsFromPairAlgorithm should be called aswell
     public List<Participant> findPairFromWaitingList() {
-        //List<Participant> successorsFromPairAlgorithm = pairListFactory.getSuccessors();
+        List<Participant> successorsFromPairAlgorithm = pairListFactory.getSuccessors();
         List<Pair> pairsFromPairAlgorithm = pairListFactory.pairList;
-        return null;
+        return successorsFromPairAlgorithm;
     }
+
 }
