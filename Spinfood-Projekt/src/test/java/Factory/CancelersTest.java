@@ -29,7 +29,7 @@ class CancelersTest {
     void setUp() throws URISyntaxException {
         generateFileFromSource();
 
-        ParticipantFactory participantFactory = new ParticipantFactory();
+        ParticipantFactory participantFactory = new ParticipantFactory(100);
         participantFactory.readCSV(participantFile);
         initializeAbsencesList(participantFactory.getParticipantList());
         PairListFactory pairListFactory = new PairListFactory(participantFactory.getParticipantList(), participantFactory.getRegisteredPairs(), criteria);

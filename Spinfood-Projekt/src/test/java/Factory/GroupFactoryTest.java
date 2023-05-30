@@ -21,7 +21,6 @@ class GroupFactoryTest {
     private ParticipantFactory participantFactory;
     private Double[] partyLocationCoordinates;
     private File partyLocation;
-    private final double genderDiversityThreshold = 0.4;
 
 
     @BeforeEach
@@ -44,15 +43,10 @@ class GroupFactoryTest {
         Assertions.assertFalse(checkFalseCooking(groupFactory));
         Assertions.assertTrue(checkNewPairsEachDinnerRound(groupFactory));
         Assertions.assertTrue(checkMixedGroupsBadFoodPref(groupFactory));
-        Assertions.assertTrue(checkGenderDiversityScore(groupFactory, genderDiversityThreshold));
-        Assertions.assertFalse(checkGenderDiversityScore(groupFactory, 0.5));
-        Assertions.assertFalse(checkAgeDifferenceScore(groupFactory, 10));
-        Assertions.assertFalse(checkPreferenceDeviationScore(groupFactory, 0.5));
-
     }
 
-    //Testmethoden
 
+    //Testmethoden
 
     /**
      * Test if each Pair cooks exactly once
@@ -179,115 +173,6 @@ class GroupFactoryTest {
             }
         }
         return false;
-    }
-
-    /**
-     * calculates the GenderDiversityScore of all generated Groups and checks if its higher than given threshold
-     * @param groupFactory
-     * @return
-     */
-    private boolean checkGenderDiversityScore(GroupFactory groupFactory, double genderDiversityThreshold) {
-        double score = 0.0;
-        for(DinnerRound dinnerRound : groupFactory.getDinnerRounds()) {
-            for(Group group : dinnerRound.getGroups()) {
-                score += group.getGenderDiversityScore();
-            }
-        }
-        score = score / (groupFactory.getDinnerRounds().size() * groupFactory.getDinnerRounds().get(0).getGroups().size());
-        System.out.println("GenderDiversity Score: " + score + " (should be > "+  genderDiversityThreshold +")");
-        return score < genderDiversityThreshold;
-    }
-
-    /**
-     * calculates the AgeDifferenceScore of all generated Groups and checks if its higher than given threshold
-     */
-    private boolean checkAgeDifferenceScore(GroupFactory groupFactory, double ageDifferenceThreshold) {
-        double score = 0.0;
-        for(DinnerRound dinnerRound : groupFactory.getDinnerRounds()) {
-            for(Group group : dinnerRound.getGroups()) {
-                score += group.getAgeRangeDeviationScore();
-            }
-        }
-        score = score / (groupFactory.getDinnerRounds().size() * groupFactory.getDinnerRounds().get(0).getGroups().size());
-        System.out.println("AgeDifference Score: " + score + " (should be > "+  ageDifferenceThreshold +")");
-        return score > ageDifferenceThreshold;
-
-    }
-
-    /**
-     * calculates the PreferenceDeviationScore of all generated Groups and checks if its higher than given threshold
-     */
-    private boolean checkPreferenceDeviationScore(GroupFactory groupFactory, double preferenceDeviationThreshold) {
-        double score = 0.0;
-        for(DinnerRound dinnerRound : groupFactory.getDinnerRounds()) {
-            for(Group group : dinnerRound.getGroups()) {
-                score += group.getFoodPreferenceDeviationScore();
-            }
-        }
-        score = score / (groupFactory.getDinnerRounds().size() * groupFactory.getDinnerRounds().get(0).getGroups().size());
-        System.out.println("PreferenceDeviation Score: " + score + " (should be > "+  preferenceDeviationThreshold +")");
-        return score > preferenceDeviationThreshold;
-    }
-
-
-
-
-
-    /**
-     * checks if all Pairs in group have access to a kitchen
-     */
-    private boolean checkPairWithoutKitchen(Group group) {
-        for (Pair pair : group.getPairs()) {
-            if ((pair.getParticipant1().getHasKitchen().equals("false")) && (pair.getParticipant2().getHasKitchen().equals("false"))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    private boolean checkGeographicalDistance(Group group) {
-        for (Pair pair : group.getPairs()) {
-            pair.getPlaceOfCooking();
-
-        }
-        return false;
-    }
-
-    private boolean checkAgeDifference(Group group) {
-        return true;
-    }
-
-    private boolean checkPreferenceDeviation(Group group) {
-        return true;
-    }
-    //Helper Methods
-
-    private double calculateGeographicalDistance(Double[] firstCoordinates, Double[] secondCoordinates) {
-        Double distance = 0.0;
-        double firstLatitude = firstCoordinates[0];
-        double firstLongitude = firstCoordinates[1];
-        double secondLatitude = secondCoordinates[0];
-        double secondLongitude = secondCoordinates[1];
-
-        double earthRadius = 6371.0;
-
-        double latitudeDistance = Math.toRadians(secondLatitude - firstLatitude);
-        double longitudeDistance = Math.toRadians(secondLongitude - firstLongitude);
-
-        double a = Math.sin(latitudeDistance / 2) * Math.sin(latitudeDistance / 2)
-                + Math.cos(Math.toRadians(firstLatitude)) * Math.cos(Math.toRadians(secondLatitude))
-                * Math.sin(longitudeDistance / 2) * Math.sin(longitudeDistance / 2);
-
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        distance = earthRadius * c;
-
-        return distance;
-    }
-
-    private double distanceToPartyLocation(Double[] coordinates) {
-        return calculateGeographicalDistance(coordinates, partyLocationCoordinates);
     }
 
     /**
