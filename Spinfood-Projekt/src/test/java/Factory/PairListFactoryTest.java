@@ -92,6 +92,84 @@ class PairListFactoryTest {
     }
 
     /**
+     * testet ob die AltersKennzahl richtig berechnet wird
+     */
+    @org.junit.jupiter.api.Test
+    void calculateAgeDifference() throws URISyntaxException {
+        int index = 0;
+        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/pairfactorytestlists/testliste0.csv")).toURI()));
+        participantList = participantFactory.getParticipantList();
+        ArrayList<Object> criteria = new ArrayList<>();
+        criteria.add("Essensvorlieben");
+        criteria.add("Altersdifferenz");
+        criteria.add("Geschlechterdiversität");
+
+        PairListFactory pairListFactory = new PairListFactory(new ArrayList<>(participantList), new ArrayList<>(participantFactory.getRegisteredPairs()), criteria);
+        List<Pair> generatedPairs = pairListFactory.pairList;
+        pairListFactory.showPairs();
+
+        while (!generatedPairs.isEmpty()) {
+            Pair p = generatedPairs.remove(0);
+            double ageDifference = p.getAgeDifference();
+            System.out.println("AgeDifference should be: " + expectedAgeDifference[index] + " and is: " + ageDifference);
+            Assertions.assertTrue(ageDifference == expectedAgeDifference[index]);
+            index++;
+        }
+    }
+
+    /**
+     * testet ob die EssensKennzahl richtig berechnet wird
+     */
+    @org.junit.jupiter.api.Test
+    void calculatePreferenceDeviation() throws URISyntaxException {
+        int index = 0;
+        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/pairfactorytestlists/testliste0.csv")).toURI()));
+        participantList = participantFactory.getParticipantList();
+        ArrayList<Object> criteria = new ArrayList<>();
+        criteria.add("Essensvorlieben");
+        criteria.add("Altersdifferenz");
+        criteria.add("Geschlechterdiversität");
+
+        PairListFactory pairListFactory = new PairListFactory(new ArrayList<>(participantList), new ArrayList<>(participantFactory.getRegisteredPairs()), criteria);
+        List<Pair> generatedPairs = pairListFactory.pairList;
+        pairListFactory.showPairs();
+
+        while (!generatedPairs.isEmpty()) {
+            Pair p = generatedPairs.remove(0);
+            double preferenceDeviation = p.getPreferenceDeviation();
+            System.out.println("PreferenceDeviation should be: " + expectedPreferenceDeviation[index] + " and is: " + preferenceDeviation);
+            Assertions.assertTrue(preferenceDeviation == expectedPreferenceDeviation[index]);
+            index++;
+        }
+    }
+
+    /**
+     * testet ob die GeschlechterKennzahl richtig berechnet wird
+     */
+    @org.junit.jupiter.api.Test
+    void calculateGenderDiversityScore() throws URISyntaxException {
+        int index = 0;
+        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/pairfactorytestlists/testliste0.csv")).toURI()));
+        participantList = participantFactory.getParticipantList();
+        ArrayList<Object> criteria = new ArrayList<>();
+        criteria.add("Essensvorlieben");
+        criteria.add("Altersdifferenz");
+        criteria.add("Geschlechterdiversität");
+
+        PairListFactory pairListFactory = new PairListFactory(new ArrayList<>(participantList), new ArrayList<>(participantFactory.getRegisteredPairs()), criteria);
+        List<Pair> generatedPairs = pairListFactory.pairList;
+        pairListFactory.showPairs();
+
+        while (!generatedPairs.isEmpty()) {
+            Pair p = generatedPairs.remove(0);
+            double genderDiversityScore = p.getGenderDiversityScore();
+            System.out.println("GenderDiversityScore should be: " + expectedGenderDiversityScore[index] + " and is: " + genderDiversityScore);
+            Assertions.assertTrue(genderDiversityScore == expectedGenderDiversityScore[index]);
+            index++;
+        }
+    }
+
+    /**
      * Initializes the criteria list.
      */
     private void initializeCriteria() {
@@ -213,5 +291,7 @@ class PairListFactoryTest {
         }
         return false;
     }
+
+
 
 }
