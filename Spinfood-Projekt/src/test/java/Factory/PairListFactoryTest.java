@@ -55,9 +55,9 @@ class PairListFactoryTest {
 
             Assertions.assertFalse(checkMultiplePairs(pairList));
 
-            for (Pair p : pairList) {
-                Assertions.assertFalse(checkNoGoPair(p));
-            }
+
+            Assertions.assertFalse(checkNoGoPair(pairList));
+
 
             Assertions.assertFalse(checkWgNoGo(pairList));
         }
@@ -129,24 +129,28 @@ class PairListFactoryTest {
     }
 
     /**
-     * Checks if a pair is a noGoPair (no kitchen / bad food preference).
-     * @param p the pair that should be checked for a noGoPair
+     * Checks if a pairList contains illegal pairs
+     *
+     * @param pairList the pairList that should be checked for  noGoPairs
      * @return a boolean indicating if the pair is a noGoPair
      */
-    private boolean checkNoGoPair(Pair p) {
-        if (checkKitchenNoGo(p.getParticipant1().getHasKitchen(), p.getParticipant2().getHasKitchen())) {
-            System.out.println("Pair:" + p.getParticipant1().getName() + " " + p.getParticipant2().getName() + " has no kitchen");
-            return true;
-        }
-        if (checkFoodNoGo(p.getParticipant1().getFoodPreference(), p.getParticipant2().getFoodPreference())) {
-            System.out.println("Pair:" + p.getParticipant1().getName() + " " + p.getParticipant2().getName() + " has illegal food preferenceCombination");
-            return true;
+    private boolean checkNoGoPair(List<Pair> pairList) {
+        for (Pair p : pairList) {
+            if (checkKitchenNoGo(p.getParticipant1().getHasKitchen(), p.getParticipant2().getHasKitchen())) {
+                System.out.println("Pair:" + p.getParticipant1().getName() + " " + p.getParticipant2().getName() + " has no kitchen");
+                return true;
+            }
+            if (checkFoodNoGo(p.getParticipant1().getFoodPreference(), p.getParticipant2().getFoodPreference())) {
+                System.out.println("Pair:" + p.getParticipant1().getName() + " " + p.getParticipant2().getName() + " has illegal food preferenceCombination");
+                return true;
+            }
         }
         return false;
     }
 
     /**
      * Checks if a Participant is in multiple Pairs.
+     *
      * @param pairList list of pairs from the pair algorithm.
      * @return a boolean indication if a participant is occurring in multiple pairs.
      */
@@ -164,6 +168,7 @@ class PairListFactoryTest {
 
     /**
      * Checks if a pair is a bad match in food preferences (vegan with meat/veggie with meat)
+     *
      * @param foodPreference1 the food preference of the first participant of the pair.
      * @param foodPreference2 the food preference of the second participant of the pair.
      * @return a boolean indicating if the pair has valid food preferences or not.
@@ -180,6 +185,7 @@ class PairListFactoryTest {
 
     /**
      * Checks if a pair is a bad match in kitchen (no kitchen with no kitchen).
+     *
      * @param kitchen1 the kitchen identification of the first participant.
      * @param kitchen2 the kitchen identification of the second participant.
      * @return a boolean indicating if both participants have no kitchen or not.
@@ -193,6 +199,7 @@ class PairListFactoryTest {
 
     /**
      * Checks if the wgCount of a participant in the pairs is too high
+     *
      * @param pairs the list of pairs from the pair algorithm.
      * @return a boolean indicating if the wg count is too high.
      */
