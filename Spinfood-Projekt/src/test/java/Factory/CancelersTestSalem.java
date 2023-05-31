@@ -15,7 +15,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CancelersTest {
+public class CancelersTestSalem {
     private List<Participant> absences;
     private List<Participant> successorsInWaitingList;
     private List<Group> groupList;
