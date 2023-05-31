@@ -1,0 +1,7 @@
+,ID,Name,FoodPreference,Age,Sex,Kitchen,Kitchen_Story,Kitchen_Longitude,Kitchen_Latitude,ID_2,Name_2,Age_2,Sex_2
+0,004670cb-47f5-40a4-87d8-5276c18616ec,Person1,meat,21,male,maybe,3.0,8.673368271555807,50.5941282715558,,,,
+1,01a099db-22e1-4fc3-bbf5-db738bc2c10b,Person2,meat,21,male,yes,1.0,8.718914539788807,50.590899839788804,,,,
+2,176e1b97-0101-4d0c-b519-75d6dbda35af,Person3,meat,21,male,yes,2.0,8.718914539788807,42.1378213782,,,,
+3,1a1a63a4-4557-4f12-bb54-cb82c51b26b7,Person4,meat,29,female,yes,-1.0,8.71246724132,50.231232312312,,,,
+4,1c30b2f3-ef9e-4f23-bcc8-73b885fd11c5,Person5,veggie,60,male,yes,1.0,8.7326137231232,50.3123223331233,,,,
+5,302a8a85-8e25-49e5-9e7f-58979d7a8c47,Person6,vegan,17,female,yes,1.0,8.213255132412,50.1251232132139,,,,
