@@ -15,25 +15,41 @@ Test Einlesen von Teilnehmern
     	|--------------------------------------------------------------|
 	| Methode                      | #Tests | #Fehler | Voll. Abd. |
 	|------------------------------+--------+---------+------------|
-	| ParticipantFactory.readCSV() | 11     | 0       | Nein       |
+	| ParticipantFactory.readCSV() | 11     | 0       | Ja	       |
 	|--------------------------------------------------------------|
 
 
-
+Test Paarlisten
+	
+	- testen ob die Altersdifferenz eines Pärchen richtig berechnet wird
+	- testen ob die Altersdifferenz einer Paarliste richtig berechnet wird 
+	- testen ob die Geschlechterdiversität eines Pärchen richtig berechnet wird
+	- testen ob die Geschlechterdiversität einer Paarliste richtig berechnet wird
+	- testen ob die richtige Anzahl an Pärchen generiert wurde
+	- testen ob die Essensvorliebenkennzahl eines Pärchens richtig berechnet wird	
+	- testen ob die Essensvorliebenkennzahl einer Paarliste richtig berechnet wird
+	- testen ob die Anzahl an Nachvolgern richtig berechnet wird
+	|--------------------------------------------------------------|
+	| Methode                      | #Tests | #Fehler | Voll. Abd. |
+	|------------------------------+--------+---------+------------|
+	| PairListFactory()            | 8	| 0       | Ja	       |
+	|--------------------------------------------------------------|
 
 Test Pärchenbildung:
 
 	- testen ob Participants mehrfach einem Pärchen zugeordnet wurden
-	- testen ob ein Pärchen mit nicht passenden Essensvorlieben generiert wurde
-	- testen ob ein Pärchen ohne Küche generiert wurde
-	- testen ob FoodKennzahl für jedes Pärchen richtig berechnet wurde
-	- testen ob AgeKennzahl für jedes Pärchen richtig berechnet wurde
-	- testen ob SexKennzahl für jedes Pärchen richtig berechnet wurde	
+	- testen ob Pärchen mit nicht passenden Essensvorlieben generiert wurde
+	- testen ob keine weiteren Pärchen (mit Participants aus WG) erstellt werden, wenn schon drei Pärchen mit participants aus derselben WG erstellt wurden
+	- testen ob Pärchen ohne Küche generiert wurden
+	- testen ob Pärchen trotz hohen Eigenschaftsdifferenzen (z.B. Altersunterschied) generiert werden
+	- testen ob die Alterskennszahl der Pärchen richtig generiert wird
+	- testen ob die Essensvorliebenkennzahl der Pärchen richtig generiert wird
+	- testen ob die Diversitätskennzahl eines Pärchens richtig generiert wird
 
     	|--------------------------------------------------------------|
 	| Methode                      | #Tests | #Fehler | Voll. Abd. |
 	|------------------------------+--------+---------+------------|
-	| PairListFactory 	       |   6	| 0       | Nein       |
+	| PairListFactory 	       |   8	| 0       | Ja	       |
 	|--------------------------------------------------------------|	
 
 
@@ -53,8 +69,25 @@ Test Gruppenbildung:
 	|--------------------------------------------------------------|
 	| Methode                      | #Tests | #Fehler | Voll. Abd. |
 	|------------------------------+--------+---------+------------|
-	| 	createGroups	       |   7	| 0       | Nein       |
+	| createGroups()       	       |   7	| 0       | Nein       |
 	|--------------------------------------------------------------|	
 	
 
 Test Absagenhandeling
+
+	-testen ob Pärchen/Teilnehmer die abgesagt haben, korrekt aus den Gruppen entfernt wurden
+	-testen ob Gruppen wieder aufgefüllt wurden
+	-testen ob die neuen Pärchen/Gruppen legale Pärchen/Gruppen sind
+	-testen ob die SuccsessorList die aufgefüllten Pärchen/Participants nicht mehr enthält
+
+	|--------------------------------------------------------------|
+	| Methode                      | #Tests | #Fehler | Voll. Abd. |
+	|------------------------------+--------+---------+------------|
+	| performAdjustment() 	       |   1	| 1	  | Nein       |
+	|--------------------------------------------------------------|
+	| updateGroupList() 	       |   1	| 1       | Nein       |
+	|--------------------------------------------------------------|
+	| updateWaitingList() 	       |   1 	| 1       | Nein       |
+	|--------------------------------------------------------------|
+	| completeGroups() 	       |   3	| 3       | Nein       |
+	|--------------------------------------------------------------|

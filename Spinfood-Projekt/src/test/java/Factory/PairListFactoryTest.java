@@ -23,7 +23,7 @@ class PairListFactoryTest {
     }
     double[] expectedAgeDifference = new double[]{2, 2, 1, 1, 2};
     double[] expectedPreferenceDeviation = new double[]{0, 0, 1, 1, 0};
-    double[] expectedGenderDiversityScore = new double[]{0.5, 1, 0.5, 1, 0}; 
+    double[] expectedGenderDiversityScore = new double[]{0.5, 1, 0.5, 1, 0};
 
 
 
