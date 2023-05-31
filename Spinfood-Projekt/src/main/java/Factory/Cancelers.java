@@ -9,6 +9,13 @@ import java.util.List;
 public class Cancelers {
     private final List<Participant> absences;
     private List<Participant> successorsInWaitingList;
+    private final List<Group> groupList;
+    private final List<Group> backupGroupList;
+    private final List<Participant> backupWaitingList;
+    private PairListFactory pairListFactory;
+    private final List<Participant> participantList = new ArrayList<>();
+    private final List<Pair> successorPairList = new ArrayList<>();
+
 
     public Cancelers(List<Participant> absences, List<Participant> successorsInWaitingList, List<Group> groupList, List<Group> backupGroupList, List<Participant> backupWaitingList, PairListFactory pairListFactory) {
         this.absences = absences;
@@ -16,14 +23,9 @@ public class Cancelers {
         this.groupList = groupList;
         this.backupGroupList = backupGroupList;
         this.backupWaitingList = backupWaitingList;
+        this.pairListFactory = pairListFactory;
 
     }
-    private final List<Group> groupList;
-    private final List<Group> backupGroupList;
-    private final List<Participant> backupWaitingList;
-    private       PairListFactory pairListFactory;
-    private final List<Participant> participantList = new ArrayList<>();
-    private final List<Pair> successorPairList = new ArrayList<>();
 
 
 
