@@ -21,6 +21,11 @@ class PairListFactoryTest {
         CRITERIA_SEX_FOOD_AGE,
         CRITERIA_SEX_AGE_FOOD,
     }
+    double[] expectedAgeDifference = new double[]{2, 2, 1, 1, 2};
+    double[] expectedPreferenceDeviation = new double[]{0, 0, 1, 1, 0};
+    double[] expectedGenderDiversityScore = new double[]{0.5, 0.5, 0.5, 0.5};
+
+
 
     private ParticipantFactory participantFactory;
     List<Participant> participantList;
@@ -97,7 +102,7 @@ class PairListFactoryTest {
     @org.junit.jupiter.api.Test
     void calculateAgeDifference() throws URISyntaxException {
         int index = 0;
-        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/pairfactorytestlists/testliste0.csv")).toURI()));
+        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/PairListTestlists/calculateAgeDifferenceTestList.csv")).toURI()));
         participantList = participantFactory.getParticipantList();
         ArrayList<Object> criteria = new ArrayList<>();
         criteria.add("Essensvorlieben");
@@ -123,7 +128,7 @@ class PairListFactoryTest {
     @org.junit.jupiter.api.Test
     void calculatePreferenceDeviation() throws URISyntaxException {
         int index = 0;
-        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/pairfactorytestlists/testliste0.csv")).toURI()));
+        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/PairListTestlists/calculatePreferenceDeviationTestList.csv")).toURI()));
         participantList = participantFactory.getParticipantList();
         ArrayList<Object> criteria = new ArrayList<>();
         criteria.add("Essensvorlieben");
@@ -149,7 +154,7 @@ class PairListFactoryTest {
     @org.junit.jupiter.api.Test
     void calculateGenderDiversityScore() throws URISyntaxException {
         int index = 0;
-        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/pairfactorytestlists/testliste0.csv")).toURI()));
+        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/PairListTestlists/calculateGenderDiversityScoreTestList.csv")).toURI()));
         participantList = participantFactory.getParticipantList();
         ArrayList<Object> criteria = new ArrayList<>();
         criteria.add("Essensvorlieben");
