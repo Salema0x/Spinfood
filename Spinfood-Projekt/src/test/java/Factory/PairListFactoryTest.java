@@ -22,7 +22,6 @@ class PairListFactoryTest {
         CRITERIA_SEX_AGE_FOOD,
     }
 
-    private PairListFactory pairListFactory;
     private ParticipantFactory participantFactory;
     List<Participant> participantList;
     List<List<Object>> criteriaOrder;
@@ -40,6 +39,7 @@ class PairListFactoryTest {
         List<Object> criteria = new ArrayList<>();
         initializeCriteria();
 
+        PairListFactory pairListFactory;
         for (Criteria c : Criteria.values()) {
             switch (c) {
                 case CRITERIA_FOOD_AGE_SEX -> criteria = criteriaOrder.get(0);
@@ -61,6 +61,34 @@ class PairListFactoryTest {
 
             Assertions.assertFalse(checkWgNoGo(pairList));
         }
+
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListFactoryTestlists/testliste1.csv")).toURI()));
+        participantList = participantFactory.getParticipantList();
+        criteria = new ArrayList<>(List.of("Essensvorlieben", "Altersdifferenz", "Geschlechterdiversität"));
+        pairListFactory = new PairListFactory(new ArrayList<>(participantList), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        //4 pairs possible but 4th pair would be cooking in the same kitchen as the other 3 pairs so 4th pairs cant exist
+        Assertions.assertEquals(3, pairListFactory.pairList.size());
+
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListFactoryTestlists/testliste2.csv")).toURI()));
+        participantList = participantFactory.getParticipantList();
+        pairListFactory = new PairListFactory(new ArrayList<>(participantList), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        //age difference of 99, but it's the only possible pair, so it will still be generated.
+        Assertions.assertEquals(1, pairListFactory.pairList.size());
+
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListFactoryTestlists/testliste3.csv")).toURI()));
+        participantList = participantFactory.getParticipantList();
+        pairListFactory = new PairListFactory(new ArrayList<>(participantList), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        //no pair should be generated
+        Assertions.assertTrue(pairListFactory.pairList.isEmpty());
+
+        //checking if correct pairs are generated
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListFactoryTestlists/testliste4.csv")).toURI()));
+        participantList = participantFactory.getParticipantList();
+        pairListFactory = new PairListFactory(new ArrayList<>(participantList), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
+        Assertions.assertEquals(3, pairListFactory.pairList.size());
+        Assertions.assertTrue(pairListFactory.pairList.get(0).isEqualTo(new Pair(participantList.get(1), participantList.get(0))));
+        Assertions.assertTrue(pairListFactory.pairList.get(1).isEqualTo(new Pair(participantList.get(3), participantList.get(2))));
+        Assertions.assertTrue(pairListFactory.pairList.get(2).isEqualTo(new Pair(participantList.get(5), participantList.get(4))));
     }
 
     /**
