@@ -22,7 +22,6 @@ class GroupFactoryTest {
     private Double[] partyLocationCoordinates;
     private File partyLocation;
 
-
     @BeforeEach
     void setUp() throws URISyntaxException {
         partyLocation = new File(Objects.requireNonNull(getClass().getResource("/partylocation.csv").toURI()));
@@ -30,10 +29,7 @@ class GroupFactoryTest {
         participantFactory = new ParticipantFactory(100);
         participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/teilnehmerliste.csv").toURI())));
         pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>());
-
-
     }
-
 
     @org.junit.jupiter.api.Test
     void GroupFactory() {
@@ -44,7 +40,6 @@ class GroupFactoryTest {
         Assertions.assertTrue(checkNewPairsEachDinnerRound(groupFactory));
         Assertions.assertTrue(checkMixedGroupsBadFoodPref(groupFactory));
     }
-
 
     //Testmethoden
 

@@ -279,4 +279,8 @@ public class GroupFactory {
     public List<Pair> getSuccessorList() {
         return successorList;
     }
+
+    public List<Group> getGroups() {
+        return groups;
+    }
 }

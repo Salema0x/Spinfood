@@ -1,23 +1,30 @@
 package Entity;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 public class Group {
     private final List<Pair> pairs;
     private final List<Participant> participants = new ArrayList<>();
     private Pair cookingPair;
-
+    private double genderDiversityScore;
+    private double ageDifference;
+    private double preferenceDeviation;
 
     public Group(Pair initialPair) {
         this.pairs = new ArrayList<>();
         pairs.add(initialPair);
         this.cookingPair = initialPair; // Setzen des initialPair als Kochpaar
+        this.ageDifference = calculateAverageScores(Pair::getAgeDifference);
+        this.preferenceDeviation = calculateAverageScores(Pair::getPreferenceDeviation);
+        this.genderDiversityScore = calculateGenderDiversityScore();
         createParticipants();
     }
 
-
+    /**
+     * Extracts the participants from the pairs.
+     */
     private void createParticipants() {
         for (Pair pair : pairs) {
             participants.add(pair.getParticipant1());
@@ -25,14 +32,52 @@ public class Group {
         }
     }
 
+    /**
+     * Calculates the average scores of the Group.
+     * @param method the method the gather the data from the pairs of the group.
+     * @return the average key identification of the list.
+     */
+    private double calculateAverageScores(Function<Pair, Double> method) {
+        double sumDiversityScores = 0.0d;
+
+        for (Pair pair : pairs) {
+            sumDiversityScores += method.apply(pair);
+        }
+
+        if (pairs.size() != 0) {
+            return sumDiversityScores / pairs.size();
+        }
+
+        return 0;
+    }
+
+    /**
+     * Calculates the gender diversity score of the group.
+     * @return a double representing the gender diversity score.
+     */
+    private double calculateGenderDiversityScore() {
+        double sumDeviationFromIdeal = 0.0d;
+
+        for (Pair pair : pairs) {
+            sumDeviationFromIdeal += Math.abs(0.5 - pair.getGenderDiversityScore());
+        }
+
+        if (pairs.size() != 0) {
+            return sumDeviationFromIdeal / pairs.size();
+        }
+
+        return 0;
+    }
+
     public List<Pair> getPairs() {
         return pairs;
     }
 
-    public void addPair(Pair pair) {
-        this.pairs.add(pair);
-    }
-
+    /**
+     * Checks if the group contains a specific participant.
+     * @param participant The participant for which should be checked.
+     * @return a boolean indicating if the specified participant is in the group or not.
+     */
     public boolean containsParticipant(Participant participant) {
         boolean contains = false;
 
@@ -41,6 +86,18 @@ public class Group {
         }
 
         return contains;
+    }
+
+    /**
+     * Builds String of Pairs for printing
+     * @return A string representing the Pairs of the group.
+     */
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        for (Pair pair : pairs) {
+            result.append(pair.toString()).append(" ");
+        }
+        return result.toString();
     }
 
     public boolean isPair() {
@@ -71,28 +128,15 @@ public class Group {
         return this.pairs.contains(pair);
     }
 
-    /**
-     * builds String of Pairs for printing
-     * @return
-     */
-    public String toString() {
-        String result = "";
-        for (Pair pair : pairs) {
-            result += pair.toString() + " ";
-        }
-        return result;
+    public double getGenderDiversityScore() {
+        return genderDiversityScore;
     }
 
-    /**
-     * calculates genderDiversityScore of a Group
-     * @return
-     */
-    public double getGenderDiversityScore() {
-        double score = 0.0;
-        for(Pair pair : pairs) {
-            score += pair.getGenderDiversityScore();
+    public double getPreferenceDeviation() {
+        return preferenceDeviation;
+    }
 
-        }
-        return score/pairs.size();
+    public double getAgeDifference() {
+        return ageDifference;
     }
 }

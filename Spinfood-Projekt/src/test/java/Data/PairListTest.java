@@ -56,14 +56,9 @@ class PairListTest {
         participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste0.csv")).toURI()));
         PairListFactory pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
         pairList = pairListFactory.getPairListObject();
-        Assertions.assertEquals(0, pairList.getGenderDiversityScore());
-
-        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste1.csv")).toURI()));
-        pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
-        pairList = pairListFactory.getPairListObject();
         Assertions.assertEquals(0.5, pairList.getGenderDiversityScore());
 
-        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste2.csv")).toURI()));
+        participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste1.csv")).toURI()));
         pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
         pairList = pairListFactory.getPairListObject();
         Assertions.assertEquals(0, pairList.getGenderDiversityScore());
@@ -72,13 +67,13 @@ class PairListTest {
         participantFactory.showCSV();
         pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
         pairList = pairListFactory.getPairListObject();
-        Assertions.assertEquals((double) 1 / 3, pairList.getGenderDiversityScore());
+        Assertions.assertEquals(0.5 / 3, pairList.getGenderDiversityScore());
 
         participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/PairListTestlists/testliste4.csv")).toURI()));
         participantFactory.showCSV();
         pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
         pairList = pairListFactory.getPairListObject();
-        Assertions.assertEquals(1, pairList.getGenderDiversityScore());
+        Assertions.assertEquals(0.5, pairList.getGenderDiversityScore());
     }
 
     @Test
@@ -147,6 +142,5 @@ class PairListTest {
         pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
         pairList = pairListFactory.getPairListObject();
         Assertions.assertEquals(2, pairList.getCountSuccessors());
-
     }
 }

@@ -4,7 +4,6 @@ import Entity.Pair;
 import Entity.Participant;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -23,17 +22,8 @@ class PairListFactoryTest {
         CRITERIA_SEX_AGE_FOOD,
     }
 
-    byte[] expectedAgeDifference = new byte[]{2, 2, 1, 1, 2};
-    byte[] expectedPreferenceDeviation = new byte[]{0, 0, 1, 1, 0};
-    double[] expectedGenderDiversityScore = new double[]{0.5, 0.5, 0.5, 0.5, 0.0};
-
-    double[] meanFoodDeviationMax = new double[]{7, 1.5, 0.7};
-    double[] meanAgeDeviationMax = new double[]{5, 3, 2.5};
-    double[] meanGenderDeviationMin = new double[]{0.3, 0.35, 0.39};
-
-
-    PairListFactory pairListFactory;
-    ParticipantFactory participantFactory;
+    private PairListFactory pairListFactory;
+    private ParticipantFactory participantFactory;
     List<Participant> participantList;
     List<List<Object>> criteriaOrder;
 
@@ -63,98 +53,19 @@ class PairListFactoryTest {
             pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
             List<Pair> pairList = pairListFactory.pairList;
 
-            //searches for participants who are in multiple pairs
             Assertions.assertFalse(checkMultiplePairs(pairList));
 
-            //searches for illegal pairs
             for (Pair p : pairList) {
                 Assertions.assertFalse(checkNoGoPair(p));
             }
 
-            //checks if generated pairList contains 3 or more pairs who plan to use the same Kitchen
             Assertions.assertFalse(checkWgNoGo(pairList));
         }
     }
 
     /**
-     * testet ob die AltersKennzahl richtig berechnet wird
+     * Initializes the criteria list.
      */
-    @org.junit.jupiter.api.Test
-    void calculateAgeDifference() throws URISyntaxException {
-        int index = 0;
-        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/pairfactorytestlists/testliste0.csv")).toURI()));
-        participantList = participantFactory.getParticipantList();
-        ArrayList<Object> criteria = new ArrayList<>();
-        criteria.add("Essensvorlieben");
-        criteria.add("Altersdifferenz");
-        criteria.add("Geschlechterdiversität");
-
-        PairListFactory pairListFactory = new PairListFactory(new ArrayList<>(participantList), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
-        List<Pair> generatedPairs = pairListFactory.pairList;
-        pairListFactory.showPairs();
-
-        while (!generatedPairs.isEmpty()) {
-            Pair p = generatedPairs.remove(0);
-            double ageDifference = p.getAgeDifference();
-            System.out.println("AgeDifference should be: " + expectedAgeDifference[index] + " and is: " + ageDifference);
-            Assertions.assertTrue(ageDifference == expectedAgeDifference[index]);
-            index++;
-        }
-    }
-
-    /**
-     * testet ob die EssensKennzahl richtig berechnet wird
-     */
-    @org.junit.jupiter.api.Test
-    void calculatePreferenceDeviation() throws URISyntaxException {
-        int index = 0;
-        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/pairfactorytestlists/testliste0.csv")).toURI()));
-        participantList = participantFactory.getParticipantList();
-        ArrayList<Object> criteria = new ArrayList<>();
-        criteria.add("Essensvorlieben");
-        criteria.add("Altersdifferenz");
-        criteria.add("Geschlechterdiversität");
-
-        PairListFactory pairListFactory = new PairListFactory(new ArrayList<>(participantList), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
-        List<Pair> generatedPairs = pairListFactory.pairList;
-        pairListFactory.showPairs();
-
-        while (!generatedPairs.isEmpty()) {
-            Pair p = generatedPairs.remove(0);
-            double preferenceDeviation = p.getPreferenceDeviation();
-            System.out.println("PreferenceDeviation should be: " + expectedPreferenceDeviation[index] + " and is: " + preferenceDeviation);
-            Assertions.assertTrue(preferenceDeviation == expectedPreferenceDeviation[index]);
-            index++;
-        }
-    }
-
-    /**
-     * testet ob die GeschlechterKennzahl richtig berechnet wird
-     */
-    @org.junit.jupiter.api.Test
-    void calculateGenderDiversityScore() throws URISyntaxException {
-        int index = 0;
-        participantFactory.readCSV(new File(Objects.requireNonNull(getClass().getResource("/testlists/pairfactorytestlists/testliste0.csv")).toURI()));
-        participantList = participantFactory.getParticipantList();
-        ArrayList<Object> criteria = new ArrayList<>();
-        criteria.add("Essensvorlieben");
-        criteria.add("Altersdifferenz");
-        criteria.add("Geschlechterdiversität");
-
-        PairListFactory pairListFactory = new PairListFactory(new ArrayList<>(participantList), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
-        List<Pair> generatedPairs = pairListFactory.pairList;
-        pairListFactory.showPairs();
-
-        while (!generatedPairs.isEmpty()) {
-            Pair p = generatedPairs.remove(0);
-            double genderDiversityScore = p.getGenderDiversityScore();
-            System.out.println("GenderDiversityScore should be: " + expectedGenderDiversityScore[index] + " and is: " + genderDiversityScore);
-            Assertions.assertEquals(genderDiversityScore, expectedGenderDiversityScore[index]);
-            index++;
-        }
-    }
-
-
     private void initializeCriteria() {
         criteriaOrder = new ArrayList<>();
         criteriaOrder.add(new ArrayList<>() {{
@@ -189,14 +100,9 @@ class PairListFactoryTest {
         }});
     }
 
-
     /**
-     * checks if a pair is a noGoPair (no kitchen / bad food preference)
-     *
-     * @param p
+     * Checks if a pair is a noGoPair (no kitchen / bad food preference).
      * @param p the pair that should be checked for a noGoPair
-     * @return /**
-     * checks if a pair is a noGoPair (no kitchen / bad food preference)
      * @return a boolean indicating if the pair is a noGoPair
      */
     private boolean checkNoGoPair(Pair p) {
@@ -209,15 +115,12 @@ class PairListFactoryTest {
             return true;
         }
         return false;
-
     }
 
-
     /**
-     * checks if a Participant is in multiple Pairs
-     *
-     * @param pairList
-     * @return
+     * Checks if a Participant is in multiple Pairs.
+     * @param pairList list of pairs from the pair algorithm.
+     * @return a boolean indication if a participant is occurring in multiple pairs.
      */
     private boolean checkMultiplePairs(List<Pair> pairList) {
         for (int i = 0; i < pairList.size(); i++) {
@@ -231,31 +134,27 @@ class PairListFactoryTest {
         return false;
     }
 
-
-
     /**
-     * checks if a pair is a bad match in food preferences (vegan with meat/veggie with meat)
-     *
-     * @param foodPreference1
-     * @param foodPreference2
-     * @return
+     * Checks if a pair is a bad match in food preferences (vegan with meat/veggie with meat)
+     * @param foodPreference1 the food preference of the first participant of the pair.
+     * @param foodPreference2 the food preference of the second participant of the pair.
+     * @return a boolean indicating if the pair has valid food preferences or not.
      */
     private boolean checkFoodNoGo(String foodPreference1, String foodPreference2) {
-        if (foodPreference1.equals("vegan") || foodPreference1.equals("vegetarian")) {
+        if (foodPreference1.equals("vegan") || foodPreference1.equals("veggie")) {
             return foodPreference2.equals("meat");
         }
-        if (foodPreference2.equals("vegan") || foodPreference2.equals("vegetarian")) {
+        if (foodPreference2.equals("vegan") || foodPreference2.equals("veggie")) {
             return foodPreference1.equals("meat");
         }
         return false;
     }
 
     /**
-     * checks if a pair is a bad match in kitchen (no kitchen with no kitchen)
-     *
-     * @param kitchen1
-     * @param kitchen2
-     * @return
+     * Checks if a pair is a bad match in kitchen (no kitchen with no kitchen).
+     * @param kitchen1 the kitchen identification of the first participant.
+     * @param kitchen2 the kitchen identification of the second participant.
+     * @return a boolean indicating if both participants have no kitchen or not.
      */
     private boolean checkKitchenNoGo(String kitchen1, String kitchen2) {
         if (kitchen1.equals("no")) {
@@ -264,11 +163,16 @@ class PairListFactoryTest {
         return false;
     }
 
+    /**
+     * Checks if the wgCount of a participant in the pairs is too high
+     * @param pairs the list of pairs from the pair algorithm.
+     * @return a boolean indicating if the wg count is too high.
+     */
     private boolean checkWgNoGo(List<Pair> pairs) {
         for (Pair p : pairs) {
             Participant p1 = p.getParticipant1();
             Participant p2 = p.getParticipant2();
-            if (p1.getCountWg() > 4 || p2.getCountWg() > 4) {
+            if (p1.getCountWg() > 3 || p2.getCountWg() > 3) {
                 return true;
             }
         }

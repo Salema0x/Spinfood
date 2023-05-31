@@ -18,7 +18,7 @@ public class PairList {
         this.pairList = pairList;
         this.countPairs = pairList.size();
         this.countSuccessors = successors.size();
-        this.genderDiversityScore = calculateAverageScores(Pair::getGenderDiversityScore);
+        this.genderDiversityScore = calculateGenderDiversity();
         this.ageDifference = calculateAverageScores(Pair::getAgeDifference);
         this.preferenceDeviation = calculateAverageScores(Pair::getPreferenceDeviation);
     }
@@ -40,7 +40,24 @@ public class PairList {
         }
 
         return 0;
+    }
 
+    /**
+     * Calculates the gender diversity score of the pair.
+     * @return a double representing the gender diversity score.
+     */
+    private double calculateGenderDiversity() {
+        double sumDeviationFromIdeal = 0.0d;
+
+        for (Pair pair : pairList) {
+            sumDeviationFromIdeal += Math.abs(0.5 - pair.getGenderDiversityScore());
+        }
+
+        if (countPairs != 0) {
+            return sumDeviationFromIdeal / countPairs;
+        }
+
+        return 0;
     }
 
     public double getAgeDifference() {
