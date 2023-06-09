@@ -12,6 +12,7 @@ public class DinnerRound {
         this.groups = new ArrayList<>();
     }
 
+
     public List<Group> getGroups() {
         return groups;
     }
