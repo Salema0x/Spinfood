@@ -9,6 +9,8 @@ public class Pair {
     private final Double[] placeOfCooking = new Double[2];
     private String foodPreference;
 
+    private Kitchen kitchen;
+
 
     public Pair(Participant participant1, Participant participant2) {
         this.participant1 = participant1;
@@ -27,15 +29,19 @@ public class Pair {
         if (participant1.getHasKitchen().equals("yes")) {
             placeOfCooking[0] = participant1.getKitchenLatitude();
             placeOfCooking[1] = participant1.getKitchenLongitude();
+            kitchen = participant1.getKitchen();
         } else if (participant2.getHasKitchen().equals("yes")) {
             placeOfCooking[0] = participant2.getKitchenLatitude();
             placeOfCooking[1] = participant2.getKitchenLongitude();
+            kitchen = participant2.getKitchen();
         } else if (participant1.getHasKitchen().equals("maybe")) {
             placeOfCooking[0] = participant1.getKitchenLatitude();
             placeOfCooking[1] = participant1.getKitchenLongitude();
+            kitchen = participant1.getKitchen();
         } else if (participant2.getHasKitchen().equals("maybe")) {
             placeOfCooking[0] = participant2.getKitchenLatitude();
             placeOfCooking[1] = participant2.getKitchenLongitude();
+            kitchen = participant2.getKitchen();
         }
     }
 
@@ -132,6 +138,10 @@ public class Pair {
 
     public Double[] getPlaceOfCooking() {
         return placeOfCooking;
+    }
+
+    public Kitchen getKitchen() {
+        return kitchen;
     }
 
 }

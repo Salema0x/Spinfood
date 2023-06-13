@@ -17,6 +17,7 @@ public class Participant {
     private boolean isSuccessor;
     private Participant partner = null;
     private boolean hasPartner = false;
+    private final Kitchen kitchen;
 
     public Participant(String[] values, boolean isSuccessor) {
         this.id = values[1];
@@ -25,6 +26,13 @@ public class Participant {
         this.age = Byte.parseByte(values[4]);
         this.sex = values[5];
         this.hasKitchen = values[6];
+        switch (hasKitchen) {
+            case "yes" -> this.kitchen = new Kitchen(false, );
+            case "maybe" -> this.kitchen = new Kitchen(true, );
+            case "no" -> this.kitchen = new Kitchen();
+        }
+
+
 
         if (values.length <= 8) {
             handleSmallKitchenValues(values);
@@ -35,12 +43,16 @@ public class Participant {
         this.isSuccessor = isSuccessor;
 
         calculateFoodPreferenceNumber(foodPreference);
+
         calculateAgeRangeNumber(age);
+
         calculateSexNumber(sex);
+
     }
 
     /**
      * Initializes the values for the kitchen when coordinates are given.
+     *
      * @param values String array representing all the values of the participant which have been read in.
      */
     private void handleFullKitchenValues(String[] values) {
@@ -55,6 +67,7 @@ public class Participant {
 
     /**
      * Initializes the values of the kitchen when no coordinates are given.
+     *
      * @param values String array representing all the values of the participant which have been read in.
      */
     private void handleSmallKitchenValues(String[] values) {
@@ -69,8 +82,9 @@ public class Participant {
 
     /**
      * Initializes the coordinates of the kitchen, to either default values or the exact coordinates.
+     *
      * @param longitude the longitude coordinate of the kitchen as string.
-     * @param latitude the latitude coordinate of the kitchen as string.
+     * @param latitude  the latitude coordinate of the kitchen as string.
      */
     private void handleKitchenCoordinates(String longitude, String latitude) {
         if (longitude.isEmpty()) {
@@ -84,6 +98,7 @@ public class Participant {
 
     /**
      * Generates a number according to the foodPreference of the participant.
+     *
      * @param foodPreference A String representing the foodPreference of the participant.
      */
     private void calculateFoodPreferenceNumber(String foodPreference) {
@@ -98,6 +113,7 @@ public class Participant {
 
     /**
      * Depending on the age every participant is getting assigned to an age range.
+     *
      * @param age the age of the participant.
      */
     private void calculateAgeRangeNumber(byte age) {
@@ -131,12 +147,15 @@ public class Participant {
 
     /**
      * Checks if two participants are the same.
+     *
      * @param participant the participant to which should be compared.
      * @return a boolean indicating if the participants are equal or not.
      */
     public boolean equals(Participant participant) {
         return this.id.equals(participant.getId());
     }
+
+
 
     /**
      * Increases the countWg from the participant if a member of his wg has registered as well.
@@ -227,5 +246,9 @@ public class Participant {
 
     public boolean getIsSuccessor() {
         return isSuccessor;
+    }
+
+    public Kitchen getKitchen() {
+        return kitchen;
     }
 }
