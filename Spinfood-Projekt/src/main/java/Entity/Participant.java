@@ -27,7 +27,7 @@ public class Participant {
         this.sex = values[5];
         this.hasKitchen = values[6];
 
-        //avoide index out of bound exception when no kitchen is given
+        //avoid index out of bound exception when no kitchen is given
         if (values.length <= 8) {
             initializeKitchenValues();
         } else {
