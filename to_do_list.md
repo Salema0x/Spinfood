@@ -3,34 +3,36 @@
 <h2> Bis zum 04.05.2023 </h2>
 
 <ul>
-	<li> Bevor mit der Implementierung angefangen wird, Testfälle spezifizieren</li>
-	<li> Datenstruktur zur Repräsentation von Teilnehmern implementieren <i>(wir sollten vielleicht nochmal darüber nachdenken welche Datenstruktur sich anbieten würde, wahrscheinlich sind Listen nicht das effizienteste)</i></li>
+<li>:heavy_check_mark: Für JUnit Tests können den .csv Teil testen, wo nur csv Dateien eingelesen werden müssen </li>
+<li>:x: den GUI Teil sollte bisschen bearbeitet werden indem man die Liste direkt angezeigt sieht, sobald man die Datei auswählt,statt wieder auf " Liste anzeigen " drucken zu müssen</li>
+	<li> :heavy_check_mark: Bevor mit der Implementierung angefangen wird, Testfälle spezifizieren</li>
+	<li> :heavy_check_mark: Datenstruktur zur Repräsentation von Teilnehmern implementieren <i>(wir sollten vielleicht nochmal darüber nachdenken welche Datenstruktur sich anbieten würde, wahrscheinlich sind Listen nicht das effizienteste)</i></li>
 	<ul>
-		<li>Vielleicht bietet sich hier eine Hash-Tabelle an, weil jeder Teilnehmer ja schon mit einer ID kommt.</li>
+		<li> :x: Vielleicht bietet sich hier eine Hash-Tabelle an, weil jeder Teilnehmer ja schon mit einer ID kommt.</li>
 	</ul>
 	<li> Implementierung Einlesen der Teilnehmer</li>
 	<ul>
-		<li>.csv Datei soll eingelesen werden, die einzelnen Teilnehmer werden in einer Datenstruktur gespeichert, die einzelnen Teilnehmer werden auf der Konsole ausgegeben</li>
+		<li> :heavy_check_mark: .csv Datei soll eingelesen werden, die einzelnen Teilnehmer werden in einer Datenstruktur gespeichert, die einzelnen Teilnehmer werden auf der Konsole ausgegeben</li>
 	</ul>
-	<li> Klassendiagramm anpassen an die neuen Anforderungen</li>
-	<li> Gantt-Diagramm mit Planung für Woche 2 erweitern <i>(Speicherung in einer neuen Datei)</i></li>
-	<li> Testdokumentation erstellen <i>(jeder Test usw. muss dokumentiert werden)</i></li>
+	<li> :heavy_check_mark: Klassendiagramm anpassen an die neuen Anforderungen</li>
+	<li> :heavy_check_mark: Gantt-Diagramm mit Planung für Woche 2 erweitern <i>(Speicherung in einer neuen Datei)</i></li>
+	<li> :heavy_check_mark: Testdokumentation erstellen <i>(jeder Test usw. muss dokumentiert werden)</i></li>
 </ul>
 
 <h3> Gedanken Implementierung Algorithmus </h3>
 
 <ul>
-<li> Es gibt eine extra Klasse zum einlesen von der .csv Datei "ParticipantFactory" die Main sollte einfach nur die verschiedenen Methoden aus den unterschiedlichen Klassen aufrufen. Das macht es einfacher aus der Main heraus den gesamten Ablauf zu erkennen.</li>
-<li> Eine GUI in der der Pfad zu einer .csv Datei angegeben werden kann </li>
-<li> Programm nimmt diesen Pfad entgegen und erstellt aus der .csv Datei Teilnehmer</li>
-<li> angemeldete Paare werden als Pairs abgespeichert und als Teilnehmer damit wirklich erstmal alle Teilnehmer einzeln angezeigt werden können </li>
-<li> Es muss sichergestellt werden, dass wirklich alle Einträge abgearbeitet werden </li>
-<li> Wenn eine leere .csv Datei angegeben wird darf nichts unerwartetes passieren: Ausgabe auf der Konsole: kein Teilnehmer hat sich angemeldet</li>
-<li> Für die Küchen sollte es meiner Meinung nach wirklich eine Kitchen Klasse geben</li>
-<li> Wir brauchen noch eine Methode um die agerange zu berechnen</li>
+<li> :heavy_check_mark: Es gibt eine extra Klasse zum einlesen von der .csv Datei "ParticipantFactory" die Main sollte einfach nur die verschiedenen Methoden aus den unterschiedlichen Klassen aufrufen. Das macht es einfacher aus der Main heraus den gesamten Ablauf zu erkennen.</li>
+<li> :heavy_check_mark: Eine GUI in der der Pfad zu einer .csv Datei angegeben werden kann </li>
+<li> :heavy_check_mark: Programm nimmt diesen Pfad entgegen und erstellt aus der .csv Datei Teilnehmer</li>
+<li> :heavy_check_mark: angemeldete Paare werden als Pairs abgespeichert und als Teilnehmer damit wirklich erstmal alle Teilnehmer einzeln angezeigt werden können </li>
+<li> :heavy_check_mark: Es muss sichergestellt werden, dass wirklich alle Einträge abgearbeitet werden </li>
+<li> :x:<i>Es wird eine leere Tabelle angezeigt.</i> Wenn eine leere .csv Datei angegeben wird darf nichts unerwartetes passieren: Ausgabe auf der Konsole: kein Teilnehmer hat sich angemeldet</li>
+<li> :x: <i> Doch nicht sinnvoll da nicht jeder Participant eine Kitchen hat</i>Für die Küchen sollte es meiner Meinung nach wirklich eine Kitchen Klasse geben</li>
+<li> :x: <i> keine Ahnung wie die berechnet werden soll</i>Wir brauchen noch eine Methode um die agerange zu berechnen</li>
 <li> Wir brauchen noch eine Methode um count_wg zu berechnen</li>
-<li> Schönerer Code: einlesen der Datei mittels Stream API, und erstellen eines participants mittels konstruktor und nicht mit so vielen set aufrufen, ist zwar komplizierter aber sehr viel schöner. Können wir uns ja mal merken falls wir noch Zeit haben.</li>
-<li> Macht die Hash-Tabelle so bis jetzt Sinn? Bis jetzt brauchen wir die noch nicht wirklich, wird aber später evtl. nützlich sein. Eigentlich ist ja eine Hash-Tabelle nur effizient wenn wir sie mit einer Hash-Funktion verwenden? Hier können wir aber vielleicht die Participants mittels der ID einfacher suchen, also ist das vielleicht schon sinnvoll insbesondere beim Löschen eines Teilnehmers</li>
+<li> :x: Schönerer Code: einlesen der Datei mittels Stream API, und erstellen eines participants mittels konstruktor und nicht mit so vielen set aufrufen, ist zwar komplizierter aber sehr viel schöner. Können wir uns ja mal merken falls wir noch Zeit haben.</li>
+<li> :x: <i> Hashtabelle wird bis jetzt nicht gebraucht</i>Macht die Hash-Tabelle so bis jetzt Sinn? Bis jetzt brauchen wir die noch nicht wirklich, wird aber später evtl. nützlich sein. Eigentlich ist ja eine Hash-Tabelle nur effizient wenn wir sie mit einer Hash-Funktion verwenden? Hier können wir aber vielleicht die Participants mittels der ID einfacher suchen, also ist das vielleicht schon sinnvoll insbesondere beim Löschen eines Teilnehmers</li>
 <li> Unit Test für die Methode zum .csv Datei einlesen </li>
 <ul>
 	<li>Liste wird übergeben -> Es wird eine Liste an Teilnehmern auf der Konsole ausgegeben</li>

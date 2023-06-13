@@ -90,8 +90,6 @@ class CancelersTest {
         testIfUpdatedGroupsAreFine();
     }
 
-
-
     /**
      * tests if absent participants were removed from the groups
      */
