@@ -1,5 +1,5 @@
 package Enum;
 
 public enum Course {
-    first, main, dessert
+    FIRST, MAIN, DESSERT
 }

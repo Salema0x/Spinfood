@@ -1,32 +1,51 @@
 package Json;
 
+import Enum.FoodPreference;
+import Enum.Course;
 import Entity.Group;
+import Entity.Kitchen;
 import Entity.Pair;
+import Entity.Participant;
 import Misc.DinnerRound;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Path;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class JsonExport {
-    private JSONObject root;
-    private List<DinnerRound> dinnerRounds;
-    private enum Course {
-        first, main, dessert
-    }
-    private enum FoodType {
-        meat, veggie, vegan
-    }
 
-    public JsonExport(List<DinnerRound> dinnerRounds, Path path) {
-        this.dinnerRounds = dinnerRounds;
+    private JSONObject root;
+    private List<DinnerRound> dinnerRoundsList;
+    private List<Pair> registeredPairsList;
+    private List<Pair> successorPairsList;
+    private List<Participant> successorParticipantsList;
+    private String filePath = "src/main/resources/output.json";
+    private String fileName = "output.json";
+
+    /**
+     * Constructor, generates the JSON Root with all its Properties and writes it to a file
+     *
+     * @param dinnerRoundsList
+     * @param registeredPairsList
+     * @param successorPairsList
+     * @param successorParticipantsList
+     */
+    public JsonExport(List<DinnerRound> dinnerRoundsList, List<Pair> registeredPairsList, List<Pair> successorPairsList, List<Participant> successorParticipantsList) {
+        this.dinnerRoundsList = dinnerRoundsList;
+        this.registeredPairsList = registeredPairsList;
+        this.successorPairsList = successorPairsList;
+        this.successorParticipantsList = successorParticipantsList;
         root = new JSONObject();
         addRootProperties();
+        writeJsonFile();
+
     }
 
 
@@ -46,23 +65,22 @@ public class JsonExport {
 
     /**
      * generates a JSONArray and fills it with the Group data from the Algorithm
+     *
      * @return
      */
     private JSONArray initializeGroups() {
         JSONArray groups = new JSONArray();
-        for(DinnerRound dinnerRound : dinnerRounds) {
-            Course course = getCourse(dinnerRound);
-            for(Group group : dinnerRound.getGroups()) {
+        for (DinnerRound dinnerRound : dinnerRoundsList) {
+            Course course = dinnerRound.getCourse();
+            for (Group group : dinnerRound.getGroups()) {
                 JSONObject groupJson = new JSONObject();
-                JSONObject[] pairs = generatePairs(group);
+                List<JSONObject> pairs = generateJsonPairs(group);
                 groupJson.put("course", course);
-                groupJson.put("foodType", getFoodType(group));
-                groupJson.put("kitchen", generateKitchenObj(group));
-                groupJson.put("cookingPair", pairs[0]);
-                groupJson.put("secondPair", pairs[1]);
-                groupJson.put("thirdPair", pairs[2]);
-
-
+                groupJson.put("foodType", group.getFoodPreference());
+                groupJson.put("kitchen", pairs.get(0).get("kitchen"));
+                groupJson.put("cookingPair", pairs.get(0));
+                groupJson.put("secondPair", pairs.get(1));
+                groupJson.put("thirdPair", pairs.get(2));
 
 
                 groups.add(groups);
@@ -71,114 +89,157 @@ public class JsonExport {
         return groups;
     }
 
+    /**
+     * generates a JSONArray containing all registered Pairs as JsonObj
+     *
+     * @return
+     */
     private JSONArray initializePairs() {
-        JSONArray pairs = new JSONArray();
-
-
-
-
-        return pairs;
+        JSONArray result = new JSONArray();
+        result.addAll(generatePairList(registeredPairsList));
+        return result;
     }
 
+    /**
+     * generates a JSONArray containing all Pairs marked as Successors as JsonObj
+     *
+     * @return
+     */
     private JSONArray initializeSuccessorPairs() {
-        JSONArray successorPairs = new JSONArray();
-
-
-
-
-        return successorPairs;
+        JSONArray result = new JSONArray();
+        result.addAll(generatePairList(successorPairsList));
+        return result;
     }
 
+    /**
+     * generates a JSONArray containing all Participants marked as Successors as JsonObj
+     *
+     * @return
+     */
     private JSONArray initializeSuccessorParticipants() {
-        JSONArray successorParticipants = new JSONArray();
-
-
-
-
-        return successorParticipants;
+        JSONArray result = new JSONArray();
+        result.addAll(generateJsonParticipantList(successorParticipantsList));
+        return result;
     }
-
 
 
     /**
-     * Creates a JSON File from the
+     * Creates a JSON File from the root
      */
-    private void writeJsonFile(Path path) {
-        File file = new File(path.toString());
-        try(FileWriter fileWriter = new FileWriter("output.json")) {
-            fileWriter.write(root.toJSONString());
-            fileWriter.flush();
+    private void writeJsonFile() {
+        try {
+            //Get URL of ressources folder
+            ClassLoader classLoader = getClass().getClassLoader();
+            URL resourceUrl = classLoader.getResource(fileName);
 
-            System.out.println("Successfully generated JSON File...");
+            if (resourceUrl == null) {
+                throw new IllegalArgumentException("file not found!");
+            }
+
+            String filePath = resourceUrl.getPath();
+            FileWriter fileWriter = new FileWriter(filePath);
+
+            //Write JSON file
+            fileWriter.write(root.toJSONString());
+            fileWriter.close();
+            System.out.println("JSON file created: " + filePath);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
 
-
     //Helper Methods
-    //TODO: Implement Field in Group for FoodType + Getter
+
+
     /**
-     * Returns the FoodType of a Group
-     * @param g
+     * generates a JSONObject from a Kitchen
+     *
+     * @param kitchen
      * @return
      */
-    private FoodType getFoodType(Group g) {
-        String foodType = "puffer";  //g.getFoodType()
-        switch (foodType) {
-            case "meat":
-                return FoodType.meat;
-            case "veggie":
-                return FoodType.veggie;
-            case "vegan":
-                return FoodType.vegan;
-            default:
-                return null;
-        }
-    }
+    private JSONObject generateJsonKitchenObj(Kitchen kitchen) {
+        JSONObject result = new JSONObject();
+        result.put("emergencyKitchen", kitchen.isEmergencyKitchen());
+        result.put("story", kitchen.getStory());
+        result.put("longitude", kitchen.getLongitude());
+        result.put("latitude", kitchen.getLatitude());
+        return result;
 
-    //TODO: Implement Field in DinnerRound + getter
-    /**
-     * Returns the Course of a DinnerRound
-     */
-    private Course getCourse(DinnerRound dinnerRound) {
-        return null;                        //dinnerRound.getCourse()
     }
 
 
-
-    //TODO: Implement Class Kitchen + Field in Group + getter
-    /**
-     * Returns a JSONObject with the Kitchen of a Group
-     * @param g
-     * @return
-     */
-    private JSONObject generateKitchenObj(Group g) {
-        JSONObject kitchen = new JSONObject();
-        kitchen.put("emergencyKitchen", "temp");      //g.getKitchen().isEmergencyKitchen()
-        kitchen.put("story", "temp");   //g.getKitchen().getAddress()
-        kitchen.put("longitude", "temp");   //g.getKitchen().getLongitude()
-        kitchen.put("latitude", "temp");      //g.getKitchen().getLatitude()
-        return kitchen;
-    }
-
-    //TODO: Implement Field in Group + getter
     /**
      * Generates a JSONObject Array with the Pairs of a Group {cookingPair, secondPair, thirdPair}
      */
-    private JSONObject[] generatePairs(Group group) {
-        List<Pair> pairs = group.getPairs();
-        Pair cookingPair = null;  //pairs.getCookingPair();
-        pairs.remove(cookingPair);
+    private List<JSONObject> generateJsonPairs(Group group) {
+        List<Pair> pairList = group.getPairs();
+        List<JSONObject> jsonPairList = new ArrayList<>();
+        jsonPairList.add(generateJsonPair(pairList.remove(pairList.indexOf(group.getCookingPair()))));
+        jsonPairList.add(generateJsonPair(pairList.remove(0)));
+        jsonPairList.add(generateJsonPair(pairList.remove(0)));
+        return jsonPairList;
+    }
 
-        JSONObject jsonCookingPair = new JSONObject();
-        jsonCookingPair.put("premade", "temp");    //cookingPair.isPremade()
-        jsonCookingPair.put("foodPreference", cookingPair.getFoodPreference());
+    /**
+     * Helper Method to generate a List of JsonObj containing all registered Pairs
+     *
+     * @param pairList
+     * @return
+     */
+    private List<JSONObject> generatePairList(List<Pair> pairList) {
+        List<JSONObject> result = new ArrayList<>();
+        for (Pair p : pairList) {
+            result.add(generateJsonPair(p));
+        }
+        return result;
+    }
 
-        JSONObject jsonSecondPair = new JSONObject();
-        JSONObject jsonThirdPair = new JSONObject();
+    /**
+     * method to generate a JSON Pair
+     *
+     * @param p given Pair
+     * @return
+     */
 
-        return new JSONObject[]{jsonCookingPair, jsonSecondPair, jsonThirdPair};
+    private JSONObject generateJsonPair(Pair p) {
+        JSONObject result = new JSONObject();
+        result.put("premade", p.isPreMade());
+        result.put("foodPreference", p.getFoodPreference());
+        result.put("firstParticipant", generateJsonParticipant(p.getParticipant1()));
+        result.put("secondParticipant", generateJsonParticipant(p.getParticipant2()));
+        return result;
+    }
+
+    /**
+     * Helpermethod to generate List containing all Participants as JSONobj
+     *
+     * @return
+     */
+    private List<JSONObject> generateJsonParticipantList(List<Participant> participantList) {
+        List<JSONObject> result = new ArrayList<>();
+        for (Participant participant : participantList) {
+            result.add(generateJsonParticipant(participant));
+        }
+        return result;
+
+    }
+
+    /**
+     * generates a JsonParticipant Obj from a given Participant
+     *
+     * @param participant
+     * @return
+     */
+    private JSONObject generateJsonParticipant(Participant participant) {
+        JSONObject result = new JSONObject();
+        result.put("id", participant.getId());
+        result.put("fullName", participant.getName());
+        result.put("foodPreference", participant.getFoodPreference());
+        result.put("age", participant.getAge());
+        result.put("gender", participant.getSex());
+        result.put("kitchen", generateJsonKitchenObj(participant.getKitchen()));
+        return result;
     }
 }

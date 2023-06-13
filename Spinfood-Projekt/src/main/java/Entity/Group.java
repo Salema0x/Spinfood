@@ -3,6 +3,7 @@ package Entity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+
 import Enum.FoodPreference;
 
 public class Group {
@@ -31,6 +32,7 @@ public class Group {
         this.preferenceDeviation = calculateAverageScores(Pair::getPreferenceDeviation);
         this.genderDiversityScore = calculateGenderDiversityScore();
         createParticipants();
+        calculateFoodPreference();
     }
 
     /**
@@ -45,6 +47,7 @@ public class Group {
 
     /**
      * Calculates the average scores of the Group.
+     *
      * @param method the method the gather the data from the pairs of the group.
      * @return the average key identification of the list.
      */
@@ -64,6 +67,7 @@ public class Group {
 
     /**
      * Calculates the gender diversity score of the group.
+     *
      * @return a double representing the gender diversity score.
      */
     private double calculateGenderDiversityScore() {
@@ -86,6 +90,7 @@ public class Group {
 
     /**
      * Checks if the group contains a specific participant.
+     *
      * @param participant The participant for which should be checked.
      * @return a boolean indicating if the specified participant is in the group or not.
      */
@@ -101,6 +106,7 @@ public class Group {
 
     /**
      * Builds String of Pairs for printing
+     *
      * @return A string representing the Pairs of the group.
      */
     public String toString() {
@@ -149,5 +155,45 @@ public class Group {
 
     public double getAgeDifference() {
         return ageDifference;
+    }
+
+
+    /**
+     * Helper method to calculate the food preference of the group.
+     */
+    public void calculateFoodPreference() {
+        int sum = 0;
+        for (Pair pair : pairs) {
+            sum += parseFoodPreference(pair.getFoodPreference());
+        }
+        double median = (double) sum / pairs.size();
+
+        if(median < 1.5) {
+            this.foodPreference = FoodPreference.MEAT;
+        } else if(median >= 1.5 && median < 2.5) {
+            this.foodPreference = FoodPreference.VEGGIE;
+        } else {
+            this.foodPreference = FoodPreference.VEGAN;
+        }
+    }
+    /**
+     * Helper method to parse the food preference of the group.
+     */
+    private int parseFoodPreference(String foodPreference) {
+        switch (foodPreference) {
+            case "MEAT":
+                return 1;
+            case "VEGETARIAN":
+                return 2;
+            case "VEGAN":
+                return 3;
+
+            default:
+                return 0;
+        }
+    }
+
+    public void addPair(Pair pair) {
+        this.pairs.add(pair);
     }
 }

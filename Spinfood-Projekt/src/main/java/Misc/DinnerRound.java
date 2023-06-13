@@ -8,10 +8,11 @@ import java.util.List;
 
 public class DinnerRound {
 
-    private String course;
+    private Course course;
     private final List<Group> groups;
 
-    public DinnerRound() {
+    public DinnerRound(Course course) {
+        this.course = course;
         this.groups = new ArrayList<>();
     }
 
@@ -20,6 +21,32 @@ public class DinnerRound {
         return groups;
     }
 
+    public Course getCourse() {
+        return course;
+    }
+
+
+
+
+
     public void setCourse(Course course) {
+        if (course == null) {
+            throw new IllegalArgumentException("Course cannot be null");
+        }
+        this.course = course;
+    }
+
+    public void addGroup(Group group) {
+        if (group == null) {
+            throw new IllegalArgumentException("Group cannot be null");
+        }
+        groups.add(group);
+    }
+
+    public void addGroupList(List<Group> groupList) {
+        if (groupList == null) {
+            throw new IllegalArgumentException("GroupList cannot be null");
+        }
+        groups.addAll(groupList);
     }
 }

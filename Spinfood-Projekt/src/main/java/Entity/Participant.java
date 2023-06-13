@@ -17,6 +17,7 @@ public class Participant {
     private boolean isSuccessor;
     private Participant partner = null;
     private boolean hasPartner = false;
+    private Kitchen kitchen;
 
     public Participant(String[] values, boolean isSuccessor) {
         this.id = values[1];
@@ -25,6 +26,14 @@ public class Participant {
         this.age = Byte.parseByte(values[4]);
         this.sex = values[5];
         this.hasKitchen = values[6];
+
+        //avoide index out of bound exception when no kitchen is given
+        if (values.length <= 8) {
+            initializeKitchenValues();
+        } else {
+            initializeKitchenValues(values);
+        }
+
 
         if (values.length <= 8) {
             handleSmallKitchenValues(values);
@@ -35,12 +44,59 @@ public class Participant {
         this.isSuccessor = isSuccessor;
 
         calculateFoodPreferenceNumber(foodPreference);
+
         calculateAgeRangeNumber(age);
+
         calculateSexNumber(sex);
+
+    }
+
+    /**
+     * initializes the kitchen Filed of the participant
+     *
+     * @param values String array representing all the values of the participant which have been read in. (hasKitchen, story, longitude, latitude)
+     */
+    private void initializeKitchenValues(String[] values) {
+        int story;
+        double longitude;
+        double latitude;
+
+        //set story to 0 if no story is given
+        if (values[7].isEmpty()) {
+            story = 0;
+        } else {
+            story = (int) Double.parseDouble(values[7]);
+        }
+
+        //set coordinates to -1 if no coordinates are given
+        if (values[8].isEmpty() || values[9].isEmpty()) {
+            longitude = -1;
+            latitude = -1;
+        } else {
+            longitude = Double.parseDouble(values[8]);
+            latitude = Double.parseDouble(values[9]);
+        }
+
+        //set maybeKitchen and generate the kitchenObj
+        if (values[0].equals("yes")) {
+            this.kitchen = new Kitchen(false, story, longitude, latitude);
+        } else {
+            this.kitchen = new Kitchen(true, story, longitude, latitude);
+        }
+
+
+    }
+
+    /**
+     * initializes the kitchen Filed of the participant with a empty kitchen
+     */
+    private void initializeKitchenValues() {
+        this.kitchen = new Kitchen();
     }
 
     /**
      * Initializes the values for the kitchen when coordinates are given.
+     *
      * @param values String array representing all the values of the participant which have been read in.
      */
     private void handleFullKitchenValues(String[] values) {
@@ -55,6 +111,7 @@ public class Participant {
 
     /**
      * Initializes the values of the kitchen when no coordinates are given.
+     *
      * @param values String array representing all the values of the participant which have been read in.
      */
     private void handleSmallKitchenValues(String[] values) {
@@ -69,8 +126,9 @@ public class Participant {
 
     /**
      * Initializes the coordinates of the kitchen, to either default values or the exact coordinates.
+     *
      * @param longitude the longitude coordinate of the kitchen as string.
-     * @param latitude the latitude coordinate of the kitchen as string.
+     * @param latitude  the latitude coordinate of the kitchen as string.
      */
     private void handleKitchenCoordinates(String longitude, String latitude) {
         if (longitude.isEmpty()) {
@@ -84,6 +142,7 @@ public class Participant {
 
     /**
      * Generates a number according to the foodPreference of the participant.
+     *
      * @param foodPreference A String representing the foodPreference of the participant.
      */
     private void calculateFoodPreferenceNumber(String foodPreference) {
@@ -98,6 +157,7 @@ public class Participant {
 
     /**
      * Depending on the age every participant is getting assigned to an age range.
+     *
      * @param age the age of the participant.
      */
     private void calculateAgeRangeNumber(byte age) {
@@ -131,12 +191,14 @@ public class Participant {
 
     /**
      * Checks if two participants are the same.
+     *
      * @param participant the participant to which should be compared.
      * @return a boolean indicating if the participants are equal or not.
      */
     public boolean equals(Participant participant) {
         return this.id.equals(participant.getId());
     }
+
 
     /**
      * Increases the countWg from the participant if a member of his wg has registered as well.
@@ -227,5 +289,9 @@ public class Participant {
 
     public boolean getIsSuccessor() {
         return isSuccessor;
+    }
+
+    public Kitchen getKitchen() {
+        return kitchen;
     }
 }

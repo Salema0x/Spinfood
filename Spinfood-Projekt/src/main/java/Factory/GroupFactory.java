@@ -1,6 +1,7 @@
 package Factory;
 
 import Entity.Pair;
+import Enum.Course;
 import Entity.Group;
 import Misc.DinnerRound;
 import java.util.*;
@@ -34,7 +35,17 @@ public class GroupFactory {
         // Initialize dinner rounds
         this.dinnerRounds = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
-            dinnerRounds.add(new DinnerRound());
+            switch (i) {
+                case 0:
+                    dinnerRounds.add(new DinnerRound(Course.FIRST));
+                    break;
+                case 1:
+                    dinnerRounds.add(new DinnerRound(Course.MAIN));
+                    break;
+                case 2:
+                    dinnerRounds.add(new DinnerRound(Course.DESSERT));
+                    break;
+            }
         }
     }
 
