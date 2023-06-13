@@ -1,26 +1,35 @@
 package Entity;
 
-public class Pair {
+import java.util.ArrayList;
+
+public class Pair implements Comparable<Pair> {
     private final Participant participant1;
     private final Participant participant2;
     private double ageDifference;
     private double preferenceDeviation;
     private double genderDiversityScore;
     private final Double[] placeOfCooking = new Double[2];
+    private Double[] coordinatesFirstRound;
+    private Double[] coordinatesSecondRound;
+    private Double[] coordinatesThirdRound;
     private String foodPreference;
-
+    private final String id;
+    private double distanceToPartyLocation;
+    private String gender;
+    public Double age;
+    public ArrayList<Pair> seen = new ArrayList<>();
 
     public Pair(Participant participant1, Participant participant2) {
         this.participant1 = participant1;
         this.participant2 = participant2;
+        this.id = participant1.getId();
 
         decideFoodPreference();
         decidePlaceOfCooking();
         calculateAgeDifference();
         calculateGenderDiversityScore();
         calculatePreferenceDeviation();
-
-
+        calculateAge();
     }
 
     private void decidePlaceOfCooking() {
@@ -39,26 +48,64 @@ public class Pair {
         }
     }
 
+    public Double[] getCoordinatesFirstRound() {
+        return coordinatesFirstRound;
+    }
+
+    public Double[] getCoordinatesSecondRound() {
+        return coordinatesSecondRound;
+    }
+
+    public Double[] getCoordinatesThirdRound() {
+        return coordinatesThirdRound;
+    }
+
+    public void setCoordinatesFirstRound(Double[] coordinatesFirstRound) {
+        this.coordinatesFirstRound = coordinatesFirstRound;
+    }
+
+    public void setCoordinatesSecondRound(Double[] coordinatesSecondRound) {
+        this.coordinatesSecondRound = coordinatesSecondRound;
+    }
+
+    public void setCoordinatesThirdRound(Double[] coordinatesThirdRound) {
+        this.coordinatesThirdRound = coordinatesThirdRound;
+    }
 
     private void decideFoodPreference() {
         String part1Pref = participant1.getFoodPreference();
         String part2Pref = participant2.getFoodPreference();
 
-        if (part1Pref.equals(part2Pref)) {
-            this.foodPreference = part1Pref;
-        } else if ((part1Pref.equals("meat") && part2Pref.equals("none")) || (part1Pref.equals("none") && part2Pref.equals("meat"))) {
-            this.foodPreference = part1Pref;
-        } else if (part1Pref.equals("meat") || part2Pref.equals("meat")) {
-            if (part2Pref.equals("veggie") || part2Pref.equals("vegan")) {
-                this.foodPreference = part2Pref;
-            } else if (part1Pref.equals("veggie") || part1Pref.equals("vegan")) {
-                this.foodPreference = part1Pref;
+        switch (part1Pref) {
+            case "vegan" -> {
+                switch (part2Pref) {
+                    case "vegan", "veggie", "none" -> this.foodPreference = "vegan";
+                }
             }
-        } else if (part1Pref.equals("veggie") && part2Pref.equals("vegan")) {
-            this.foodPreference = part2Pref;
-        } else if (part1Pref.equals("vegan") && part2Pref.equals("veggie")) {
-            this.foodPreference = part1Pref;
+            case "veggie" -> {
+                switch (part2Pref) {
+                    case "vegan" -> this.foodPreference = "vegan";
+                    case "veggie", "none" -> this.foodPreference = "veggie";
+                }
+            }
+            case "meat" -> {
+                switch (part2Pref) {
+                    case "meat", "none" -> this.foodPreference = "meat";
+                }
+            }
+            case "none" -> {
+                switch (part2Pref) {
+                    case "vegan" -> this.foodPreference = "vegan";
+                    case "veggie" -> this.foodPreference = "veggie";
+                    case "meat", "none" -> this.foodPreference = "meat";
+                }
+            }
         }
+
+    }
+
+    private void calculateAge() {
+        this.age = (double) (participant1.getAge() + participant2.getAge()) / 2;
     }
 
     /**
@@ -74,10 +121,13 @@ public class Pair {
     private void calculateGenderDiversityScore() {
         if (!participant1.getSex().equals(participant2.getSex()) || !participant2.getSex().equals(participant1.getSex())) {
             this.genderDiversityScore = 0.5;
+            this.gender = "mixed";
         } else if (participant1.getSex().equals(participant2.getSex()) && participant1.getSex().equals("female")) {
             this.genderDiversityScore = 1;
+            this.gender = "female";
         } else {
             this.genderDiversityScore = 0;
+            this.gender = "male";
         }
     }
 
@@ -134,4 +184,24 @@ public class Pair {
         return placeOfCooking;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setDistanceToPartyLocation(double distanceToPartyLocation) {
+        this.distanceToPartyLocation = distanceToPartyLocation;
+    }
+
+    public Double getDistanceToPartyLocation() {
+        return distanceToPartyLocation;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    @Override
+    public int compareTo(Pair o) {
+        return age.compareTo(o.age);
+    }
 }

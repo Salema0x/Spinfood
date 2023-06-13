@@ -21,7 +21,7 @@ public class Cancelers {
     private final List<Participant> participantList = new ArrayList<>();
     private final List<Pair> successorPairList = new ArrayList<>();
     private final ParticipantFactory participantFactory;
-    private final GroupFactory groupFactory;
+    private final GroupFactoryOld groupFactoryOld;
     List<Pair> registeredPairs;
     List<Object> criteria;
 
@@ -35,10 +35,10 @@ public class Cancelers {
      * @param backupWaitingList       the backup list for participants in the waiting list
      * @param pairListFactory         the PairListFactory object for generating pairs
      * @param participantFactory      the ParticipantFactory object for creating participants
-     * @param groupFactory            the GroupFactory object for creating groups
+     * @param groupFactoryOld            the GroupFactory object for creating groups
      */
 
-    public Cancelers(List<Participant> absences, List<Participant> successorsInWaitingList, List<Group> groupList, List<Group> backupGroupList, List<Participant> backupWaitingList, PairListFactory pairListFactory, PairListFactory pairListFactory1, ParticipantFactory participantFactory, GroupFactory groupFactory) {
+    public Cancelers(List<Participant> absences, List<Participant> successorsInWaitingList, List<Group> groupList, List<Group> backupGroupList, List<Participant> backupWaitingList, PairListFactory pairListFactory, PairListFactory pairListFactory1, ParticipantFactory participantFactory, GroupFactoryOld groupFactoryOld) {
         this.absences = absences;
         this.successorsInWaitingList = successorsInWaitingList;
         this.groupList = groupList;
@@ -46,7 +46,7 @@ public class Cancelers {
         this.backupWaitingList = backupWaitingList;
         this.pairListFactory = pairListFactory;
         this.participantFactory = participantFactory;
-        this.groupFactory = groupFactory;
+        this.groupFactoryOld = groupFactoryOld;
     }
 
     /**
@@ -112,19 +112,24 @@ public class Cancelers {
                             if (absences.contains(participant1)) {
                                 // remove the canceled Participant from the ParticipantList
                                 participantList.remove(participant1);
+                                /*
                                 if (findPairFromWaitingList(participant2, successor)) {
                                     successorPairList.add(new Pair(participant2, successor));
                                     successorsInWaitingList.remove(i);
                                     break;
                                 }
+                                 */
                             } else {
                                 // remove the canceled Participant from the ParticipantList
                                 participantList.remove(participant2);
+                                /*
                                 if (findPairFromWaitingList(participant1, successor)) {
                                     successorPairList.add(new Pair(participant1, successor));
                                     successorsInWaitingList.remove(i);
                                     break;
                                 }
+
+                                 */
                             }
                         }
                     }
@@ -213,6 +218,6 @@ public class Cancelers {
 
     // DinnerRounds are unnecessary here right ?
     public List<DinnerRound> findGroupFromWaitingList() {
-        return groupFactory.createGroups();
+        return groupFactoryOld.createGroups();
     }
 }

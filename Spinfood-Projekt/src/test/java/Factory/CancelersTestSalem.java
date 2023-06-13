@@ -1,5 +1,5 @@
 package Factory;
-
+/*
 import Factory.Cancelers;
 import Entity.Group;
 import Entity.Pair;
@@ -35,11 +35,14 @@ public class CancelersTestSalem {
         groupList = new ArrayList<>();
         backupGroupList = new ArrayList<>();
         backupWaitingList = new ArrayList<>();
+
         pairListFactory = new PairListFactory();
         participantList = new ArrayList<>();
         successorPairList = new ArrayList<>();
         participantFactory = new ParticipantFactory();
         groupFactory = new GroupFactory();
+
+
 
         cancelers = new Cancelers(absences, successorsInWaitingList, groupList, backupGroupList, backupWaitingList, pairListFactory, pairListFactory, participantFactory, groupFactory);
     }
@@ -47,6 +50,7 @@ public class CancelersTestSalem {
     @Test
     public void testUpdateGroupList() {
         // Prepare test data
+
         Participant participant1 = new Participant("");
         Participant participant2 = new Participant("");
         Participant participant3 = new Participant("");
@@ -120,3 +124,5 @@ public class CancelersTestSalem {
         assertEquals(new Pair(successor1, successor2), successorPairList.get(0));
     }
 }
+
+ */

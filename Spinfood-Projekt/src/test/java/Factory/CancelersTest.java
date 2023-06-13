@@ -1,6 +1,5 @@
 package Factory;
 
-import Data.PairList;
 import Entity.Group;
 import Entity.Pair;
 import Entity.Participant;
@@ -37,10 +36,10 @@ class CancelersTest {
         participantFactory.readCSV(participantFile);
         PairListFactory pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
 
-        GroupFactory groupFactory = new GroupFactory(pairListFactory, 3, new Double[]{8.6746166676233, 50.5909317660173});
-        groupFactory.createGroups();
+        GroupFactoryOld groupFactoryOld = new GroupFactoryOld(pairListFactory, 3, new Double[]{8.6746166676233, 50.5909317660173});
+        groupFactoryOld.createGroups();
 
-        initializeLists(groupFactory, pairListFactory);
+        initializeLists(groupFactoryOld, pairListFactory);
 
         //TODO: cancelersConstructor takes absences, successorList, dinnerRounds
         //cancelers = new Cancelers(absenceParticipants, absencePairs, successorList, dinnerRounds);
@@ -181,12 +180,12 @@ class CancelersTest {
     /**
      * initializes the lists for the test
      *
-     * @param groupFactory
+     * @param groupFactoryOld
      * @param pairListFactory
      */
-    public void initializeLists(GroupFactory groupFactory, PairListFactory pairListFactory) {
-        dinnerRounds = groupFactory.getDinnerRounds();
-        successorList = groupFactory.getSuccessorList();
+    public void initializeLists(GroupFactoryOld groupFactoryOld, PairListFactory pairListFactory) {
+        dinnerRounds = groupFactoryOld.getDinnerRounds();
+        successorList = groupFactoryOld.getSuccessorList();
         absencePairs = pairListFactory.registeredPairs.subList(0, 2);
         System.out.println("absencePairs: " + absencePairs);
         absenceParticipants.add(pairListFactory.getRegisteredPairs().get(14).getParticipant1());

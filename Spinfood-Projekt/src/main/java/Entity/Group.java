@@ -5,12 +5,13 @@ import java.util.List;
 import java.util.function.Function;
 
 public class Group {
-    private final List<Pair> pairs;
+    private final ArrayList<Pair> pairs;
     private final List<Participant> participants = new ArrayList<>();
     private Pair cookingPair;
     private double genderDiversityScore;
     private double ageDifference;
     private double preferenceDeviation;
+    private String gender;
 
     public Group(Pair initialPair) {
         this.pairs = new ArrayList<>();
@@ -20,6 +21,56 @@ public class Group {
         this.preferenceDeviation = calculateAverageScores(Pair::getPreferenceDeviation);
         this.genderDiversityScore = calculateGenderDiversityScore();
         createParticipants();
+    }
+
+
+    public void addPair(Pair pair) {
+        pairs.add(pair);
+    }
+
+    public String getGender() {
+        Pair pair1 = pairs.get(0);
+        Pair pair2 = pairs.get(1);
+        String genderPair1 = pair1.getGender();
+        String genderPair2 = pair2.getGender();
+
+        if (genderPair1.equals("female") && genderPair2.equals("female")) {
+            return "ff";
+        } else if (genderPair1.equals("female") && genderPair2.equals("male")) {
+            return "fma";
+        } else if (genderPair1.equals("female") && genderPair2.equals("mixed")) {
+            return "fmix";
+        } else if (genderPair1.equals("male") && genderPair2.equals("male")) {
+            return "mm";
+        } else if (genderPair1.equals("male") && genderPair2.equals("mixed")) {
+            return "mmix";
+        } else if (genderPair1.equals("mixed") && genderPair2.equals("mixed")) {
+            return "mixmix";
+        }
+        return "0";
+    }
+
+    public void setSeen() {
+        Pair p1 = pairs.get(0);
+        Pair p2 = pairs.get(1);
+        Pair p3 = pairs.get(2);
+
+        p1.seen.add(p2);
+        p1.seen.add(p3);
+
+        p2.seen.add(p1);
+        p2.seen.add(p3);
+
+        p3.seen.add(p2);
+        p3.seen.add(p1);
+    }
+
+    public void addPairs(ArrayList<Pair> pairs) {
+        this.pairs.addAll(pairs);
+    }
+
+    public int getGroupSize() {
+        return pairs.size();
     }
 
     /**
@@ -69,7 +120,7 @@ public class Group {
         return 0;
     }
 
-    public List<Pair> getPairs() {
+    public ArrayList<Pair> getPairs() {
         return pairs;
     }
 
