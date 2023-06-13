@@ -3,6 +3,7 @@ package Entity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import Enum.FoodPreference;
 
 public class Group {
     private final List<Pair> pairs;
@@ -11,6 +12,16 @@ public class Group {
     private double genderDiversityScore;
     private double ageDifference;
     private double preferenceDeviation;
+
+    public FoodPreference getFoodPreference() {
+        return foodPreference;
+    }
+
+    public void setFoodPreference(FoodPreference foodPreference) {
+        this.foodPreference = foodPreference;
+    }
+
+    private FoodPreference foodPreference;
 
     public Group(Pair initialPair) {
         this.pairs = new ArrayList<>();
