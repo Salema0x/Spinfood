@@ -34,6 +34,7 @@ public class MainWindow implements ActionListener {
     private static boolean partyLocationRead = false;
     private static boolean criteriaOrdered = false;
     private static boolean participantsAreRead = true;
+    private static boolean groupsGenerated = false;
 
     private static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory(1000);
     private static PairListFactory PAIR_LIST_FACTORY;
@@ -95,7 +96,7 @@ public class MainWindow implements ActionListener {
         pairMenu.add(START_GROUPS);
 
         SAVE_GROUPS.addActionListener(this);
-        SAVE_GROUPS.setEnabled(true);       //TODO setEnabled if Algorithm is finished
+        SAVE_GROUPS.setEnabled(true);
         pairMenu.add(SAVE_GROUPS);
         return menuBar;
     }
@@ -161,9 +162,10 @@ public class MainWindow implements ActionListener {
             GROUP_FACTORY.updateGroupsWithClosestPairs();
             GROUP_FACTORY.displayDinnerRounds();
             GROUP_FACTORY.ensureEachPairCooksOnce();
+            groupsGenerated = true;
         }
         else if (e.getActionCommand().equals("GruppenSpeichern")) {
-            //JSON_EXPORT = new JsonExport(GROUP_FACTORY.getDinnerRounds(),PAIR_LIST_FACTORY.getRegisteredPairs(), GROUP_FACTORY.getSuccessorList(), P );
+            JSON_EXPORT = new JsonExport(GROUP_FACTORY.getDinnerRounds(),PAIR_LIST_FACTORY.getRegisteredPairs(), GROUP_FACTORY.getSuccessorList(), PAIR_LIST_FACTORY.getParticipantSuccessorList());
 
         }
     }
@@ -186,6 +188,10 @@ public class MainWindow implements ActionListener {
 
         if (pairsGenerated) {
             START_GROUPS.setEnabled(true);
+        }
+
+        if (groupsGenerated) {
+            SAVE_GROUPS.setEnabled(true);
         }
     }
 

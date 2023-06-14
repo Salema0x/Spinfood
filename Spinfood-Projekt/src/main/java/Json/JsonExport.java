@@ -1,23 +1,22 @@
 package Json;
 
-import Enum.FoodPreference;
 import Enum.Course;
 import Entity.Group;
 import Entity.Kitchen;
 import Entity.Pair;
 import Entity.Participant;
 import Misc.DinnerRound;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.io.File;
+
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.io.BufferedWriter;
 
 public class JsonExport {
 
@@ -26,8 +25,8 @@ public class JsonExport {
     private List<Pair> registeredPairsList;
     private List<Pair> successorPairsList;
     private List<Participant> successorParticipantsList;
-    private String filePath = "src/main/resources/output.json";
-    private String fileName = "output.json";
+
+    private String filePath = "src/main/resources/Json/output.json";
 
     /**
      * Constructor, generates the JSON Root with all its Properties and writes it to a file
@@ -43,22 +42,34 @@ public class JsonExport {
         this.successorPairsList = successorPairsList;
         this.successorParticipantsList = successorParticipantsList;
         root = new JSONObject();
+
         addRootProperties();
-        writeJsonFile();
+        prettyPrintJson();
 
     }
 
+    /**
+     * Constructor, generates the JSON Root with all its Properties and writes it to a file under the given path
+     * @param dinnerRoundsList
+     * @param registeredPairsList
+     * @param successorPairsList
+     * @param successorParticipantsList
+     * @param filePath
+     */
+    public JsonExport(List<DinnerRound> dinnerRoundsList, List<Pair> registeredPairsList, List<Pair> successorPairsList, List<Participant> successorParticipantsList, String filePath) {
+        new JsonExport(dinnerRoundsList, registeredPairsList, successorPairsList, successorParticipantsList);
+        this.filePath = filePath;
+    }
 
+    /**
+     * adds given properties to the root JSONObject (4 JSONArrays: groups, pairs, successorPairs, successorParticipants)
+     */
     private void addRootProperties() {
-        JSONArray groups = initializeGroups();
-        JSONArray pairs = initializePairs();
-        JSONArray successorPairs = initializeSuccessorPairs();
-        JSONArray successorParticipants = initializeSuccessorParticipants();
 
-        root.put("groups", groups);
-        root.put("pairs", pairs);
-        root.put("successorPairs", successorPairs);
-        root.put("successorParticipants", successorParticipants);
+        root.put("groups", generateJsonGroupArray());
+        root.put("pairs", generateJsonPairArray());
+        root.put("successorPairs", generateJsonPairSuccessorArray());
+        root.put("successorParticipants", generateJsonParticipantSuccessorArray());
 
 
     }
@@ -68,7 +79,7 @@ public class JsonExport {
      *
      * @return
      */
-    private JSONArray initializeGroups() {
+    private JSONArray generateJsonGroupArray() {
         JSONArray groups = new JSONArray();
         for (DinnerRound dinnerRound : dinnerRoundsList) {
             Course course = dinnerRound.getCourse();
@@ -81,9 +92,7 @@ public class JsonExport {
                 groupJson.put("cookingPair", pairs.get(0));
                 groupJson.put("secondPair", pairs.get(1));
                 groupJson.put("thirdPair", pairs.get(2));
-
-
-                groups.add(groups);
+                groups.add(groupJson);
             }
         }
         return groups;
@@ -94,7 +103,7 @@ public class JsonExport {
      *
      * @return
      */
-    private JSONArray initializePairs() {
+    private JSONArray generateJsonPairArray() {
         JSONArray result = new JSONArray();
         result.addAll(generatePairList(registeredPairsList));
         return result;
@@ -105,9 +114,13 @@ public class JsonExport {
      *
      * @return
      */
-    private JSONArray initializeSuccessorPairs() {
+    private JSONArray generateJsonPairSuccessorArray() {
         JSONArray result = new JSONArray();
-        result.addAll(generatePairList(successorPairsList));
+        for (JSONObject obj : generatePairList(successorPairsList)) {
+            result.add(obj);
+
+        }
+
         return result;
     }
 
@@ -116,37 +129,31 @@ public class JsonExport {
      *
      * @return
      */
-    private JSONArray initializeSuccessorParticipants() {
+    private JSONArray generateJsonParticipantSuccessorArray() {
         JSONArray result = new JSONArray();
         result.addAll(generateJsonParticipantList(successorParticipantsList));
         return result;
     }
 
 
-    /**
-     * Creates a JSON File from the root
-     */
-    private void writeJsonFile() {
-        try {
-            //Get URL of ressources folder
-            ClassLoader classLoader = getClass().getClassLoader();
-            URL resourceUrl = classLoader.getResource(fileName);
+    private void prettyPrintJson() {
+        if (root != null) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String jsonData = gson.toJson(root);
 
-            if (resourceUrl == null) {
-                throw new IllegalArgumentException("file not found!");
+            // Write JSON data to the file
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+                writer.write(jsonData);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-            String filePath = resourceUrl.getPath();
-            FileWriter fileWriter = new FileWriter(filePath);
-
-            //Write JSON file
-            fileWriter.write(root.toJSONString());
-            fileWriter.close();
-            System.out.println("JSON file created: " + filePath);
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+    }
+
+    //Getter and Setter
+
+    public JSONObject getRoot() {
+        return root;
     }
 
 
@@ -161,12 +168,18 @@ public class JsonExport {
      */
     private JSONObject generateJsonKitchenObj(Kitchen kitchen) {
         JSONObject result = new JSONObject();
-        result.put("emergencyKitchen", kitchen.isEmergencyKitchen());
-        result.put("story", kitchen.getStory());
-        result.put("longitude", kitchen.getLongitude());
-        result.put("latitude", kitchen.getLatitude());
+        if (kitchen.isNoKitchen()) {
+            result.put("emergencyKitchen", false);
+            result.put("story", 0);
+            result.put("longitude", -1);
+            result.put("latitude", -1);
+        } else {
+            result.put("emergencyKitchen", kitchen.isEmergencyKitchen());
+            result.put("story", kitchen.getStory());
+            result.put("longitude", kitchen.getLongitude());
+            result.put("latitude", kitchen.getLatitude());
+        }
         return result;
-
     }
 
 
@@ -242,4 +255,6 @@ public class JsonExport {
         result.put("kitchen", generateJsonKitchenObj(participant.getKitchen()));
         return result;
     }
+
+
 }

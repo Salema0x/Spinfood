@@ -121,7 +121,7 @@ public class Cancelers {
     }
     // pairsFromPairAlgorithm should be called aswell
     public List<Participant> findPairFromWaitingList() {
-        List<Participant> successorsFromPairAlgorithm = pairListFactory.getSuccessors();
+        List<Participant> successorsFromPairAlgorithm = pairListFactory.getParticipantSuccessorList();
         List<Pair> pairsFromPairAlgorithm = pairListFactory.pairList;
         return successorsFromPairAlgorithm;
     }

@@ -11,6 +11,10 @@ public class DinnerRound {
     private Course course;
     private final List<Group> groups;
 
+    public DinnerRound() {
+        this.groups = new ArrayList<>();
+    }
+
     public DinnerRound(Course course) {
         this.course = course;
         this.groups = new ArrayList<>();

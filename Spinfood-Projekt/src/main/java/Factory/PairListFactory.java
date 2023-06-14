@@ -25,7 +25,7 @@ public class PairListFactory {
     private Function<Participant, Integer> thirdMethod;
     private final ArrayList<Participant> removements = new ArrayList<>();
     private final ArrayList<Participant> upperRemovements = new ArrayList<>();
-    private ArrayList<Participant> successors = new ArrayList<>();
+    private ArrayList<Participant> participantSuccessorList = new ArrayList<>();
     private final PairList pairListObject;
 
     public PairListFactory(ArrayList<Participant> participantList, ArrayList<Pair> registeredPairs, ArrayList<Object> criteriaOrder) {
@@ -68,7 +68,7 @@ public class PairListFactory {
         concatWithRegisteredPairs();
         showPairs();
         identifySuccessors();
-        pairListObject = new PairList(pairList, successors);
+        pairListObject = new PairList(pairList, participantSuccessorList);
         System.out.println(pairListObject.getCountPairs() + " " + pairListObject.getCountSuccessors() + " " + pairListObject.getPreferenceDeviation() + " " + pairListObject.getAgeDifference() + " " + pairListObject.getGenderDiversityScore());
     }
 
@@ -93,11 +93,11 @@ public class PairListFactory {
      * Removes Participants which are already a successor from the participant List.
      */
     private void cleanParticipantListFromSuccessors() {
-        successors = new ArrayList<>(participantList.stream()
+        participantSuccessorList = new ArrayList<>(participantList.stream()
                 .filter(Participant::isSuccessor)
                 .toList());
 
-        for (Participant participant : successors) {
+        for (Participant participant : participantSuccessorList) {
             participantList.remove(participant);
         }
     }
@@ -462,7 +462,7 @@ public class PairListFactory {
      * Identifies the successors after the pairs have been created.
      */
     private void identifySuccessors() {
-        successors = new ArrayList<>(successors);
+        participantSuccessorList = new ArrayList<>(participantSuccessorList);
 
         for (int i = 0; i < 3; i++) {
             System.out.println("Yes kitchen " + i + " " + yesKitchenParticipants.get(i).size());
@@ -489,24 +489,24 @@ public class PairListFactory {
             System.out.println(participant.getName());
         }
 
-        successors.addAll(yesKitchenParticipants.get(0));
-        successors.addAll(yesKitchenParticipants.get(1));
-        successors.addAll(yesKitchenParticipants.get(2));
+        participantSuccessorList.addAll(yesKitchenParticipants.get(0));
+        participantSuccessorList.addAll(yesKitchenParticipants.get(1));
+        participantSuccessorList.addAll(yesKitchenParticipants.get(2));
 
-        successors.addAll(maybeKitchenParticipants.get(0));
-        successors.addAll(maybeKitchenParticipants.get(1));
-        successors.addAll(maybeKitchenParticipants.get(2));
+        participantSuccessorList.addAll(maybeKitchenParticipants.get(0));
+        participantSuccessorList.addAll(maybeKitchenParticipants.get(1));
+        participantSuccessorList.addAll(maybeKitchenParticipants.get(2));
 
-        successors.addAll(noKitchenParticipants.get(0));
-        successors.addAll(noKitchenParticipants.get(1));
-        successors.addAll(noKitchenParticipants.get(2));
+        participantSuccessorList.addAll(noKitchenParticipants.get(0));
+        participantSuccessorList.addAll(noKitchenParticipants.get(1));
+        participantSuccessorList.addAll(noKitchenParticipants.get(2));
     }
 
     public PairList getPairListObject() {
         return pairListObject;
     }
 
-    public ArrayList<Participant> getSuccessors() {
-        return successors;
+    public ArrayList<Participant> getParticipantSuccessorList() {
+        return participantSuccessorList;
     }
 }

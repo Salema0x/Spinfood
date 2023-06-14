@@ -13,16 +13,11 @@ public class Group {
     private double genderDiversityScore;
     private double ageDifference;
     private double preferenceDeviation;
-
-    public FoodPreference getFoodPreference() {
-        return foodPreference;
-    }
-
-    public void setFoodPreference(FoodPreference foodPreference) {
-        this.foodPreference = foodPreference;
-    }
-
     private FoodPreference foodPreference;
+
+
+
+
 
     public Group(Pair initialPair) {
         this.pairs = new ArrayList<>();
@@ -195,5 +190,13 @@ public class Group {
 
     public void addPair(Pair pair) {
         this.pairs.add(pair);
+    }
+
+    public FoodPreference getFoodPreference() {
+        return foodPreference;
+    }
+
+    public void setFoodPreference(FoodPreference foodPreference) {
+        this.foodPreference = foodPreference;
     }
 }

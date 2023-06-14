@@ -34,4 +34,8 @@ public class Kitchen {
         return latitude;
     }
 
+    public boolean isNoKitchen() {
+        return noKitchen;
+    }
+
 }

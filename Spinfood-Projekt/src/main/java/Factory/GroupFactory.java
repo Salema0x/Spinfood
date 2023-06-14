@@ -4,6 +4,7 @@ import Entity.Pair;
 import Enum.Course;
 import Entity.Group;
 import Misc.DinnerRound;
+
 import java.util.*;
 
 
@@ -21,9 +22,10 @@ public class GroupFactory {
 
     /**
      * Constructor for GroupFactory. Initializes registeredPairs and partyLocation.
+     *
      * @param pairListFactory The list of pairs registered for the event from the PairListFactoryClass.
-     * @param maxGroupSize The maximum size of a group.
-     * @param partyLocation The location of the party.
+     * @param maxGroupSize    The maximum size of a group.
+     * @param partyLocation   The location of the party.
      */
     public GroupFactory(PairListFactory pairListFactory, int maxGroupSize, Double[] partyLocation) {
         this.registeredPairs = pairListFactory.getRegisteredPairs();
@@ -34,24 +36,14 @@ public class GroupFactory {
 
         // Initialize dinner rounds
         this.dinnerRounds = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            switch (i) {
-                case 0:
-                    dinnerRounds.add(new DinnerRound(Course.FIRST));
-                    break;
-                case 1:
-                    dinnerRounds.add(new DinnerRound(Course.MAIN));
-                    break;
-                case 2:
-                    dinnerRounds.add(new DinnerRound(Course.DESSERT));
-                    break;
-            }
-        }
+
+
     }
 
     /**
      * Creates groups for dinner rounds. Each pair cooks once and is in a group with different pairs in each round.
      * If a group does not have enough pairs, move the pairs to successorList.
+     *
      * @return List of dinner rounds.
      */
     public List<DinnerRound> createGroups() {
@@ -69,7 +61,21 @@ public class GroupFactory {
 
         // Each pair cooks once
         for (int i = 0; i < pairs.size(); i++) {
-            DinnerRound round = dinnerRounds.get(i % 3);
+            int roundNumber = i % 3;
+            DinnerRound round = dinnerRounds.get(roundNumber);
+            if (round.getCourse().equals(null)) {
+                switch (roundNumber) {
+                    case 0:
+                        round.setCourse(Course.FIRST);
+                        break;
+                    case 1:
+                        round.setCourse(Course.MAIN);
+                        break;
+                    case 2:
+                        round.setCourse(Course.DESSERT);
+                        break;
+                }
+            }
             // Holt das nächste Paar aus der Queue zum Kochen
             Pair cookingPair = cookingQueue.poll();
 
@@ -200,7 +206,8 @@ public class GroupFactory {
 
     /**
      * Finds the closest pair to a group based on geographical distance and group deviation.
-     * @param group The group for which we want to find the closest pair.
+     *
+     * @param group          The group for which we want to find the closest pair.
      * @param availablePairs The list of pairs available to be assigned for cooking.
      * @return The pair closest to the group. Returns null if no pair can be found.
      */
@@ -227,7 +234,7 @@ public class GroupFactory {
      * preference deviation, and gender diversity score.
      *
      * @param group The group for which we want to calculate the distance
-     * @param pair The Pair for which we want to calculate the distance
+     * @param pair  The Pair for which we want to calculate the distance
      * @return The total deviation between the Pair and the Group
      */
     private double calculateGroupPairDeviation(Group group, Pair pair) {
