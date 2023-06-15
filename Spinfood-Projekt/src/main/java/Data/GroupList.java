@@ -1,6 +1,7 @@
 package Data;
 
 import Entity.Group;
+import Entity.Pair;
 import Entity.Participant;
 
 import java.util.ArrayList;
@@ -8,20 +9,49 @@ import java.util.function.Function;
 
 public class GroupList {
     private ArrayList<Group> groupList = new ArrayList<>();
-    private final int groupCount;
-    private final int successorCount;
-    private double genderDiversity;
-    private double ageDifference;
-    private double preferenceDeviation;
-    private double pathLength;
+    public final int groupCount;
+    public final int successorCount;
+    public double genderDiversity;
+    public double ageDifference;
+    public double preferenceDeviation;
+    public double pathLength;
+    public Double[] partyLocation;
 
-    public GroupList(ArrayList<Group> groupList, ArrayList<Participant> successors) {
+    public GroupList(ArrayList<Group> groupList, ArrayList<Participant> successors, Double[] partylocation) {
         this.groupList = groupList;
         this.groupCount = groupList.size();
         this.successorCount = successors.size();
         this.genderDiversity = calculateGenderDiversityScore();
         this.ageDifference = calculateAverageScores(Group::getAgeDifference);
         this.preferenceDeviation = calculateAverageScores(Group::getPreferenceDeviation);
+        this.partyLocation = partylocation;
+        this.pathLength = gogje();
+    }
+
+    private double gogje() {
+        double sum = 0;
+        for (Group group : groupList) {
+            Pair pair = group.getCookingPair();
+            sum += calculateGeographicalDistance(partyLocation, pair.getPlaceOfCooking());
+        }
+        return sum;
+    }
+
+
+    private double calculateGeographicalDistance(Double[] place1, Double[] place2) {
+        double latitudeDifference = Math.toRadians(place2[0] - place1[0]);
+        double longitudeDifference = Math.toRadians(place2[1] - place1[1]);
+
+        double a = Math.pow(Math.sin(latitudeDifference / 2), 2)
+                + Math.cos(Math.toRadians(place1[0])) * Math.cos(Math.toRadians(place2[0]))
+                * Math.pow(Math.sin(longitudeDifference / 2), 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        // Radius of the earth in kilometers
+        final int EARTH_RADIUS = 6371;
+
+        return EARTH_RADIUS * c;
     }
 
     /**

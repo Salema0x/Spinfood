@@ -112,19 +112,26 @@ public class Cancelers {
                             if (absences.contains(participant1)) {
                                 // remove the canceled Participant from the ParticipantList
                                 participantList.remove(participant1);
+                                /*
                                 if (findPairFromWaitingList(participant2, successor)) {
                                     successorPairList.add(new Pair(participant2, successor));
                                     successorsInWaitingList.remove(i);
                                     break;
                                 }
+
+                                 */
+
                             } else {
                                 // remove the canceled Participant from the ParticipantList
                                 participantList.remove(participant2);
+                                /*
                                 if (findPairFromWaitingList(participant1, successor)) {
                                     successorPairList.add(new Pair(participant1, successor));
                                     successorsInWaitingList.remove(i);
                                     break;
                                 }
+
+                                 */
                             }
                         }
                     }

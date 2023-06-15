@@ -157,10 +157,7 @@ public class MainWindow implements ActionListener {
             createFileChooser();
         } else if (e.getActionCommand().equals("Gruppen bilden")) {
             GROUP_FACTORY = new GroupFactory(PAIR_LIST_FACTORY, 3, PARTICIPANT_FACTORY.getPartyLocation());
-            GROUP_FACTORY.createGroups();
-            GROUP_FACTORY.updateGroupsWithClosestPairs();
-            GROUP_FACTORY.displayDinnerRounds();
-            GROUP_FACTORY.ensureEachPairCooksOnce();
+
         }
         else if (e.getActionCommand().equals("GruppenSpeichern")) {
             //JSON_EXPORT = new JsonExport(GROUP_FACTORY.getDinnerRounds(),PAIR_LIST_FACTORY.getRegisteredPairs(), GROUP_FACTORY.getSuccessorList(), P );

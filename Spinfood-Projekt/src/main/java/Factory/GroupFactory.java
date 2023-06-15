@@ -1,6 +1,8 @@
 package Factory;
 
+import Data.GroupList;
 import Entity.Pair;
+import Entity.Participant;
 import Enum.Course;
 import Entity.Group;
 import Misc.DinnerRound;
@@ -13,10 +15,10 @@ import java.util.*;
 public class GroupFactory {
     private final List<Pair> registeredPairs;
     private final List<DinnerRound> dinnerRounds;
-    private final List<Pair> successorList;
+    private final ArrayList<Pair> successorList;
     private final int maxGroupSize;
     private Double[] partyLocation;
-    private final List<Group> groups;
+    private final ArrayList<Group> groups;
     private final String[] roundNames = {"Vorspeise", "Hauptgang", "Dessert"}; // Name der DinnerRounds
 
     /**
@@ -47,6 +49,19 @@ public class GroupFactory {
                     break;
             }
         }
+
+        createGroups();
+        updateGroupsWithClosestPairs();
+        displayDinnerRounds();
+        ensureEachPairCooksOnce();
+
+        ArrayList<Participant> succPart = new ArrayList<>();
+        for (Pair pair : successorList) {
+            succPart.add(pair.getParticipant1());
+            succPart.add(pair.getParticipant2());
+        }
+        GroupList groupList = new GroupList(groups, succPart, partyLocation);
+        System.out.println(groupList.groupCount + " " + groupList.successorCount + " " + groupList.preferenceDeviation + " " + groupList.ageDifference + " " + groupList.genderDiversity + " " + groupList.pathLength);
     }
 
     /**

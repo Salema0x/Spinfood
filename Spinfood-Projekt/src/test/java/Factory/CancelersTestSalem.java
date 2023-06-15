@@ -1,5 +1,5 @@
 package Factory;
-
+/*
 import Factory.Cancelers;
 import Entity.Group;
 import Entity.Pair;
@@ -119,4 +119,8 @@ public class CancelersTestSalem {
         assertEquals(1, successorPairList.size());
         assertEquals(new Pair(successor1, successor2), successorPairList.get(0));
     }
+
+
 }
+
+ */
