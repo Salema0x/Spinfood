@@ -1,6 +1,6 @@
 package GUI;
 
-import Factory.GroupFactory;
+import GroupFactory;
 import Factory.PairListFactory;
 import Factory.ParticipantFactory;
 

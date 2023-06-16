@@ -6,7 +6,7 @@ import Entity.Pair;
 import Entity.Participant;
 import Factory.PairListFactory;
 import Factory.ParticipantFactory;
-import Factory.GroupFactory;
+import Factory.Group.GroupFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
