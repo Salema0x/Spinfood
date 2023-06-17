@@ -31,20 +31,23 @@ public class Group {
     public String getGender() {
         Pair pair1 = pairs.get(0);
         Pair pair2 = pairs.get(1);
-        String genderPair1 = pair1.getGender();
-        String genderPair2 = pair2.getGender();
+        Gender genderPair1 = pair1.getGender();
+        Gender genderPair2 = pair2.getGender();
+        Gender female = Gender.FEMALE;
+        Gender male = Gender.MALE;
+        Gender mixed = Gender.MIXED;
 
-        if (genderPair1.equals("female") && genderPair2.equals("female")) {
+        if (genderPair1.equals(female) && genderPair2.equals(female)) {
             return "ff";
-        } else if (genderPair1.equals("female") && genderPair2.equals("male")) {
+        } else if (genderPair1.equals(female) && genderPair2.equals(male)) {
             return "fma";
-        } else if (genderPair1.equals("female") && genderPair2.equals("mixed")) {
+        } else if (genderPair1.equals(female) && genderPair2.equals(mixed)) {
             return "fmix";
-        } else if (genderPair1.equals("male") && genderPair2.equals("male")) {
+        } else if (genderPair1.equals(male) && genderPair2.equals(male)) {
             return "mm";
-        } else if (genderPair1.equals("male") && genderPair2.equals("mixed")) {
+        } else if (genderPair1.equals(male) && genderPair2.equals(mixed)) {
             return "mmix";
-        } else if (genderPair1.equals("mixed") && genderPair2.equals("mixed")) {
+        } else if (genderPair1.equals(mixed) && genderPair2.equals(mixed)) {
             return "mixmix";
         }
         return "0";

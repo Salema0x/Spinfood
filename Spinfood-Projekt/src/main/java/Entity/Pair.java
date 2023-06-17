@@ -9,13 +9,13 @@ public class Pair implements Comparable<Pair> {
     private double preferenceDeviation;
     private double genderDiversityScore;
     private final Double[] placeOfCooking = new Double[2];
-    private Double[] coordinatesFirstRound;
-    private Double[] coordinatesSecondRound;
-    private Double[] coordinatesThirdRound;
-    private String foodPreference;
+    private final Double[] coordinatesFirstRound = new Double[2];
+    private final Double[] coordinatesSecondRound = new Double[2];
+    private final Double[] coordinatesThirdRound = new Double[2];
+    private FoodPreference foodPreference;
     private final String id;
     private double distanceToPartyLocation;
-    private String gender;
+    private Gender gender;
     public Double age;
     public ArrayList<Pair> seen = new ArrayList<>();
 
@@ -56,20 +56,19 @@ public class Pair implements Comparable<Pair> {
         return coordinatesSecondRound;
     }
 
-    public Double[] getCoordinatesThirdRound() {
-        return coordinatesThirdRound;
-    }
-
     public void setCoordinatesFirstRound(Double[] coordinatesFirstRound) {
-        this.coordinatesFirstRound = coordinatesFirstRound;
+        this.coordinatesFirstRound[0] = coordinatesFirstRound[0];
+        this.coordinatesFirstRound[1] = coordinatesFirstRound[1];
     }
 
     public void setCoordinatesSecondRound(Double[] coordinatesSecondRound) {
-        this.coordinatesSecondRound = coordinatesSecondRound;
+        this.coordinatesSecondRound[0] = coordinatesSecondRound[0];
+        this.coordinatesSecondRound[1] = coordinatesSecondRound[1];
     }
 
     public void setCoordinatesThirdRound(Double[] coordinatesThirdRound) {
-        this.coordinatesThirdRound = coordinatesThirdRound;
+        this.coordinatesThirdRound[0] = coordinatesThirdRound[0];
+        this.coordinatesThirdRound[1] = coordinatesThirdRound[1];
     }
 
     private void decideFoodPreference() {
@@ -79,25 +78,25 @@ public class Pair implements Comparable<Pair> {
         switch (part1Pref) {
             case "vegan" -> {
                 switch (part2Pref) {
-                    case "vegan", "veggie", "none" -> this.foodPreference = "vegan";
+                    case "vegan", "veggie", "none" -> this.foodPreference = FoodPreference.VEGAN;
                 }
             }
             case "veggie" -> {
                 switch (part2Pref) {
-                    case "vegan" -> this.foodPreference = "vegan";
-                    case "veggie", "none" -> this.foodPreference = "veggie";
+                    case "vegan" -> this.foodPreference = FoodPreference.VEGAN;
+                    case "veggie", "none" -> this.foodPreference = FoodPreference.VEGGIE;
                 }
             }
             case "meat" -> {
                 switch (part2Pref) {
-                    case "meat", "none" -> this.foodPreference = "meat";
+                    case "meat", "none" -> this.foodPreference = FoodPreference.MEAT;
                 }
             }
             case "none" -> {
                 switch (part2Pref) {
-                    case "vegan" -> this.foodPreference = "vegan";
-                    case "veggie" -> this.foodPreference = "veggie";
-                    case "meat", "none" -> this.foodPreference = "meat";
+                    case "vegan" -> this.foodPreference = FoodPreference.VEGAN;
+                    case "veggie" -> this.foodPreference = FoodPreference.VEGGIE;
+                    case "meat", "none" -> this.foodPreference = FoodPreference.MEAT;
                 }
             }
         }
@@ -121,13 +120,13 @@ public class Pair implements Comparable<Pair> {
     private void calculateGenderDiversityScore() {
         if (!participant1.getSex().equals(participant2.getSex()) || !participant2.getSex().equals(participant1.getSex())) {
             this.genderDiversityScore = 0.5;
-            this.gender = "mixed";
+            this.gender = Gender.MIXED;
         } else if (participant1.getSex().equals(participant2.getSex()) && participant1.getSex().equals("female")) {
             this.genderDiversityScore = 1;
-            this.gender = "female";
+            this.gender = Gender.FEMALE;
         } else {
             this.genderDiversityScore = 0;
-            this.gender = "male";
+            this.gender = Gender.MALE;
         }
     }
 
@@ -164,7 +163,7 @@ public class Pair implements Comparable<Pair> {
         return participant2;
     }
 
-    public String getFoodPreference() {
+    public FoodPreference getFoodPreference() {
         return foodPreference;
     }
 
@@ -196,7 +195,7 @@ public class Pair implements Comparable<Pair> {
         return distanceToPartyLocation;
     }
 
-    public String getGender() {
+    public Gender getGender() {
         return gender;
     }
 

@@ -11,14 +11,14 @@ import java.util.*;
  * @author David Krell
  */
 public class GroupFactory {
-    private ArrayList<Pair> pairList;
+    private final ArrayList<Pair> pairList;
     private final ArrayList<Pair> successorPairs = new ArrayList<>();
     private final Double[] PARTY_LOCATION = new Double[2];
-    private final ArrayList<Group> allGroups = new ArrayList<>();
     private final ArrayList<Group> appetizerGroups = new ArrayList<>();
     private final ArrayList<Group> mainDishGroups = new ArrayList<>();
     private final ArrayList<Group> dessertGroups = new ArrayList<>();
     private final ArrayList<Group> successorGroups = new ArrayList<>();
+
 
     public GroupFactory(ArrayList<Pair> pairList, Double[] partyLocation) {
         this.pairList = pairList;
@@ -30,94 +30,20 @@ public class GroupFactory {
      * Initiates the building of groups.
      */
     public void startGroupAlgorithm() {
-        ArrayList<ArrayList<Pair>> rings = makeRings();
-        ArrayList<ArrayList<Pair>> foodPreferences = makeFoodPreferenceLists();
-        ArrayList<ArrayList<ArrayList<Pair>>> foodPreferenceListGenderSplit = splitIntoGenderLists(foodPreferences);
-        sortAccordingToAge(foodPreferenceListGenderSplit);
+        RingFactory ringFactory = new RingFactory(pairList, PARTY_LOCATION);
 
-        ArrayList<Pair> outerRing = rings.get(0);
-        ArrayList<Pair> middleRing = rings.get(1);
-        ArrayList<Pair> innerRing = rings.get(2);
+        Ring outerRing = new Ring(ringFactory.getOuterRing());
+        Ring middleRing = new Ring(ringFactory.getMiddleRing());
+        Ring innerRing = new Ring(ringFactory.getInnerRing());
 
-        Collections.sort(outerRing);
-        Collections.sort(middleRing);
-        Collections.sort(innerRing);
-
-        ArrayList<ArrayList<ArrayList<Pair>>> foodPreferenceListGenderSplitCopy = new ArrayList<>(foodPreferenceListGenderSplit);
-        ArrayList<ArrayList<Pair>> foodPreferencesCopy = new ArrayList<>(foodPreferences);
-
-        makeAppetizerGroups(outerRing, foodPreferenceListGenderSplitCopy, foodPreferencesCopy, "appetizer");
-
-        ArrayList<Pair> pairsAfterAppetizer = new ArrayList<>();
-        for (Group group : appetizerGroups) {
-            pairsAfterAppetizer.addAll(group.getPairs());
-        }
-        pairList = pairsAfterAppetizer;
-
-        rings = makeRings();
-        middleRing = rings.get(1);
-        Collections.sort(middleRing);
-        foodPreferences = makeFoodPreferenceLists();
-        foodPreferenceListGenderSplit = splitIntoGenderLists(foodPreferences);
-        sortAccordingToAge(foodPreferenceListGenderSplit);
-
-        foodPreferenceListGenderSplitCopy = new ArrayList<>(foodPreferenceListGenderSplit);
-        foodPreferencesCopy = new ArrayList<>(foodPreferences);
-        makeAppetizerGroups(middleRing, foodPreferenceListGenderSplitCopy, foodPreferencesCopy, "main");
-
-        ArrayList<Pair> pairsAfterMain = new ArrayList<>();
-        for (Group group : mainDishGroups) {
-            pairsAfterMain.addAll(group.getPairs());
-        }
-        pairList = pairsAfterMain;
-
-        rings = makeRings();
-        innerRing = rings.get(1);
-        Collections.sort(innerRing);
-        foodPreferences = makeFoodPreferenceLists();
-        foodPreferenceListGenderSplit = splitIntoGenderLists(foodPreferences);
-        sortAccordingToAge(foodPreferenceListGenderSplit);
-
-
-
-        makeAppetizerGroups(innerRing, foodPreferenceListGenderSplit, foodPreferences, "dessert");
     }
-
-    private int sizeSplit(ArrayList<ArrayList<ArrayList<Pair>>> list) {
-        int size0 = 0;
-        for (ArrayList<ArrayList<Pair>> list1 : list) {
-            for (ArrayList<Pair> list2 : list1) {
-                size0 += list2.size();
-            }
-        }
-        return size0;
-    }
-
-    private int sizePref(ArrayList<ArrayList<Pair>> list) {
-        int size = 0;
-        for (ArrayList<Pair> list1 : list) {
-            size += list1.size();
-        }
-        return size;
-    }
-
-    private void sortAccordingToAge(ArrayList<ArrayList<ArrayList<Pair>>> foodPreferenceListGenderSplit) {
-        for (ArrayList<ArrayList<Pair>> genderLists : foodPreferenceListGenderSplit) {
-            for (ArrayList<Pair> pairs : genderLists) {
-                Collections.sort(pairs);
-            }
-        }
-    }
-
-
 
     /**
-     * Splits the original pair list in 4 lists
+     * Splits the original pair list in 3 lists
      * <ul>
-     *     <li>Index 0: A list containing the pairs with foodPreference = "none"</li>
-     *     <li>Index 1: A list containing the pairs with foodPreference = "meat"</li>
-     *     <li>Index 2: A list containing the pairs with foodPreference = "veggie"</li>
-     *     <li>Index 3: A list containing the pairs with foodPreference = "vegan"</li>
+     *     <li>Index 0: A list containing the pairs with foodPreference = "meat"</li>
+     *     <li>Index 1: A list containing the pairs with foodPreference = "veggie"</li>
+     *     <li>Index 2: A list containing the pairs with foodPreference = "vegan"</li>
      * </ul>
      * @return a list containing sub lists from the original pair list, divided into the four food preferences.
      */
