@@ -1,10 +1,13 @@
 package Factory.Group;
 
+import Entity.FoodPreference;
 import Entity.Group;
 import Entity.Pair;
+import Entity.PairAttributes;
 import Misc.PairDistanceComparator;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This class is holding methods to generate a list of groups out of the list of pairs.
@@ -36,233 +39,45 @@ public class GroupFactory {
         Ring middleRing = new Ring(ringFactory.getMiddleRing());
         Ring innerRing = new Ring(ringFactory.getInnerRing());
 
-    }
-
-    /**
-     * Splits the original pair list in 3 lists
-     * <ul>
-     *     <li>Index 0: A list containing the pairs with foodPreference = "meat"</li>
-     *     <li>Index 1: A list containing the pairs with foodPreference = "veggie"</li>
-     *     <li>Index 2: A list containing the pairs with foodPreference = "vegan"</li>
-     * </ul>
-     * @return a list containing sub lists from the original pair list, divided into the four food preferences.
-     */
-    private ArrayList<ArrayList<Pair>> makeFoodPreferenceLists() {
-        ArrayList<Pair> noFoodPreference;
-        ArrayList<Pair> meatFoodPreference;
-        ArrayList<Pair> veggieFoodPreference;
-        ArrayList<Pair> veganFoodPreference;
-
-        ArrayList<Pair> pairs = new ArrayList<>(pairList);
-        pairs.removeAll(successorPairs);
-
-        noFoodPreference = extractFoodPreference("none", pairs);
-        meatFoodPreference = extractFoodPreference("meat", pairs);
-        veggieFoodPreference = extractFoodPreference("veggie", pairs);
-        veganFoodPreference = extractFoodPreference("vegan", pairs);
-
-        return new ArrayList<>(List.of(noFoodPreference, meatFoodPreference, veggieFoodPreference, veganFoodPreference));
-    }
-
-    /**
-     * Extracts specified pairs from the given list.
-     * @param foodPreference The specification defining which pairs should get extracted.
-     * @param pairs The list from which the pairs should get extracted.
-     * @return a list only containing the pairs that are matching the given specification.
-     */
-    private ArrayList<Pair> extractFoodPreference(String foodPreference, ArrayList<Pair> pairs) {
-        List<Pair> filteredList = pairs
-                .stream()
-                .filter(pair -> pair.getFoodPreference().equals(foodPreference))
-                .toList();
-
-        return new ArrayList<>(filteredList);
-    }
-
-    /**
-     * Splits each sub list of foodPreferenceList into three smaller lists according to the gender of the pairs.
-     * <ul>
-     *     <li>Index 0: Index 0: foodPreference = "none" and gender = "male"</li>
-     *     <li>Index 0: Index 1: foodPreference = "none" and gender = "female"</li>
-     *     <li>Index 0: Index 2: foodPreference = "none" and gender = "mixed" </li>
-     *     <li>Index 1: Index 0: foodPreference = "meat" and gender = "male"</li>
-     *     <li>Index 1: Index 1: foodPreference = "meat" and gender = "female"</li>
-     *     <li>Index 1: Index 2: foodPreference = "meat" and gender = "mixed"</li>
-     *     <li>Index 2: Index 0: foodPreference = "veggie" and gender = "male"</li>
-     *     <li>Index 2: Index 1: foodPreference = "veggie" and gender = "female"</li>
-     *     <li>Index 2: Index 2: foodPreference = "veggie" and gender = "mixed"</li>
-     *     <li>Index 3: Index 0: foodPreference = "vegan" and gender = "male"</li>
-     *     <li>Index 3: Index 1: foodPreference = "vegan" and gender = "female"</li>
-     *     <li>Index 3: Index 2: foodPreference = "vegan" and gender = "mixed"</li>
-     * </ul>
-     * @param foodPreferenceList the list containing the pairs split up according to their foodPreference
-     * @return a list containing a list for each food preference these lists are containing lists with pairs where
-     *         each list is representing a specific gender group (male, female, mixed)
-     */
-    private ArrayList<ArrayList<ArrayList<Pair>>> splitIntoGenderLists(ArrayList<ArrayList<Pair>> foodPreferenceList) {
-        ArrayList<Pair> noFoodPreference = foodPreferenceList.get(0);
-        ArrayList<Pair> meatFoodPreference = foodPreferenceList.get(1);
-        ArrayList<Pair> veggieFoodPreference = foodPreferenceList.get(2);
-        ArrayList<Pair> veganFoodPreference = foodPreferenceList.get(3);
-
-        ArrayList<ArrayList<Pair>> noFoodPreferenceSplitUp;
-        ArrayList<ArrayList<Pair>> meatFoodPreferenceSplitUp;
-        ArrayList<ArrayList<Pair>> veggieFoodPreferenceSplitUp;
-        ArrayList<ArrayList<Pair>> veganFoodPreferenceSplitUp;
-
-        noFoodPreferenceSplitUp = extractGender(noFoodPreference);
-        meatFoodPreferenceSplitUp = extractGender(meatFoodPreference);
-        veggieFoodPreferenceSplitUp = extractGender(veggieFoodPreference);
-        veganFoodPreferenceSplitUp = extractGender(veganFoodPreference);
-
-        ArrayList<ArrayList<ArrayList<Pair>>> foodPreferenceListSplitUp = new ArrayList<>();
-
-        foodPreferenceListSplitUp.add(noFoodPreferenceSplitUp);
-        foodPreferenceListSplitUp.add(meatFoodPreferenceSplitUp);
-        foodPreferenceListSplitUp.add(veggieFoodPreferenceSplitUp);
-        foodPreferenceListSplitUp.add(veganFoodPreferenceSplitUp);
-
-        return foodPreferenceListSplitUp;
-    }
-
-    /**
-     * Extracts three sub lists from the given list according to the gender.
-     * @param pairs The list from which the sub lists should get extracted.
-     * @return a list containing three lists:
-     *         <ul>
-     *             <li>Index 0: the pairs with gender = "male"</li>
-     *             <li>Index 1: the pairs with gender = "female"</li>
-     *             <li>Index 2: the pairs with gender = "mixed"</li>
-     *         </ul>
-     */
-    private ArrayList<ArrayList<Pair>> extractGender (ArrayList<Pair> pairs) {
-        String[] genders = new String[]{"male", "female", "mixed"};
-        ArrayList<ArrayList<Pair>> listSplitUp = new ArrayList<>();
-
-        for (String gender : genders) {
-            List<Pair> filteredList = pairs
-                    .stream()
-                    .filter(pair -> pair.getGender().equals(gender))
-                    .toList();
-
-            listSplitUp.add(new ArrayList<>(filteredList));
-        }
-
-        return listSplitUp;
+        makeAppetizerGroups(outerRing);
     }
 
     /**
      * Makes groups for the appetizer. The pairs on the outerRing are the pair who are cooking the appetizer.
-     * @param outerRing a list containing the pairs on the outer ring.
-     * @param pairsSplitUp a list of four lists (these four lists are for the different food preferences), these lists are split
-     *                     up in lists according to the gender.
+     * @param outerRing a Ring Record indicating the ring with which the groups should be generated.
      */
-    private void makeAppetizerGroups(ArrayList<Pair> outerRing, ArrayList<ArrayList<ArrayList<Pair>>> pairsSplitUp, ArrayList<ArrayList<Pair>> foodPreferenceList, String courseIdentification) {
-        ArrayList<ArrayList<ArrayList<Pair>>> pairsSplitUpCopy = new ArrayList<>(pairsSplitUp);
-        ArrayList<ArrayList<Pair>> foodPreferenceListCopy = new ArrayList<>(foodPreferenceList);
+    private void makeAppetizerGroups(Ring outerRing) {
+        ArrayList<Pair> outerRingPairs = outerRing.pairsOnTheRing();
+        ArrayList<Pair> possibleMatchingPairs = new ArrayList<>(pairList);
+        possibleMatchingPairs.removeAll(outerRingPairs);
 
-        cleanPairsSplitUp(pairsSplitUpCopy, outerRing);
-        int size0 = 0;
-        for (ArrayList<ArrayList<Pair>> list1 : pairsSplitUp) {
-            for (ArrayList<Pair> list2 : list1) {
-                size0 += list2.size();
+        Map<PairAttributes, List<Pair>> pairsByAttributes = possibleMatchingPairs
+                .stream()
+                .collect(Collectors.groupingBy(PairAttributes::new));
+
+        for (Pair cookingPair : outerRingPairs) {
+            FoodPreference foodPreferenceFromCookingPair = cookingPair.getFoodPreference();
+
+            ArrayList<Pair> groupMembers = switch (foodPreferenceFromCookingPair) {
+                case MEAT -> findPairsForMeatPair(cookingPair, pairsByAttributes);
+                case VEGGIE -> findPairsForVeggiePair(cookingPair, pairsByAttributes);
+                case VEGAN -> findPairsForVeganPair(cookingPair, pairsByAttributes);
+            };
+
+            if (groupMembers.size() != 2) {
+                continue;
             }
-        }
-        int size1 = 0;
-        for (ArrayList<Pair> list : foodPreferenceList) {
-            list.removeAll(outerRing);
-            size1 += list.size();
-        }
 
-        for (Pair cookingPair : outerRing) {
+            possibleMatchingPairs.removeAll(groupMembers);
 
-            String cookingPairFoodPreference = cookingPair.getFoodPreference();
-            Group group = new Group(cookingPair);
+            pairsByAttributes = possibleMatchingPairs
+                    .stream()
+                    .collect(Collectors.groupingBy(PairAttributes::new));
 
-            ArrayList<Integer> veganFiller = new ArrayList<>(List.of(2, 1, 0, 2, 2, 1, 0));
-            ArrayList<Integer> veggieFiller = new ArrayList<>(List.of(3, 1, 0, 3, 3, 1, 0));
-            ArrayList<Integer> meatFiller = new ArrayList<>(List.of(0, 3, 2, 0));
-            ArrayList<Integer> noneFiller = new ArrayList<>(List.of(1, 3, 2, 1));
+            groupMembers.add(cookingPair);
+            Group group = new Group(groupMembers);
 
-            switch (cookingPairFoodPreference) {
-                case "vegan" -> fillWithVegansVeggies(group, cookingPair, pairsSplitUpCopy, foodPreferenceListCopy, veganFiller, 3, courseIdentification);
-                case "veggie" -> fillWithVegansVeggies(group, cookingPair, pairsSplitUpCopy, foodPreferenceListCopy, veggieFiller, 2, courseIdentification);
-                case "meat" -> fillWithMeatNones(group, cookingPair, pairsSplitUpCopy, foodPreferenceListCopy, meatFiller, 1, courseIdentification);
-                case "none" -> fillWithMeatNones(group, cookingPair, pairsSplitUpCopy, foodPreferenceListCopy, noneFiller, 0, courseIdentification);
-            }
-             //TODO appetizer gruppen aus fünf personen???? 4 mal und dann gibt es auch 4 mal successor = +8 gruppen 43 + 8 = 51
-            if (group.getGroupSize() == 3) {                           //TODO main 13 successor
-                group.setSeen();                                       //TODO dessert 1 mal 5er gruppe 9 mal successor eigentlich 8 successor
-                allGroups.add(group);
-                ArrayList<Pair> pairs = group.getPairs();
-                for (ArrayList<ArrayList<Pair>> list1 : pairsSplitUpCopy) {
-                    for (ArrayList<Pair> list2 : list1) {
-                        list2.removeAll(pairs);
-                    }
-                }
-
-                for (ArrayList<Pair> list : foodPreferenceListCopy) {
-                    list.removeAll(pairs);
-                }
-
-                switch (courseIdentification) {
-                    case "appetizer" -> {
-                        appetizerGroups.add(group);
-                        for (Pair pair : group.getPairs()) {
-                            pair.setCoordinatesFirstRound(cookingPair.getPlaceOfCooking());
-                        }
-                    }
-                    case "main" -> {
-                        mainDishGroups.add(group);
-                        for (Pair pair : group.getPairs()) {
-                            pair.setCoordinatesSecondRound(cookingPair.getPlaceOfCooking());
-                        }
-                    }
-                    case "dessert" -> {
-                        dessertGroups.add(group);
-                        for (Pair pair : group.getPairs()) {
-                            pair.setCoordinatesThirdRound(cookingPair.getPlaceOfCooking());
-                        }
-                    }
-                }
-            }
-        }
-
-        switch (courseIdentification) {
-            case "appetizer" -> {
-                System.out.println("Appetizer Groups: ");
-                printAppetizerGroups(appetizerGroups);
-            }
-            case "main" -> {
-                System.out.println("Main Dish Groups: ");
-                printAppetizerGroups(mainDishGroups);
-            }
-            case "dessert" -> {
-                System.out.println("Dessert Groups: ");
-                printAppetizerGroups(dessertGroups);
-            }
-        }
-
-        for (Group group : successorGroups) {
-            successorPairs.addAll(group.getPairs());
-        }
-    }
-
-
-    private void testGroups(ArrayList<Group> appetizerGroups) {
-        ArrayList<String> ids = new ArrayList<>();
-        for (Group group : appetizerGroups) {
-            ids.add(group.getPairs().get(0).getId());
-            ids.add(group.getPairs().get(1).getId());
-            ids.add(group.getPairs().get(2).getId());
-        }
-
-        for (int i = 0; i < ids.size(); i++) {
-            for (int j = i + 1; j < ids.size(); j++) {
-                if (ids.get(i).equals(ids.get(j))) {
-                    System.out.println("Duplicate");
-                }
-            }
+            appetizerGroups.add(group);
         }
     }
 

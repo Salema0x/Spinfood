@@ -5,22 +5,31 @@ import java.util.List;
 import java.util.function.Function;
 
 public class Group {
-    private final ArrayList<Pair> pairs;
+    private final ArrayList<Pair> pairs = new ArrayList<>();
     private final List<Participant> participants = new ArrayList<>();
     private Pair cookingPair;
-    private double genderDiversityScore;
-    private double ageDifference;
-    private double preferenceDeviation;
+    private final double genderDiversityScore;
+    private final double ageDifference;
+    private final double preferenceDeviation;
     private String gender;
 
     public Group(Pair initialPair) {
-        this.pairs = new ArrayList<>();
         pairs.add(initialPair);
         this.cookingPair = initialPair; // Setzen des initialPair als Kochpaar
         this.ageDifference = calculateAverageScores(Pair::getAgeDifference);
         this.preferenceDeviation = calculateAverageScores(Pair::getPreferenceDeviation);
         this.genderDiversityScore = calculateGenderDiversityScore();
         createParticipants();
+    }
+
+    public Group(ArrayList<Pair> pairs) {
+        this.pairs.addAll(pairs);
+        this.cookingPair = pairs.get(2);
+        this.ageDifference = calculateAverageScores(Pair::getAgeDifference);
+        this.preferenceDeviation = calculateAverageScores(Pair::getPreferenceDeviation);
+        this.genderDiversityScore = calculateGenderDiversityScore();
+        createParticipants();
+        setSeen();
     }
 
 

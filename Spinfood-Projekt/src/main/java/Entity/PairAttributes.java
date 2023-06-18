@@ -11,6 +11,11 @@ public class PairAttributes {
     private final FoodPreference foodPreference;
     private final Gender gender;
 
+    public PairAttributes(Pair pair) {
+        this.foodPreference = pair.getFoodPreference();
+        this.gender = pair.getGender();
+    }
+
     public PairAttributes(FoodPreference foodPreference, Gender gender) {
         this.foodPreference = foodPreference;
         this.gender = gender;
