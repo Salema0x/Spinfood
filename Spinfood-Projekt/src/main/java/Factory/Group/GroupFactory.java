@@ -1,9 +1,6 @@
 package Factory.Group;
 
-import Entity.FoodPreference;
-import Entity.Group;
-import Entity.Pair;
-import Entity.PairAttributes;
+import Entity.*;
 import Misc.PairDistanceComparator;
 
 import java.util.*;
@@ -48,7 +45,7 @@ public class GroupFactory {
      */
     private void makeAppetizerGroups(Ring outerRing) {
         ArrayList<Pair> outerRingPairs = outerRing.pairsOnTheRing();
-        ArrayList<Pair> possibleMatchingPairs = new ArrayList<>(pairList);
+        LinkedList<Pair> possibleMatchingPairs = new LinkedList<>(pairList);
         possibleMatchingPairs.removeAll(outerRingPairs);
 
         Map<PairAttributes, List<Pair>> pairsByAttributes = possibleMatchingPairs
@@ -68,17 +65,79 @@ public class GroupFactory {
                 continue;
             }
 
-            possibleMatchingPairs.removeAll(groupMembers);
+            int sizeOfRemovementsCheck = 0;
 
-            pairsByAttributes = possibleMatchingPairs
-                    .stream()
-                    .collect(Collectors.groupingBy(PairAttributes::new));
+            for(Pair pair : groupMembers) {
+                PairAttributes attributes = new PairAttributes(pair);
+                pairsByAttributes.get(attributes).remove(pair);
+                sizeOfRemovementsCheck++;
+            }
+
+            if (sizeOfRemovementsCheck != 2) {
+                System.out.println("ERROR: Too many pairs are getting removed, from the map!");
+            }
 
             groupMembers.add(cookingPair);
             Group group = new Group(groupMembers);
 
             appetizerGroups.add(group);
         }
+    }
+
+    /**
+     * Will start the according algorithm to find two matching pairs for a given Pair. It's decided after gender which algorithm is chosen.
+     * @param cookingPair the pair for which the two matching pairs should get found.
+     * @param possibleMatchingPairs all the pairs which are possible matching pairs organized in a map.
+     * @return a List containing the best matching pairs.
+     */
+    private ArrayList<Pair> findPairsForMeatPair(Pair cookingPair, Map<PairAttributes, List<Pair>> possibleMatchingPairs) {
+        Gender genderFromCookingPair = cookingPair.getGender();
+
+        if (possibleMatchingPairs.values().size() < 2) {
+            return new ArrayList<>();
+        }
+
+        return switch (genderFromCookingPair) {
+            case MALE -> findPairsForMaleMeatPair(possibleMatchingPairs);
+            case FEMALE -> findPairsForFemaleMeatPair(cookingPair, possibleMatchingPairs);
+            case MIXED -> findPairsForMixedMeatPair(cookingPair, possibleMatchingPairs);
+        };
+    }
+
+    private ArrayList<Pair> findPairsForMaleMeatPair(Map<PairAttributes, List<Pair>> possibleMatchingPairs) {
+        ArrayList<Pair> groupMembers;
+
+        groupMembers = findTwoPairsWithFoodPreference(FoodPreference.MEAT, FoodPreference.MEAT, possibleMatchingPairs);
+
+        if (!groupMembers.isEmpty()) {
+            return groupMembers;
+        }
+
+        groupMembers = findTwoPairsWithFoodPreference(FoodPreference.VEGGIE, FoodPreference.VEGGIE, possibleMatchingPairs);
+
+        if (!groupMembers.isEmpty()) {
+            return groupMembers;
+        }
+
+        groupMembers = findTwoPairsWithFoodPreference(FoodPreference.VEGGIE, FoodPreference.VEGAN, possibleMatchingPairs);
+
+        if (!groupMembers.isEmpty()) {
+            return groupMembers;
+        }
+
+        groupMembers = findTwoPairsWithFoodPreference(FoodPreference.VEGAN, FoodPreference.VEGGIE, possibleMatchingPairs);
+
+        if (!groupMembers.isEmpty()) {
+            return groupMembers;
+        }
+
+        groupMembers = findTwoPairsWithFoodPreference(FoodPreference.VEGAN, FoodPreference.VEGAN, possibleMatchingPairs);
+
+        return groupMembers;
+    }
+
+    private ArrayList<Pair> findTwoPairsWithFoodPreference(FoodPreference firstFoodPreference, FoodPreference secondFoodPreference, Map<PairAttributes, List<Pair>> possibleMatchingPairs) {
+
     }
 
     private void printAppetizerGroups(ArrayList<Group> list) {
@@ -105,144 +164,8 @@ public class GroupFactory {
     }
 
 
-    private void cleanPairsSplitUp(ArrayList<ArrayList<ArrayList<Pair>>> pairsSplitUp, ArrayList<Pair> outerRing) {
-        for (ArrayList<ArrayList<Pair>> genderLists : pairsSplitUp) {
-            for (ArrayList<Pair> pairs : genderLists) {
-                pairs.removeAll(outerRing);
-            }
-        }
-    }
-
-    private void fillWithMeatNones(Group group, Pair cookingPair, ArrayList<ArrayList<ArrayList<Pair>>> pairsSplitUp, ArrayList<ArrayList<Pair>> foodPreferenceList, ArrayList<Integer> meatFiller, int listIndicator, String courseIdentification) {
-        ArrayList<ArrayList<Pair>> foodPreferenceListCopy;
-        ArrayList<ArrayList<ArrayList<Pair>>> pairsSplitUpCopy;
-        if (courseIdentification.equals("main") || courseIdentification.equals("dessert")) {
-            ArrayList<Pair> seen = cookingPair.seen;
-
-            foodPreferenceListCopy = new ArrayList<>(foodPreferenceList);
-            pairsSplitUpCopy = new ArrayList<>(pairsSplitUp);
-
-            foodPreferenceListCopy.get(0).removeAll(seen);
-            foodPreferenceListCopy.get(1).removeAll(seen);
-            foodPreferenceListCopy.get(2).removeAll(seen);
-            foodPreferenceListCopy.get(3).removeAll(seen);
-
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 3; j++) {
-                    pairsSplitUpCopy.get(i).get(j).removeAll(seen);
-                }
-
-            }
-        } else {
-            foodPreferenceListCopy = foodPreferenceList;
-            pairsSplitUpCopy = pairsSplitUp;
-        }
 
 
-        ArrayList<Pair> foodPairs = foodPreferenceListCopy.get(listIndicator);
-
-        int amountPairs = foodPairs.size();
-
-        String gender = cookingPair.getGender();
-
-        if (amountPairs > 2) {
-            switch (gender) {
-                case "male" -> fillMaleOnlyPair(group, pairsSplitUpCopy, false, listIndicator, foodPreferenceListCopy, courseIdentification);
-                case "female" -> fillMaleOnlyPair(group, pairsSplitUpCopy, true, listIndicator, foodPreferenceListCopy, courseIdentification);
-                case "mixed" -> fillMixedPair(group, pairsSplitUpCopy, listIndicator, foodPreferenceListCopy, courseIdentification);
-            }
-        } else if (amountPairs == 2) {
-            group.addPairs(foodPairs);
-            foodPairs.clear();
-            foodPreferenceListCopy.get(listIndicator).clear();
-            for (ArrayList<Pair> pairs : pairsSplitUpCopy.get(listIndicator)) {
-                pairs.clear();
-            }
-        } else {
-            //TODO wir können auch einen Veganer und einen Veggie adden
-            if (filler(group, foodPreferenceListCopy, 2, pairsSplitUpCopy, 3, courseIdentification) == -2) {
-                if (filler(group, foodPreferenceListCopy, 1, pairsSplitUpCopy, 2, courseIdentification) == -1) {
-                    successorGroups.add(group);
-                }
-            } else if (filler(group, foodPreferenceListCopy, 2, pairsSplitUpCopy, 3, courseIdentification) == -1) {
-                if (filler(group, foodPreferenceListCopy, 2, pairsSplitUpCopy, 2, courseIdentification) == -1) {
-                    successorGroups.add(group);
-                }
-            }
-        }
-    }
-
-    private void fillWithVegansVeggies(Group group, Pair initialPair, ArrayList<ArrayList<ArrayList<Pair>>> pairsSplitUp, ArrayList<ArrayList<Pair>> foodPreferenceList, ArrayList<Integer> veganFiller, int listIndicator, String courseIdentification) {
-        ArrayList<ArrayList<Pair>> foodPreferenceListCopy;
-        ArrayList<ArrayList<ArrayList<Pair>>> pairsSplitUpCopy;
-        if (courseIdentification.equals("main") || courseIdentification.equals("dessert")) {
-            ArrayList<Pair> seen = initialPair.seen;
-
-            foodPreferenceListCopy = new ArrayList<>(foodPreferenceList);
-            pairsSplitUpCopy = new ArrayList<>(pairsSplitUp);
-
-            foodPreferenceListCopy.get(0).removeAll(seen);
-            foodPreferenceListCopy.get(1).removeAll(seen);
-            foodPreferenceListCopy.get(2).removeAll(seen);
-            foodPreferenceListCopy.get(3).removeAll(seen);
-
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 3; j++) {
-                    pairsSplitUpCopy.get(i).get(j).removeAll(seen);
-                }
-
-            }
-        } else {
-            foodPreferenceListCopy = foodPreferenceList;
-            pairsSplitUpCopy = pairsSplitUp;
-        }
-
-        ArrayList<Pair> vegans = foodPreferenceListCopy.get(listIndicator);
-
-        int amountVegans = vegans.size();
-
-        String gender = initialPair.getGender();
-
-
-        if (amountVegans > 2) {
-            switch (gender) {
-                case "male" -> fillMaleOnlyPair(group, pairsSplitUpCopy, false, listIndicator, foodPreferenceListCopy, courseIdentification);
-                case "female" -> fillMaleOnlyPair(group, pairsSplitUpCopy, true, listIndicator, foodPreferenceListCopy, courseIdentification);
-                case "mixed" -> fillMixedPair(group, pairsSplitUpCopy, listIndicator, foodPreferenceListCopy, courseIdentification);
-            }
-        } else if (amountVegans == 2) {
-            group.addPairs(vegans);
-            vegans.clear();
-            foodPreferenceListCopy.get(listIndicator).clear();
-            for (ArrayList<Pair> pairs : pairsSplitUpCopy.get(listIndicator)) {
-                    pairs.clear();
-            }
-        } else if (amountVegans == 1) {
-            group.addPairs(vegans);
-            vegans.clear();
-            foodPreferenceListCopy.get(listIndicator).clear();
-            for (ArrayList<Pair> pairs : pairsSplitUpCopy.get(listIndicator)) {
-                    pairs.clear();
-            }
-            if (filler(group, foodPreferenceListCopy, 1, pairsSplitUpCopy, veganFiller.get(0), courseIdentification) == -1) {
-                if (filler(group, foodPreferenceListCopy, 1, pairsSplitUpCopy, veganFiller.get(1), courseIdentification) == -1) {
-                    if (filler(group, foodPreferenceListCopy, 1, pairsSplitUpCopy, veganFiller.get(2), courseIdentification) == -1 ){
-                        successorGroups.add(group);
-                    }
-                }
-            }
-        } else {
-            if (filler(group, foodPreferenceListCopy, 2, pairsSplitUpCopy, veganFiller.get(3), courseIdentification) == -1) {
-                successorGroups.add(group);
-            } else if (filler(group, foodPreferenceListCopy, 2, pairsSplitUpCopy, veganFiller.get(4), courseIdentification) == -2) {
-                if (filler(group, foodPreferenceListCopy, 1, pairsSplitUpCopy, veganFiller.get(5), courseIdentification) == -1) {
-                    if (filler(group, foodPreferenceListCopy, 1, pairsSplitUpCopy, veganFiller.get(6), courseIdentification) == -1 ) {
-                        successorGroups.add(group);
-                    }
-                }
-            }
-        }
-    }
 
     private int filler(Group group, ArrayList<ArrayList<Pair>> foodPreferenceList, int i, ArrayList<ArrayList<ArrayList<Pair>>> pairsSplitUp, int listIndex, String courseIdentification) {
         ArrayList<Pair> veggies = foodPreferenceList.get(listIndex);
@@ -636,16 +559,5 @@ public class GroupFactory {
                 successorGroups.add(group);
             }
         }
-    }
-
-
-    /**
-     * Sorts the pair List according to the distances to the party location.
-     * @return a copy of the pair list sorted in descending order, according to the distances to the party location.
-     */
-    private ArrayList<Pair> sortPairListAccordingToDistances() {
-        ArrayList<Pair> pairListCopy = new ArrayList<>(pairList);
-        pairListCopy.sort(new PairDistanceComparator());
-        return pairListCopy;
     }
 }
