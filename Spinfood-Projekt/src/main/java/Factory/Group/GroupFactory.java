@@ -1,7 +1,6 @@
 package Factory.Group;
 
 import Entity.*;
-import Misc.PairDistanceComparator;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -104,40 +103,76 @@ public class GroupFactory {
         };
     }
 
-    private ArrayList<Pair> findPairsForMaleMeatPair(Map<PairAttributes, List<Pair>> possibleMatchingPairs) {
+    private ArrayList<Pair> findPairsForMeatPair(Map<PairAttributes, List<Pair>> possibleMatchingPairs) {
         ArrayList<Pair> groupMembers;
 
-        groupMembers = findTwoPairsWithFoodPreference(FoodPreference.MEAT, FoodPreference.MEAT, possibleMatchingPairs);
+        groupMembers = findTwoPairsWithFoodPreferenceMeat(FoodPreference.MEAT, FoodPreference.MEAT, possibleMatchingPairs);
 
         if (!groupMembers.isEmpty()) {
             return groupMembers;
         }
 
-        groupMembers = findTwoPairsWithFoodPreference(FoodPreference.VEGGIE, FoodPreference.VEGGIE, possibleMatchingPairs);
+        groupMembers = findTwoPairsWithFoodPreferenceMeat(FoodPreference.VEGGIE, FoodPreference.VEGGIE, possibleMatchingPairs);
 
         if (!groupMembers.isEmpty()) {
             return groupMembers;
         }
 
-        groupMembers = findTwoPairsWithFoodPreference(FoodPreference.VEGGIE, FoodPreference.VEGAN, possibleMatchingPairs);
+        groupMembers = findTwoPairsWithFoodPreferenceMeat(FoodPreference.VEGGIE, FoodPreference.VEGAN, possibleMatchingPairs);
 
         if (!groupMembers.isEmpty()) {
             return groupMembers;
         }
 
-        groupMembers = findTwoPairsWithFoodPreference(FoodPreference.VEGAN, FoodPreference.VEGGIE, possibleMatchingPairs);
+        groupMembers = findTwoPairsWithFoodPreferenceMeat(FoodPreference.VEGAN, FoodPreference.VEGGIE, possibleMatchingPairs);
 
         if (!groupMembers.isEmpty()) {
             return groupMembers;
         }
 
-        groupMembers = findTwoPairsWithFoodPreference(FoodPreference.VEGAN, FoodPreference.VEGAN, possibleMatchingPairs);
+        groupMembers = findTwoPairsWithFoodPreferenceMeat(FoodPreference.VEGAN, FoodPreference.VEGAN, possibleMatchingPairs);
 
         return groupMembers;
     }
 
-    private ArrayList<Pair> findTwoPairsWithFoodPreference(FoodPreference firstFoodPreference, FoodPreference secondFoodPreference, Map<PairAttributes, List<Pair>> possibleMatchingPairs) {
 
+    private ArrayList<Pair> findTwoPairsWithFoodPreferenceMeat(FoodPreference firstFoodPreference, FoodPreference secondFoodPreference, Map<PairAttributes, List<Pair>> possibleMatchingPairs) {
+        ArrayList<Pair> groupMembers = new ArrayList<>();
+
+        PairAttributes firstFemale = new PairAttributes(firstFoodPreference, Gender.FEMALE);
+        PairAttributes firstMixed = new PairAttributes(firstFoodPreference, Gender.MIXED);
+        PairAttributes firstMale = new PairAttributes(firstFoodPreference, Gender.MALE);
+
+        PairAttributes secondFemale = new PairAttributes(secondFoodPreference, Gender.FEMALE);
+        PairAttributes secondMixed = new PairAttributes(secondFoodPreference, Gender.MIXED);
+        PairAttributes secondMale = new PairAttributes(secondFoodPreference, Gender.MALE);
+
+        ArrayList<Pair> firstFemaleList = new ArrayList<>(possibleMatchingPairs.get(firstFemale));
+        ArrayList<Pair> firstMixedList = new ArrayList<>(possibleMatchingPairs.get(firstMixed));
+        ArrayList<Pair> firstMaleList = new ArrayList<>(possibleMatchingPairs.get(firstMale));
+
+        ArrayList<Pair> secondFemaleList = new ArrayList<>(possibleMatchingPairs.get(secondFemale));
+        ArrayList<Pair> secondMixedList = new ArrayList<>(possibleMatchingPairs.get(secondMixed));
+        ArrayList<Pair> secondMaleList = new ArrayList<>(possibleMatchingPairs.get(secondMale));
+
+        if (!firstFemaleList.isEmpty() && !secondMixedList.isEmpty()) {
+            groupMembers.add(firstFemaleList.remove(0));
+            groupMembers.add(secondMixedList.remove(0));
+        } else if (!firstMixedList.isEmpty() && !secondMixedList.isEmpty()) {
+            groupMembers.add(firstMixedList.remove(0));
+            groupMembers.add(secondMixedList.remove(0));
+        } else if (!firstFemaleList.isEmpty() && !secondFemaleList.isEmpty()) {
+            groupMembers.add(firstFemaleList.remove(0));
+            groupMembers.add(secondFemaleList.remove(0));
+        } else if (!firstMaleList.isEmpty() && !secondFemaleList.isEmpty()) {
+            groupMembers.add(firstMaleList.remove(0));
+            groupMembers.add(secondFemaleList.remove(0));
+        } else if (!firstMaleList.isEmpty() && !secondMaleList.isEmpty()) {
+            groupMembers.add(firstMaleList.remove(0));
+            groupMembers.add(secondMaleList.remove(0));
+        }
+
+        return groupMembers;
     }
 
     private void printAppetizerGroups(ArrayList<Group> list) {
