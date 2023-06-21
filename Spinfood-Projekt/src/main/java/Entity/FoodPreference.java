@@ -1,5 +1,5 @@
 package Entity;
 
 public enum FoodPreference {
-    NONE, MEAT, VEGGIE, VEGAN
+    MEAT, VEGGIE, VEGAN
 }

@@ -36,6 +36,21 @@ public class GroupFactory {
         Ring innerRing = new Ring(ringFactory.getInnerRing());
 
         makeAppetizerGroups(outerRing);
+        testGroups();
+        printAppetizerGroups(appetizerGroups);
+    }
+
+    private void testGroups() {
+        ArrayList<Pair> pairs = new ArrayList<>();
+        for (Group group : appetizerGroups) {
+            pairs.addAll(group.getPairs());
+        }
+
+        Set<Pair> set = new HashSet<Pair>(pairs);
+
+        if (set.size() < pairs.size()) {
+            System.out.println("Duplikate!");
+        }
     }
 
     /**
@@ -45,6 +60,7 @@ public class GroupFactory {
     private void makeAppetizerGroups(Ring outerRing) {
         ArrayList<Pair> outerRingPairs = outerRing.pairsOnTheRing();
         LinkedList<Pair> possibleMatchingPairs = new LinkedList<>(pairList);
+
         possibleMatchingPairs.removeAll(outerRingPairs);
 
         Map<PairAttributes, List<Pair>> pairsByAttributes = possibleMatchingPairs
@@ -60,24 +76,14 @@ public class GroupFactory {
                 case VEGAN -> findPairsForVeganPair(cookingPair, pairsByAttributes);
             };
 
-            if (groupMembers.size() != 2) {
-                continue;
-            }
-
-            int sizeOfRemovementsCheck = 0;
-
             for(Pair pair : groupMembers) {
                 PairAttributes attributes = new PairAttributes(pair);
-                pairsByAttributes.get(attributes).remove(pair);
-                sizeOfRemovementsCheck++;
-            }
-
-            if (sizeOfRemovementsCheck != 2) {
-                System.out.println("ERROR: Too many pairs are getting removed, from the map!");
+                pairsByAttributes.get(attributes).remove(pair)
             }
 
             groupMembers.add(cookingPair);
             Group group = new Group(groupMembers);
+
 
             appetizerGroups.add(group);
         }
@@ -96,47 +102,150 @@ public class GroupFactory {
             return new ArrayList<>();
         }
 
-        return switch (genderFromCookingPair) {
-            case MALE -> findPairsForMaleMeatPair(possibleMatchingPairs);
-            case FEMALE -> findPairsForFemaleMeatPair(cookingPair, possibleMatchingPairs);
-            case MIXED -> findPairsForMixedMeatPair(cookingPair, possibleMatchingPairs);
-        };
-    }
-
-    private ArrayList<Pair> findPairsForMeatPair(Map<PairAttributes, List<Pair>> possibleMatchingPairs) {
         ArrayList<Pair> groupMembers;
 
-        groupMembers = findTwoPairsWithFoodPreferenceMeat(FoodPreference.MEAT, FoodPreference.MEAT, possibleMatchingPairs);
+        groupMembers = findTwoPairsForFoodPreference(FoodPreference.MEAT, FoodPreference.MEAT, genderFromCookingPair, possibleMatchingPairs);
 
         if (!groupMembers.isEmpty()) {
             return groupMembers;
         }
 
-        groupMembers = findTwoPairsWithFoodPreferenceMeat(FoodPreference.VEGGIE, FoodPreference.VEGGIE, possibleMatchingPairs);
+        groupMembers = findTwoPairsForFoodPreference(FoodPreference.VEGGIE, FoodPreference.VEGGIE, genderFromCookingPair, possibleMatchingPairs);
 
         if (!groupMembers.isEmpty()) {
             return groupMembers;
         }
 
-        groupMembers = findTwoPairsWithFoodPreferenceMeat(FoodPreference.VEGGIE, FoodPreference.VEGAN, possibleMatchingPairs);
+        groupMembers = findTwoPairsForFoodPreference(FoodPreference.VEGGIE, FoodPreference.VEGAN, genderFromCookingPair, possibleMatchingPairs);
 
         if (!groupMembers.isEmpty()) {
             return groupMembers;
         }
 
-        groupMembers = findTwoPairsWithFoodPreferenceMeat(FoodPreference.VEGAN, FoodPreference.VEGGIE, possibleMatchingPairs);
+        groupMembers = findTwoPairsForFoodPreference(FoodPreference.VEGAN, FoodPreference.VEGGIE, genderFromCookingPair, possibleMatchingPairs);
 
         if (!groupMembers.isEmpty()) {
             return groupMembers;
         }
 
-        groupMembers = findTwoPairsWithFoodPreferenceMeat(FoodPreference.VEGAN, FoodPreference.VEGAN, possibleMatchingPairs);
+        groupMembers = findTwoPairsForFoodPreference(FoodPreference.VEGAN, FoodPreference.VEGAN, genderFromCookingPair, possibleMatchingPairs);
 
         return groupMembers;
     }
 
+    private ArrayList<Pair> findPairsForVeggiePair(Pair cookingPair, Map<PairAttributes, List<Pair>> possibleMatchingPairs) {
+        Gender genderFromCookingPair = cookingPair.getGender();
 
-    private ArrayList<Pair> findTwoPairsWithFoodPreferenceMeat(FoodPreference firstFoodPreference, FoodPreference secondFoodPreference, Map<PairAttributes, List<Pair>> possibleMatchingPairs) {
+        if (possibleMatchingPairs.values().size() < 2) {
+            return new ArrayList<>();
+        }
+
+        ArrayList<Pair> groupMembers;
+
+        groupMembers = findTwoPairsForFoodPreference(FoodPreference.VEGGIE, FoodPreference.VEGGIE, genderFromCookingPair, possibleMatchingPairs);
+
+        if (!groupMembers.isEmpty()) {
+            return groupMembers;
+        }
+
+        groupMembers = findTwoPairsForFoodPreference(FoodPreference.VEGGIE, FoodPreference.VEGAN, genderFromCookingPair, possibleMatchingPairs);
+
+        if (!groupMembers.isEmpty()) {
+            return  groupMembers;
+        }
+
+        groupMembers = findTwoPairsForFoodPreference(FoodPreference.VEGGIE, FoodPreference.MEAT, genderFromCookingPair, possibleMatchingPairs);
+
+        if (!groupMembers.isEmpty()) {
+            return groupMembers;
+        }
+
+        groupMembers = findTwoPairsForFoodPreference(FoodPreference.VEGAN, FoodPreference.VEGGIE, genderFromCookingPair, possibleMatchingPairs);
+
+        if (!groupMembers.isEmpty()) {
+            return groupMembers;
+        }
+
+        groupMembers = findTwoPairsForFoodPreference(FoodPreference.VEGAN, FoodPreference.VEGAN, genderFromCookingPair, possibleMatchingPairs);
+
+        if (!groupMembers.isEmpty()) {
+            return groupMembers;
+        }
+
+        groupMembers = findTwoPairsForFoodPreference(FoodPreference.VEGAN, FoodPreference.MEAT, genderFromCookingPair, possibleMatchingPairs);
+
+        if (!groupMembers.isEmpty()) {
+            return groupMembers;
+        }
+
+        groupMembers = findTwoPairsForFoodPreference(FoodPreference.MEAT, FoodPreference.VEGGIE, genderFromCookingPair, possibleMatchingPairs);
+
+        if (!groupMembers.isEmpty()) {
+            return groupMembers;
+        }
+
+        groupMembers = findTwoPairsForFoodPreference(FoodPreference.MEAT, FoodPreference.VEGAN, genderFromCookingPair, possibleMatchingPairs);
+
+        return groupMembers;
+    }
+
+    private ArrayList<Pair> findPairsForVeganPair(Pair cookingPair, Map<PairAttributes, List<Pair>> possibleMatchingPairs) {
+        Gender genderFromCookingPair = cookingPair.getGender();
+
+        if (possibleMatchingPairs.values().size() < 2) {
+            return new ArrayList<>();
+        }
+
+        ArrayList<Pair> groupMembers;
+
+        groupMembers = findTwoPairsForFoodPreference(FoodPreference.VEGAN, FoodPreference.VEGAN, genderFromCookingPair, possibleMatchingPairs);
+
+        if (!groupMembers.isEmpty()) {
+            return groupMembers;
+        }
+
+        groupMembers = findTwoPairsForFoodPreference(FoodPreference.VEGAN, FoodPreference.VEGGIE, genderFromCookingPair, possibleMatchingPairs);
+
+        if (!groupMembers.isEmpty()) {
+            return groupMembers;
+        }
+
+        groupMembers = findTwoPairsForFoodPreference(FoodPreference.VEGAN, FoodPreference.MEAT, genderFromCookingPair, possibleMatchingPairs);
+
+        if (!groupMembers.isEmpty()) {
+            return groupMembers;
+        }
+
+        groupMembers = findTwoPairsForFoodPreference(FoodPreference.VEGGIE, FoodPreference.VEGAN, genderFromCookingPair, possibleMatchingPairs);
+
+        if (!groupMembers.isEmpty()) {
+            return groupMembers;
+        }
+
+        groupMembers = findTwoPairsForFoodPreference(FoodPreference.VEGGIE, FoodPreference.VEGGIE, genderFromCookingPair, possibleMatchingPairs);
+
+        if (!groupMembers.isEmpty()) {
+            return groupMembers;
+        }
+
+        groupMembers = findTwoPairsForFoodPreference(FoodPreference.VEGGIE, FoodPreference.MEAT, genderFromCookingPair, possibleMatchingPairs);
+
+        if (!groupMembers.isEmpty()) {
+            return groupMembers;
+        }
+
+        groupMembers = findTwoPairsForFoodPreference(FoodPreference.MEAT, FoodPreference.VEGAN, genderFromCookingPair, possibleMatchingPairs);
+
+        if (!groupMembers.isEmpty()) {
+            return groupMembers;
+        }
+
+        groupMembers = findTwoPairsForFoodPreference(FoodPreference.MEAT, FoodPreference.VEGGIE, genderFromCookingPair, possibleMatchingPairs);
+
+        return groupMembers;
+    }
+
+    private ArrayList<Pair> findTwoPairsForFoodPreference(FoodPreference firstFoodPreference, FoodPreference secondFoodPreference, Gender genderFromCookingPair, Map<PairAttributes, List<Pair>> possibleMatchingPairs) {
         ArrayList<Pair> groupMembers = new ArrayList<>();
 
         PairAttributes firstFemale = new PairAttributes(firstFoodPreference, Gender.FEMALE);
@@ -155,24 +264,139 @@ public class GroupFactory {
         ArrayList<Pair> secondMixedList = new ArrayList<>(possibleMatchingPairs.get(secondMixed));
         ArrayList<Pair> secondMaleList = new ArrayList<>(possibleMatchingPairs.get(secondMale));
 
-        if (!firstFemaleList.isEmpty() && !secondMixedList.isEmpty()) {
-            groupMembers.add(firstFemaleList.remove(0));
-            groupMembers.add(secondMixedList.remove(0));
-        } else if (!firstMixedList.isEmpty() && !secondMixedList.isEmpty()) {
-            groupMembers.add(firstMixedList.remove(0));
-            groupMembers.add(secondMixedList.remove(0));
-        } else if (!firstFemaleList.isEmpty() && !secondFemaleList.isEmpty()) {
-            groupMembers.add(firstFemaleList.remove(0));
-            groupMembers.add(secondFemaleList.remove(0));
-        } else if (!firstMaleList.isEmpty() && !secondFemaleList.isEmpty()) {
-            groupMembers.add(firstMaleList.remove(0));
-            groupMembers.add(secondFemaleList.remove(0));
-        } else if (!firstMaleList.isEmpty() && !secondMaleList.isEmpty()) {
-            groupMembers.add(firstMaleList.remove(0));
-            groupMembers.add(secondMaleList.remove(0));
+        if (genderFromCookingPair == Gender.MALE) {
+            if (checkLists(firstMixedList, secondFemaleList)) {
+                int[] indices = calculateIndices(firstMixedList, secondFemaleList);
+                groupMembers.add(firstMixedList.remove(indices[0]));
+                groupMembers.add(secondFemaleList.remove(indices[1]));
+            } else if (checkLists(firstFemaleList, secondMixedList)) {
+                int[] indices = calculateIndices(firstFemaleList, secondMixedList);
+                groupMembers.add(firstFemaleList.remove(indices[0]));
+                groupMembers.add(secondMixedList.remove(indices[1]));
+            } else if (checkLists(firstFemaleList, secondFemaleList)) {
+                int[] indices = calculateIndices(firstFemaleList, secondFemaleList);
+                groupMembers.add(firstFemaleList.remove(indices[0]));
+                groupMembers.add(secondFemaleList.remove(indices[1]));
+            } else if (checkLists(firstMixedList, secondMixedList)) {
+                int[] indices = calculateIndices(firstMixedList, secondMixedList);
+                groupMembers.add(firstMixedList.remove(indices[0]));
+                groupMembers.add(secondMixedList.remove(indices[1]));
+            } else if (checkLists(firstFemaleList, secondMaleList)) {
+                int[] indices = calculateIndices(firstFemaleList, secondMaleList);
+                groupMembers.add(firstFemaleList.remove(indices[0]));
+                groupMembers.add(secondMaleList.remove(indices[1]));
+            } else if (checkLists(firstMaleList, secondFemaleList)) {
+                int[] indices = calculateIndices(firstMaleList, secondFemaleList);
+                groupMembers.add(firstMaleList.remove(indices[0]));
+                groupMembers.add(secondFemaleList.remove(indices[1]));
+            } else if (checkLists(firstMixedList, secondMaleList)) {
+                int[] indices = calculateIndices(firstMixedList, secondMaleList);
+                groupMembers.add(firstMixedList.remove(indices[0]));
+                groupMembers.add(secondMaleList.remove(indices[1]));
+            } else if (checkLists(firstMaleList, secondMixedList)) {
+                int[] indices = calculateIndices(firstMaleList, secondMixedList);
+                groupMembers.add(firstMaleList.remove(indices[0]));
+                groupMembers.add(secondMixedList.remove(indices[1]));
+            } else if (checkLists(firstMaleList, secondMaleList)) {
+                int[] indices = calculateIndices(firstMaleList, secondMaleList);
+                groupMembers.add(firstMaleList.remove(indices[0]));
+                groupMembers.add(secondMaleList.remove(indices[1]));
+            }
+        } else if (genderFromCookingPair == Gender.FEMALE) {
+            if (checkLists(firstMixedList, secondMaleList)) {
+                int[] indices = calculateIndices(firstMixedList, secondMaleList);
+                groupMembers.add(firstMixedList.remove(indices[0]));
+                groupMembers.add(secondMaleList.remove(indices[1]));
+            } else if (checkLists(firstMaleList, secondMixedList)) {
+                int[] indices = calculateIndices(firstMaleList, secondMixedList);
+                groupMembers.add(firstMaleList.remove(indices[0]));
+                groupMembers.add(secondMixedList.remove(indices[1]));
+            } else if (checkLists(firstMixedList, secondMixedList)) {
+                int[] indices = calculateIndices(firstMixedList, secondMixedList);
+                groupMembers.add(firstMixedList.remove(indices[0]));
+                groupMembers.add(secondMixedList.remove(indices[1]));
+            } else if (checkLists(firstFemaleList, secondMaleList)) {
+                int[] indices = calculateIndices(firstFemaleList, secondMaleList);
+                groupMembers.add(firstFemaleList.remove(indices[0]));
+                groupMembers.add(secondMaleList.remove(indices[1]));
+            } else if (checkLists(firstMaleList, secondFemaleList)) {
+                int[] indices = calculateIndices(firstMaleList, secondFemaleList);
+                groupMembers.add(firstMaleList.remove(indices[0]));
+                groupMembers.add(secondFemaleList.remove(indices[1]));
+            } else if (checkLists(firstMaleList, secondMaleList)) {
+                int[] indices = calculateIndices(firstMaleList, secondMaleList);
+                groupMembers.add(firstMaleList.remove(indices[0]));
+                groupMembers.add(secondMaleList.remove(indices[1]));
+            } else if (checkLists(firstMixedList, secondFemaleList)) {
+                int[] indices = calculateIndices(firstMixedList, secondFemaleList);
+                groupMembers.add(firstMixedList.remove(indices[0]));
+                groupMembers.add(secondFemaleList.remove(indices[1]));
+            } else if (checkLists(firstFemaleList, secondMixedList)) {
+                int[] indices = calculateIndices(firstFemaleList, secondMixedList);
+                groupMembers.add(firstFemaleList.remove(indices[0]));
+                groupMembers.add(secondMixedList.remove(indices[1]));
+            } else if (checkLists(firstFemaleList, secondFemaleList)) {
+                int[] indices = calculateIndices(firstFemaleList, secondFemaleList);
+                groupMembers.add(firstFemaleList.remove(indices[0]));
+                groupMembers.add(secondFemaleList.remove(indices[1]));
+            }
+        } else if (genderFromCookingPair == Gender.MIXED) {
+            if (checkLists(firstMixedList, secondMixedList)) {
+                int[] indices = calculateIndices(firstMixedList, secondMixedList);
+                groupMembers.add(firstMixedList.remove(indices[0]));
+                groupMembers.add(secondMixedList.remove(indices[1]));
+            } else if (checkLists(firstFemaleList, secondMaleList)) {
+                int[] indices = calculateIndices(firstFemaleList, secondMaleList);
+                groupMembers.add(firstFemaleList.remove(indices[0]));
+                groupMembers.add(secondMaleList.remove(indices[1]));
+            } else if (checkLists(firstMaleList, secondFemaleList)) {
+                int[] indices = calculateIndices(firstMaleList, secondFemaleList);
+                groupMembers.add(firstMaleList.remove(indices[0]));
+                groupMembers.add(secondFemaleList.remove(indices[1]));
+            } else if (checkLists(firstMixedList, secondFemaleList)) {
+                int[] indices = calculateIndices(firstMixedList, secondFemaleList);
+                groupMembers.add(firstMixedList.remove(indices[0]));
+                groupMembers.add(secondFemaleList.remove(indices[1]));
+            } else if (checkLists(firstFemaleList, secondMixedList)) {
+                int[] indices = calculateIndices(firstFemaleList, secondMixedList);
+                groupMembers.add(firstFemaleList.remove(indices[0]));
+                groupMembers.add(secondMixedList.remove(indices[1]));
+            } else if (checkLists(firstMixedList, secondMaleList)) {
+                int[] indices = calculateIndices(firstMixedList, secondMaleList);
+                groupMembers.add(firstMixedList.remove(indices[0]));
+                groupMembers.add(secondMaleList.remove(indices[1]));
+            } else if (checkLists(firstMaleList, secondMixedList)) {
+                int[] indices = calculateIndices(firstMaleList, secondMixedList);
+                groupMembers.add(firstMaleList.remove(indices[0]));
+                groupMembers.add(secondMixedList.remove(indices[1]));
+            } else if (checkLists(firstFemaleList, secondFemaleList)) {
+                int[] indices = calculateIndices(firstFemaleList, secondFemaleList);
+                groupMembers.add(firstFemaleList.remove(indices[0]));
+                groupMembers.add(secondFemaleList.remove(indices[1]));
+            } else if (checkLists(firstMaleList, secondMaleList)) {
+                int[] indices = calculateIndices(firstMaleList, secondMaleList);
+                groupMembers.add(firstMaleList.remove(indices[0]));
+                groupMembers.add(secondMaleList.remove(indices[1]));
+            }
         }
 
         return groupMembers;
+    }
+
+    private int[] calculateIndices(ArrayList<Pair> listOne, ArrayList<Pair> listTwo) {
+        if (listOne.equals(listTwo)) {
+            return new int[]{0, 1};
+        } else {
+            return new int[]{0, 0};
+        }
+    }
+
+    private boolean checkLists(ArrayList<Pair> listOne, ArrayList<Pair> listTwo) {
+        if (listOne.equals(listTwo)) {
+            return listOne.size() >= 2;
+        } else {
+            return !listOne.isEmpty() && !listTwo.isEmpty();
+        }
     }
 
     private void printAppetizerGroups(ArrayList<Group> list) {
@@ -189,9 +413,9 @@ public class GroupFactory {
             String id1 = group.getPairs().get(0).getId();
             String id2 = group.getPairs().get(1).getId();
             String id3 = group.getPairs().get(2).getId();
-            String pref1 = group.getPairs().get(0).getFoodPreference();
-            String pref2 = group.getPairs().get(1).getFoodPreference();
-            String pref3 = group.getPairs().get(2).getFoodPreference();
+            FoodPreference pref1 = group.getPairs().get(0).getFoodPreference();
+            FoodPreference pref2 = group.getPairs().get(1).getFoodPreference();
+            FoodPreference pref3 = group.getPairs().get(2).getFoodPreference();
 
             System.out.format(leftAlignFormat, counter, id1, id2, id3, pref1, pref2, pref3);
         }
@@ -201,58 +425,6 @@ public class GroupFactory {
 
 
 
-
-    private int filler(Group group, ArrayList<ArrayList<Pair>> foodPreferenceList, int i, ArrayList<ArrayList<ArrayList<Pair>>> pairsSplitUp, int listIndex, String courseIdentification) {
-        ArrayList<Pair> veggies = foodPreferenceList.get(listIndex);
-
-        if (i == 1) {
-            String gender = group.getGender();
-            if (veggies.size() > 1) {
-                genderFillerForDoubleGroups(gender, group, foodPreferenceList, pairsSplitUp, listIndex, courseIdentification); //TODO
-                return 0;
-            } else if (veggies.size() == 1) {
-                group.addPairs(veggies);
-                veggies.clear();
-                foodPreferenceList.get(listIndex).clear();
-                for (ArrayList<Pair> pairs : pairsSplitUp.get(listIndex)) {
-                    pairs.clear();
-                }
-                return 0;
-            } else {
-                return -1;
-            }
-        } else if (i == 2) {
-            Pair p = group.getPairs().get(0);
-            String gender = p.getGender();
-
-            if (veggies.size() > 2) {
-                switch (gender) {
-                    case "male" -> fillMaleOnlyPair(group, pairsSplitUp, false, listIndex, foodPreferenceList, courseIdentification);
-                    case "female" -> fillMaleOnlyPair(group, pairsSplitUp, true, listIndex, foodPreferenceList, courseIdentification);
-                    case "mixed" -> fillMixedPair(group, pairsSplitUp, listIndex, foodPreferenceList, courseIdentification);
-                }
-                return 0;
-            } else if (veggies.size() == 2) {
-                group.addPairs(veggies);
-                veggies.clear();
-                foodPreferenceList.get(listIndex).clear();
-                for (ArrayList<Pair> pairs : pairsSplitUp.get(listIndex)) {
-                    pairs.clear();
-                }
-                return 0;
-            } else if (veggies.size() == 1) {
-                group.addPairs(veggies);
-                veggies.clear();
-                foodPreferenceList.get(listIndex).clear();
-                for (ArrayList<Pair> pairs : pairsSplitUp.get(listIndex)) {
-                    pairs.clear();
-                }
-                return -2;
-            } else {
-                return -1;
-            }
-        } else return -100;
-    }
 
     private void genderFillerForDoubleGroups(String gender, Group group, ArrayList<ArrayList<Pair>> foodPreferenceList, ArrayList<ArrayList<ArrayList<Pair>>> pairsSplitUp, int listIndex, String courseIdentification) {
         ArrayList<Integer> maleFiller = new ArrayList<>(List.of(0, 2, 1));

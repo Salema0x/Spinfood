@@ -18,6 +18,7 @@ public class RingFactory {
         this.PARTY_LOCATION = partyLocation;
 
         ArrayList<ArrayList<Pair>> rings = makeRings();
+
         this.outerRing = rings.get(0);
         this.middleRing = rings.get(1);
         this.innerRing = rings.get(2);
