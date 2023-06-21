@@ -7,6 +7,9 @@ import Factory.PairListFactory;
 import Factory.ParticipantFactory;
 import Misc.DinnerRound;
 
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.json.simple.JSONArray;
@@ -27,14 +30,15 @@ import java.util.List;
 import Enum.FoodPreference;
 import Enum.Course;
 
-public class JsonExportTest {
-    private JsonExport jsonExport;
+public class JacksonExportTest {
+    private JacksonExport jacksonExport;
 
     /**
      * tests JsonExport with default input data(see csv file)
      */
     @Test
     public void testJsonExport() {
+        //Arrange
         ParticipantFactory participantFactory = new ParticipantFactory(100);
         participantFactory.readCSV(new File("src/main/resources/Teilnehmerliste.csv"));
         PairListFactory pairListFactory = new PairListFactory(
@@ -43,8 +47,12 @@ public class JsonExportTest {
                 new ArrayList<Object>(Arrays.asList("Geschlechterdiversität", "Essensvorlieben", "Altersdifferenz")));
         GroupFactory groupFactory = new GroupFactory(pairListFactory, 3, new Double[]{8.6746166676233, 50.5909317660173});
         checkValidInputData(groupFactory.getDinnerRounds(), groupFactory.getRegisteredPairs(), groupFactory.getSuccessorList(), pairListFactory.getParticipantSuccessorList());
-        JsonExport export = new JsonExport(groupFactory.getDinnerRounds(), groupFactory.getRegisteredPairs(), groupFactory.getSuccessorList(), pairListFactory.getParticipantSuccessorList());
-        writePropertyData(export.getRoot());
+
+        //Act
+        JacksonExport export = new JacksonExport(groupFactory.getDinnerRounds(), groupFactory.getRegisteredPairs(), groupFactory.getSuccessorList(), pairListFactory.getParticipantSuccessorList(), "src/main/resources/Json/Output.json");
+
+        //Assert
+        Assertions.assertTrue(Paths.get("src/main/resources/Json/Output.json").toFile().exists());
     }
 
     /**
@@ -59,66 +67,9 @@ public class JsonExportTest {
         List<Participant> successorParticipantsList = generateSuccessorParticipants();
 
         //Act
-        JsonExport jsonExport = new JsonExport(dinnerRoundsList, registeredPairsList, successorPairsList, successorParticipantsList, "src/main/resources/Json/Test/testOutputCustom.json");
+        JacksonExport export = new JacksonExport(dinnerRoundsList, registeredPairsList, successorPairsList, successorParticipantsList, "src/main/resources/Json/Test/testOutputCustom.json");
         Assertions.assertTrue(Paths.get("src/main/resources/Json/Test/testOutputCustom.json").toFile().exists());
 
-    }
-
-    /**
-     * SimpleJson test for the functionality of the JsonExport class
-     * @throws IOException
-     */
-
-    @Test
-    public void functionalityTest() throws IOException {
-
-        JSONObject root = new JSONObject();
-
-        JSONObject jsonObject1 = new JSONObject();
-
-        jsonObject1.put("ID", "1521");
-        jsonObject1.put("Position", "Manager");
-        jsonObject1.put("Name", "Albert Ferenc");
-
-        JSONObject jsonObject2 = new JSONObject();
-
-        jsonObject2.put("ID", "1111");
-        jsonObject2.put("Position", "Chef");
-        jsonObject2.put("Name", "Rudi Ratlos");
-
-        JSONObject jsonObject3 = new JSONObject();
-
-        jsonObject3.put("ID", "2721");
-        jsonObject3.put("Position", "Abteilungsleiterin");
-        jsonObject3.put("Name", "Maria chen");
-
-        JSONObject jsonObject4 = new JSONObject();
-
-        jsonObject4.put("ID", "p111");
-        jsonObject4.put("Position", "Praktikant");
-        jsonObject4.put("Name", "Sepp Meier");
-
-        JSONObject jsonObject5 = new JSONObject();
-
-        jsonObject5.put("ID", "p222");
-        jsonObject5.put("Position", "Praktikant");
-        jsonObject5.put("Name", "Willy Astor");
-
-        JSONArray jsonArray = new JSONArray();
-        jsonArray.add(jsonObject4);
-        jsonArray.add(jsonObject5);
-
-
-        root.put("Manager", jsonObject1);
-        root.put("Chef", jsonObject2);
-        root.put("Abteilungsleiterin", jsonObject3);
-        root.put("Praktikanten", jsonArray);
-
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String jsonData = gson.toJson(root);
-        BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/resources/Json/Test/functionallityTest.json"));
-        writer.write(jsonData);
-        writer.close();
     }
 
 
@@ -147,10 +98,10 @@ public class JsonExportTest {
         // Create groups
         if (course.equals(Course.FIRST)) {
 
-            Group group1 = new Group(pairs.get(0));
+            Group group1 = new Group(pairs.get(0), Course.FIRST);
             group1.addPair(pairs.get(1));
             group1.addPair(pairs.get(2));
-            Group group2 = new Group(pairs.get(3));
+            Group group2 = new Group(pairs.get(3), Course.FIRST);
             group2.addPair(pairs.get(4));
             group2.addPair(pairs.get(5));
             return new ArrayList<Group>() {{
@@ -160,10 +111,10 @@ public class JsonExportTest {
 
         } else if (course.equals(Course.MAIN)) {
 
-            Group group3 = new Group(pairs.get(1));
+            Group group3 = new Group(pairs.get(1), Course.MAIN);
             group3.addPair(pairs.get(3));
             group3.addPair(pairs.get(4));
-            Group group4 = new Group(pairs.get(2));
+            Group group4 = new Group(pairs.get(2), Course.MAIN);
             group4.addPair(pairs.get(5));
             group4.addPair(pairs.get(0));
             return new ArrayList<Group>() {{
@@ -173,8 +124,8 @@ public class JsonExportTest {
 
         }
 
-        Group group5 = new Group(pairs.get(2));
-        Group group6 = new Group(pairs.get(5));
+        Group group5 = new Group(pairs.get(2), Course.DESSERT);
+        Group group6 = new Group(pairs.get(5), Course.DESSERT);
         group5.addPair(pairs.get(0));
         group5.addPair(pairs.get(1));
         group6.addPair(pairs.get(3));
@@ -200,12 +151,12 @@ public class JsonExportTest {
         Participant participant10 = new Participant(new String[]{"10", "06d17797-9452-49e2-8e46-e1067a5fb901", "Person10", "meat", "25", "female", "yes", "2", "8.67073904401206", "50.57969724401207"}, false);
         Participant participant11 = new Participant(new String[]{"11", "07b46a18-a534-4c2c-b154-ec28c1aae8a7", "Person11", "meat", "19", "male", "yes", "1", "50.673368271555807", "50.57969724401207"}, false);
         Participant participant12 = new Participant(new String[]{"12", "07b7446a-9d8b-478b-b3e9-e95b992fcf50", "Person12", "meat", "19", "female", "no"}, false);
-        Pair pair1 = new Pair(participant1, participant2);
-        Pair pair2 = new Pair(participant3, participant4);
-        Pair pair3 = new Pair(participant5, participant6);
-        Pair pair4 = new Pair(participant7, participant8);
-        Pair pair5 = new Pair(participant9, participant10);
-        Pair pair6 = new Pair(participant11, participant12);
+        Pair pair1 = new Pair(participant1, participant2, false);
+        Pair pair2 = new Pair(participant3, participant4, false);
+        Pair pair3 = new Pair(participant5, participant6, false);
+        Pair pair4 = new Pair(participant7, participant8, false);
+        Pair pair5 = new Pair(participant9, participant10, false);
+        Pair pair6 = new Pair(participant11, participant12, false);
 
         //add pairs to a List
         List<Pair> pairs = new ArrayList<>();
@@ -230,9 +181,9 @@ public class JsonExportTest {
         Participant participant6 = new Participant(new String[]{"6", "f6afb0b2-752f-4c4d-a419-14fd0cd27a8e", "Person24", "vegan", "22", "female", "yes", "-1.0", "8.677227638993099", "50.5782781389931"}, false);
 
         //generate some pairs
-        Pair pair1 = new Pair(participant1, participant2);
-        Pair pair2 = new Pair(participant3, participant4);
-        Pair pair3 = new Pair(participant5, participant6);
+        Pair pair1 = new Pair(participant1, participant2, false);
+        Pair pair2 = new Pair(participant3, participant4, false);
+        Pair pair3 = new Pair(participant5, participant6, false);
 
 
         //add pairs to a List
@@ -290,29 +241,4 @@ public class JsonExportTest {
         System.out.println("All Lists contain data");
         return true;
     }
-
-    /**
-     * helper Method to check if Arrays contain data
-     */
-    private void writePropertyData(JSONObject root) {
-        writeJsonData(root.get("groups"), "src/main/resources/Json/Test/groups.json");
-        writeJsonData(root.get("pairs"), "src/main/resources/Json/Test/pairs.json");
-        writeJsonData(root.get("successorPairs"), "src/main/resources/Json/Test/successorPairs.json");
-        writeJsonData(root.get("successorParticipants"), "src/main/resources/Json/Test/successorParticipants.json");
-    }
-
-    public void writeJsonData(Object data, String fileName) {
-
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String jsonData = gson.toJson(data);
-
-        // Write JSON data to the file
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-            writer.write(jsonData);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
 }

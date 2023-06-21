@@ -6,6 +6,7 @@ import Entity.Pair;
 import Entity.Participant;
 import Misc.DinnerRound;
 import org.junit.jupiter.api.Assertions;
+import Enum.FoodPreference;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.File;
@@ -27,6 +28,7 @@ class CancelersTest {
     private ParticipantFactory participantFactory;
     private Cancelers cancelers;
     private int initialDinnerRoundSize;
+
 
 
     @BeforeEach
@@ -226,12 +228,12 @@ class CancelersTest {
      * @param foodPreference2 the food preference of the second participant of the pair.
      * @return a boolean indicating if the pair has valid food preferences or not.
      */
-    private boolean checkFoodNoGo(String foodPreference1, String foodPreference2) {
-        if (foodPreference1.equals("vegan") || foodPreference1.equals("veggie")) {
-            return foodPreference2.equals("meat");
+    private boolean checkFoodNoGo(FoodPreference foodPreference1, FoodPreference foodPreference2) {
+        if (foodPreference1.equals(FoodPreference.VEGAN) || foodPreference1.equals(FoodPreference.VEGGIE)) {
+            return foodPreference2.equals(FoodPreference.MEAT);
         }
-        if (foodPreference2.equals("vegan") || foodPreference2.equals("veggie")) {
-            return foodPreference1.equals("meat");
+        if (foodPreference2.equals(FoodPreference.VEGAN) || foodPreference2.equals(FoodPreference.VEGGIE)) {
+            return foodPreference1.equals(FoodPreference.MEAT);
         }
         return false;
     }

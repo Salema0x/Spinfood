@@ -73,15 +73,15 @@ class ParticipantFactoryTest {
 
         //testing isSuccessor
         participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/ParticipantFactoryTestlists/testliste9.csv")).toURI()));
-        Assertions.assertFalse(participantFactory.getParticipantList().get(0).isSuccessor()); //First participant cant be Successor
-        Assertions.assertTrue(participantFactory.getParticipantList().get(101).isSuccessor());  //MAX Participants = 100 -> 101 Participant = Successor
+        Assertions.assertFalse(participantFactory.getParticipantList().get(0).getIsSuccessor()); //First participant cant be Successor
+        Assertions.assertTrue(participantFactory.getParticipantList().get(101).getIsSuccessor());  //MAX Participants = 100 -> 101 Participant = Successor
 
         //testing if participant is correctly marked as Successor, if WG count > 3
         participantFactory.readCSV(new File(Objects.requireNonNull(ClassLoader.getSystemResource("testlists/ParticipantFactoryTestlists/testliste10.csv")).toURI()));
-        Assertions.assertFalse(participantFactory.getParticipantList().get(0).isSuccessor());
-        Assertions.assertFalse(participantFactory.getParticipantList().get(4).isSuccessor());
-        Assertions.assertFalse(participantFactory.getParticipantList().get(5).isSuccessor());
-        Assertions.assertTrue(participantFactory.getParticipantList().get(6).isSuccessor());
-        Assertions.assertTrue(participantFactory.getParticipantList().get(7).isSuccessor());
+        Assertions.assertFalse(participantFactory.getParticipantList().get(0).getIsSuccessor());
+        Assertions.assertFalse(participantFactory.getParticipantList().get(4).getIsSuccessor());
+        Assertions.assertFalse(participantFactory.getParticipantList().get(5).getIsSuccessor());
+        Assertions.assertTrue(participantFactory.getParticipantList().get(6).getIsSuccessor());
+        Assertions.assertTrue(participantFactory.getParticipantList().get(7).getIsSuccessor());
     }
 }

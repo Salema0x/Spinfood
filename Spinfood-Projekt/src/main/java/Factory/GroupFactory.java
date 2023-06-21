@@ -79,7 +79,7 @@ public class GroupFactory {
             // Holt das nächste Paar aus der Queue zum Kochen
             Pair cookingPair = cookingQueue.poll();
 
-            Group group = new Group(cookingPair);
+            Group group = new Group(cookingPair, round.getCourse());
             group.setCookingPair(cookingPair); // Setzt das kochende Paar für die Gruppe
             round.getGroups().add(group);
             groups.add(group);

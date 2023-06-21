@@ -1,5 +1,13 @@
 package Entity;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import Enum.FoodPreference;
+
+import static Enum.FoodPreference.*;
+
+@JsonPropertyOrder({"premade", "foodPreference", "firstParticipant", "secondParticipant"})
 public class Pair {
     private final Participant participant1;
     private final Participant participant2;
@@ -7,14 +15,15 @@ public class Pair {
     private double preferenceDeviation;
     private double genderDiversityScore;
     private final Double[] placeOfCooking = new Double[2];
-    private String foodPreference;
-    private final boolean preMade = false; //TODO: add preMade tracking
+    private FoodPreference foodPreference;
+    private final boolean preMade;
     private Kitchen kitchen;
 
 
-    public Pair(Participant participant1, Participant participant2) {
+    public Pair(Participant participant1, Participant participant2, boolean preMade) {
         this.participant1 = participant1;
         this.participant2 = participant2;
+        this.preMade = preMade;
 
         decideFoodPreference();
         decidePlaceOfCooking();
@@ -47,23 +56,25 @@ public class Pair {
 
 
     private void decideFoodPreference() {
-        String part1Pref = participant1.getFoodPreference();
-        String part2Pref = participant2.getFoodPreference();
+        FoodPreference part1Pref = participant1.getFoodPreference();
+        FoodPreference part2Pref = participant2.getFoodPreference();
 
         if (part1Pref.equals(part2Pref)) {
             this.foodPreference = part1Pref;
-        } else if ((part1Pref.equals("meat") && part2Pref.equals("none")) || (part1Pref.equals("none") && part2Pref.equals("meat"))) {
+        } else if ((part1Pref.equals(MEAT) && part2Pref.equals(NONE)) || (part1Pref.equals(NONE) && part2Pref.equals(MEAT))) {
             this.foodPreference = part1Pref;
-        } else if (part1Pref.equals("meat") || part2Pref.equals("meat")) {
-            if (part2Pref.equals("veggie") || part2Pref.equals("vegan")) {
+        } else if (part1Pref.equals(MEAT) || part2Pref.equals(MEAT)) {
+            if (part2Pref.equals(VEGGIE) || part2Pref.equals(VEGAN)) {
                 this.foodPreference = part2Pref;
-            } else if (part1Pref.equals("veggie") || part1Pref.equals("vegan")) {
+            } else if (part1Pref.equals(VEGGIE) || part1Pref.equals(VEGAN)) {
                 this.foodPreference = part1Pref;
             }
-        } else if (part1Pref.equals("veggie") && part2Pref.equals("vegan")) {
+        } else if (part1Pref.equals(VEGGIE) && part2Pref.equals(VEGAN)) {
             this.foodPreference = part2Pref;
-        } else if (part1Pref.equals("vegan") && part2Pref.equals("veggie")) {
+        } else if (part1Pref.equals(VEGAN) && part2Pref.equals(VEGGIE)) {
             this.foodPreference = part1Pref;
+        } else {
+            this.foodPreference = NONE;
         }
     }
 
@@ -111,41 +122,48 @@ public class Pair {
         }
     }
 
+    //Getters
 
-    public Participant getParticipant1() {
-        return participant1;
-    }
-
-    public Participant getParticipant2() {
-        return participant2;
-    }
-
-    public String getFoodPreference() {
-        return foodPreference;
-    }
-
+    @JsonIgnore
     public double getAgeDifference() {
         return ageDifference;
     }
-
+    @JsonIgnore
     public double getPreferenceDeviation() {
         return preferenceDeviation;
     }
-
+    @JsonIgnore
     public double getGenderDiversityScore() {
         return genderDiversityScore;
     }
-
+    @JsonIgnore
     public Double[] getPlaceOfCooking() {
         return placeOfCooking;
     }
-
+    @JsonIgnore
     public Kitchen getKitchen() {
         return kitchen;
     }
 
+    //JsonGetters
+    @JsonGetter("premade")
     public boolean isPreMade() {
         return preMade;
     }
+    @JsonGetter("foodPreference")
+    public FoodPreference getFoodPreference() {
+        return foodPreference;
+    }
+    @JsonGetter("firstParticipant")
+    public Participant getParticipant1() {
+        return participant1;
+    }
+    @JsonGetter("secondParticipant")
+    public Participant getParticipant2() {
+        return participant2;
+    }
+
+    //Setters
+
 
 }

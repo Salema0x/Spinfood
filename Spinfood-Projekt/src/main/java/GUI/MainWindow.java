@@ -3,7 +3,7 @@ package GUI;
 import Factory.GroupFactory;
 import Factory.PairListFactory;
 import Factory.ParticipantFactory;
-import Json.JsonExport;
+import Json.JacksonExport;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -39,7 +39,7 @@ public class MainWindow implements ActionListener {
     private static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory(1000);
     private static PairListFactory PAIR_LIST_FACTORY;
     private static GroupFactory GROUP_FACTORY;
-    private static JsonExport JSON_EXPORT;
+    private static JacksonExport JACKSON_EXPORT;
 
     /**
      * Will create a Main Window for the application using JFrame.
@@ -165,7 +165,7 @@ public class MainWindow implements ActionListener {
             groupsGenerated = true;
         }
         else if (e.getActionCommand().equals("GruppenSpeichern")) {
-            JSON_EXPORT = new JsonExport(GROUP_FACTORY.getDinnerRounds(),PAIR_LIST_FACTORY.getRegisteredPairs(), GROUP_FACTORY.getSuccessorList(), PAIR_LIST_FACTORY.getParticipantSuccessorList());
+            JACKSON_EXPORT = new JacksonExport(GROUP_FACTORY.getDinnerRounds(),PAIR_LIST_FACTORY.getRegisteredPairs(), GROUP_FACTORY.getSuccessorList(), PAIR_LIST_FACTORY.getParticipantSuccessorList());
 
         }
     }

@@ -4,8 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import Enum.FoodPreference;
+import Enum.Course;
 
+import Enum.FoodPreference;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonPropertyOrder({"course", "foodType", "kitchen", "cookingPair", "secondPair", "thirdPair"})
 public class Group {
     private final List<Pair> pairs;
     private final List<Participant> participants = new ArrayList<>();
@@ -14,18 +20,17 @@ public class Group {
     private double ageDifference;
     private double preferenceDeviation;
     private FoodPreference foodPreference;
+    private Course course;
 
 
-
-
-
-    public Group(Pair initialPair) {
+    public Group(Pair initialPair, Course course) {
         this.pairs = new ArrayList<>();
         pairs.add(initialPair);
         this.cookingPair = initialPair; // Setzen des initialPair als Kochpaar
         this.ageDifference = calculateAverageScores(Pair::getAgeDifference);
         this.preferenceDeviation = calculateAverageScores(Pair::getPreferenceDeviation);
         this.genderDiversityScore = calculateGenderDiversityScore();
+        this.course = course;
         createParticipants();
         calculateFoodPreference();
     }
@@ -79,9 +84,7 @@ public class Group {
         return 0;
     }
 
-    public List<Pair> getPairs() {
-        return pairs;
-    }
+
 
     /**
      * Checks if the group contains a specific participant.
@@ -112,44 +115,22 @@ public class Group {
         return result.toString();
     }
 
+    //TODO: Remove this method if useless?
+    /**
+     * Method to check if a group contains only one pair
+     * @return
+     */
     public boolean isPair() {
         return participants.size() == 2;
     }
 
-    public List<Participant> getParticipants() {
-        return participants;
-    }
 
+    /**
+     * Method to manually add a Participant to the group
+     * @param participant
+     */
     public void addParticipant(Participant participant) {
         this.participants.add(participant);
-    }
-
-    public Pair getCookingPair() {
-        return this.cookingPair;
-    }
-
-    public void setCookingPair(Pair pair) {
-        if (this.pairs.contains(pair)) {
-            this.cookingPair = pair;
-        } else {
-            throw new IllegalArgumentException("The provided pair is not part of this group.");
-        }
-    }
-
-    public boolean containsPair(Pair pair) {
-        return this.pairs.contains(pair);
-    }
-
-    public double getGenderDiversityScore() {
-        return genderDiversityScore;
-    }
-
-    public double getPreferenceDeviation() {
-        return preferenceDeviation;
-    }
-
-    public double getAgeDifference() {
-        return ageDifference;
     }
 
 
@@ -159,44 +140,108 @@ public class Group {
     public void calculateFoodPreference() {
         int sum = 0;
         for (Pair pair : pairs) {
-            sum += parseFoodPreference(pair.getFoodPreference());
+            sum += pair.getFoodPreference().asNumber();
         }
         double median = (double) sum / pairs.size();
 
-        if(median < 1.5) {
+        if (median < 1.5) {
             this.foodPreference = FoodPreference.MEAT;
-        } else if(median >= 1.5 && median < 2.5) {
+        } else if (median >= 1.5 && median < 2.5) {
             this.foodPreference = FoodPreference.VEGGIE;
         } else {
             this.foodPreference = FoodPreference.VEGAN;
         }
     }
+
+
     /**
-     * Helper method to parse the food preference of the group.
+     * Adds a pair to the group.
+     *
+     * @param pair
      */
-    private int parseFoodPreference(String foodPreference) {
-        switch (foodPreference) {
-            case "MEAT":
-                return 1;
-            case "VEGETARIAN":
-                return 2;
-            case "VEGAN":
-                return 3;
-
-            default:
-                return 0;
-        }
-    }
-
     public void addPair(Pair pair) {
         this.pairs.add(pair);
     }
 
+
+    // Getter
+    @JsonIgnore
+    public List<Pair> getPairs() {
+        return pairs;
+    }
+
+    @JsonIgnore
+    public double getGenderDiversityScore() {
+        return genderDiversityScore;
+    }
+
+    @JsonIgnore
+    public double getPreferenceDeviation() {
+        return preferenceDeviation;
+    }
+
+    @JsonIgnore
+    public double getAgeDifference() {
+        return ageDifference;
+    }
+
+    @JsonIgnore
+    public Pair getCookingPair() {
+        return this.cookingPair;
+    }
+
+    @JsonIgnore
+    public List<Participant> getParticipants() {
+        return participants;
+    }
+
+    //JsonGetter
+    @JsonGetter("course")
+    public Course getCourse() {
+        return course;
+    }
+
+    @JsonGetter("foodType")
     public FoodPreference getFoodPreference() {
         return foodPreference;
     }
 
+    @JsonGetter("kitchen")
+    public Kitchen getKitchen() {
+        return cookingPair.getKitchen();
+    }
+
+    @JsonGetter("cookingPair")
+    public Pair getCookingPairJson() {
+        return cookingPair;
+    }
+
+    @JsonGetter("secondPair")
+    public Pair getSecondPair() {
+        if (pairs.size() > 1) {
+            return pairs.get(1);
+        }
+        return null;
+    }
+
+    @JsonGetter("thirdPair")
+    public Pair getThirdPair() {
+        if (pairs.size() > 2) {
+            return pairs.get(2);
+        }
+        return null;
+    }
+
+    //Setter
     public void setFoodPreference(FoodPreference foodPreference) {
         this.foodPreference = foodPreference;
+    }
+
+    public void setCookingPair(Pair pair) {
+        if (this.pairs.contains(pair)) {
+            this.cookingPair = pair;
+        } else {
+            throw new IllegalArgumentException("The provided pair is not part of this group.");
+        }
     }
 }

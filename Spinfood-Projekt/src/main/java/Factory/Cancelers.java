@@ -60,7 +60,7 @@ public class Cancelers {
      */
     void updateWaitingList() {
         for (Participant participant : participantList) {
-            if (!participant.hasPartner() && absences.contains(participant)) {
+            if (!participant.getHasPartner() && absences.contains(participant)) {
                 System.out.println("The participant signed up alone and has canceled.");
                 Participant successor = successorsInWaitingList.remove(0);
                 participantList.add(successor);
@@ -71,7 +71,7 @@ public class Cancelers {
             Participant participant1 = participants.get(0);
             Participant participant2 = participants.get(1);
 
-            if (!participant1.hasPartner() || !participant2.hasPartner() && absences.contains(participant1) || absences.contains(participant2)) {
+            if (!participant1.getHasPartner() || !participant2.getHasPartner() && absences.contains(participant1) || absences.contains(participant2)) {
                 groupList.remove(group);
                 backupGroupList.add(group);
                 if (absences.contains(participant1)) {
@@ -90,7 +90,7 @@ public class Cancelers {
                         if (!successorsInWaitingList.isEmpty()) {
                             Participant successor1 = successorsInWaitingList.remove(0);
                             Participant successor2 = successorsInWaitingList.remove(0);
-                            successorPairList.add(new Pair(successor1,successor2));
+                            successorPairList.add(new Pair(successor1,successor2, true));
                             backupWaitingList.add((Participant) successorPairList);
                         }
                     }

@@ -1,10 +1,4 @@
-import Factory.PairListFactory;
-import Factory.ParticipantFactory;
 import GUI.MainWindow;
-import Json.JsonExport;
-
-import java.io.File;
-import java.util.Objects;
 
 public class Main {
 

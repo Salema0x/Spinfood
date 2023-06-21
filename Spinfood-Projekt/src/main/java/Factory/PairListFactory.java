@@ -94,7 +94,7 @@ public class PairListFactory {
      */
     private void cleanParticipantListFromSuccessors() {
         participantSuccessorList = new ArrayList<>(participantList.stream()
-                .filter(Participant::isSuccessor)
+                .filter(Participant::getIsSuccessor)
                 .toList());
 
         for (Participant participant : participantSuccessorList) {
@@ -427,7 +427,7 @@ public class PairListFactory {
         participant2.setPartner(participant1);
         participant1.setHasPartner(true);
         participant2.setHasPartner(true);
-        pairList.add(new Pair(participant1, participant2));
+        pairList.add(new Pair(participant1, participant2, false));
     }
 
     /**
