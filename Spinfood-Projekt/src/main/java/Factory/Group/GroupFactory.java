@@ -4,6 +4,7 @@ import Entity.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import Enum.FoodPreference;
 
 /**
  * This class is holding methods to generate a list of groups out of the list of pairs.
@@ -74,11 +75,16 @@ public class GroupFactory {
                 case MEAT -> findPairsForMeatPair(cookingPair, pairsByAttributes);
                 case VEGGIE -> findPairsForVeggiePair(cookingPair, pairsByAttributes);
                 case VEGAN -> findPairsForVeganPair(cookingPair, pairsByAttributes);
+
+                //Problem with Enum FoodPreference since it allows foodPreference NONE for Participants
+                case NONE -> {generateEmptyList();
+                    System.out.println("FoodPreference NONE is not allowed for Pairs");
+                    ;}
             };
 
             for(Pair pair : groupMembers) {
                 PairAttributes attributes = new PairAttributes(pair);
-                pairsByAttributes.get(attributes).remove(pair)
+                pairsByAttributes.get(attributes).remove(pair);
             }
 
             groupMembers.add(cookingPair);
@@ -766,5 +772,41 @@ public class GroupFactory {
                 successorGroups.add(group);
             }
         }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //Helper
+
+    /**
+     * filler method to avoid compiler error
+     * @return
+     */
+    public ArrayList<Group> generateEmptyList() {
+        return new ArrayList<>();
     }
 }

@@ -46,11 +46,6 @@ public class Group {
         setSeen();
     }
 
-
-    public void addPair(Pair pair) {
-        pairs.add(pair);
-    }
-
     public String getGender() {
         Pair pair1 = pairs.get(0);
         Pair pair2 = pairs.get(1);
@@ -226,14 +221,6 @@ public class Group {
 
 
     // Getter
-    @JsonIgnore
-    public List<Participant> getParticipants() {
-        return participants;
-    }
-    @JsonIgnore
-    public List<Pair> getPairs() {
-        return pairs;
-    }
 
     @JsonIgnore
     public double getGenderDiversityScore() {
@@ -249,6 +236,7 @@ public class Group {
     public double getAgeDifference() {
         return ageDifference;
     }
+    @JsonIgnore
     public ArrayList<Pair> getPairs() {
         return pairs;
     }

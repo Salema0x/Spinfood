@@ -5,13 +5,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import Enum.FoodPreference;
 
+import java.util.ArrayList;
+
+
 import static Enum.FoodPreference.*;
 
 @JsonPropertyOrder({"premade", "foodPreference", "firstParticipant", "secondParticipant"})
-public class Pair {
-import java.util.ArrayList;
-
 public class Pair implements Comparable<Pair> {
+
+
     private final Participant participant1;
     private final Participant participant2;
     private double ageDifference;
@@ -19,20 +21,21 @@ public class Pair implements Comparable<Pair> {
     private double genderDiversityScore;
     private final Double[] placeOfCooking = new Double[2];
     private FoodPreference foodPreference;
-    private final boolean preMade;
+    private boolean preMade = false;
     private Kitchen kitchen;
 
     private final Double[] coordinatesFirstRound = new Double[2];
     private final Double[] coordinatesSecondRound = new Double[2];
     private final Double[] coordinatesThirdRound = new Double[2];
-    private FoodPreference foodPreference;
     private final String id;
     private double distanceToPartyLocation;
     private Gender gender;
     public Double age;
     public ArrayList<Pair> seen = new ArrayList<>();
+
     /**
      * Constructur without preMade option
+     *
      * @param participant1
      * @param participant2
      */
@@ -50,17 +53,18 @@ public class Pair implements Comparable<Pair> {
         calculatePreferenceDeviation();
         calculateAge();
     }
+
     /**
      * Constructor with preMade option
+     *
      * @param participant1
      * @param participant2
      * @param preMade
      */
     public Pair(Participant participant1, Participant participant2, boolean preMade) {
-        this();
+        this(participant1, participant2);
         this.preMade = preMade;
     }
-
 
 
     private void decidePlaceOfCooking() {
@@ -113,7 +117,7 @@ public class Pair implements Comparable<Pair> {
         switch (part1Pref) {
             case VEGAN -> {
                 switch (part2Pref) {
-                    case VEGAN , VEGGIE , NONE-> this.foodPreference = FoodPreference.VEGAN;
+                    case VEGAN, VEGGIE, NONE -> this.foodPreference = FoodPreference.VEGAN;
                 }
             }
             case VEGGIE -> {
@@ -124,7 +128,7 @@ public class Pair implements Comparable<Pair> {
             }
             case MEAT -> {
                 switch (part2Pref) {
-                    case MEAT , NONE -> this.foodPreference = FoodPreference.MEAT;
+                    case MEAT, NONE -> this.foodPreference = FoodPreference.MEAT;
                 }
             }
             case NONE -> {
@@ -134,12 +138,7 @@ public class Pair implements Comparable<Pair> {
                     case MEAT, NONE -> this.foodPreference = FoodPreference.MEAT;
                 }
             }
-        } else if (part1Pref.equals(VEGGIE) && part2Pref.equals(VEGAN)) {
-            this.foodPreference = part2Pref;
-        } else if (part1Pref.equals(VEGAN) && part2Pref.equals(VEGGIE)) {
-            this.foodPreference = part1Pref;
         }
-
     }
 
     private void calculateAge() {
@@ -203,30 +202,37 @@ public class Pair implements Comparable<Pair> {
     public String getId() {
         return id;
     }
+
     @JsonIgnore
     public Double getDistanceToPartyLocation() {
         return distanceToPartyLocation;
     }
+
     @JsonIgnore
     public Gender getGender() {
         return gender;
     }
+
     @JsonIgnore
     public double getAgeDifference() {
         return ageDifference;
     }
+
     @JsonIgnore
     public double getPreferenceDeviation() {
         return preferenceDeviation;
     }
+
     @JsonIgnore
     public double getGenderDiversityScore() {
         return genderDiversityScore;
     }
+
     @JsonIgnore
     public Double[] getPlaceOfCooking() {
         return placeOfCooking;
     }
+
     @JsonIgnore
     public Kitchen getKitchen() {
         return kitchen;
@@ -237,14 +243,17 @@ public class Pair implements Comparable<Pair> {
     public boolean isPreMade() {
         return preMade;
     }
+
     @JsonGetter("foodPreference")
     public FoodPreference getFoodPreference() {
         return foodPreference;
     }
+
     @JsonGetter("firstParticipant")
     public Participant getParticipant1() {
         return participant1;
     }
+
     @JsonGetter("secondParticipant")
     public Participant getParticipant2() {
         return participant2;
@@ -254,5 +263,5 @@ public class Pair implements Comparable<Pair> {
     public void setDistanceToPartyLocation(double distanceToPartyLocation) {
         this.distanceToPartyLocation = distanceToPartyLocation;
     }
-
 }
+
