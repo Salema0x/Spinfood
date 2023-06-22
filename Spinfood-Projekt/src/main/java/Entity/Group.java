@@ -13,18 +13,17 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder({"course", "foodType", "kitchen", "cookingPair", "secondPair", "thirdPair"})
 public class Group {
-    private final List<Pair> pairs;
+    private final ArrayList<Pair> pairs = new ArrayList<>();
     private final List<Participant> participants = new ArrayList<>();
     private Pair cookingPair;
-    private double genderDiversityScore;
-    private double ageDifference;
-    private double preferenceDeviation;
+    private final double genderDiversityScore;
+    private final double ageDifference;
+    private final double preferenceDeviation;
     private FoodPreference foodPreference;
     private Course course;
-
+    private String gender;
 
     public Group(Pair initialPair, Course course) {
-        this.pairs = new ArrayList<>();
         pairs.add(initialPair);
         this.cookingPair = initialPair; // Setzen des initialPair als Kochpaar
         this.ageDifference = calculateAverageScores(Pair::getAgeDifference);
@@ -33,6 +32,71 @@ public class Group {
         this.course = course;
         createParticipants();
         calculateFoodPreference();
+    }
+
+    public Group(ArrayList<Pair> pairs) {
+        this.pairs.addAll(pairs);
+        this.cookingPair = pairs.get(2);
+        this.ageDifference = calculateAverageScores(Pair::getAgeDifference);
+        this.preferenceDeviation = calculateAverageScores(Pair::getPreferenceDeviation);
+        this.genderDiversityScore = calculateGenderDiversityScore();
+        this.course = course;
+        calculateFoodPreference();
+        createParticipants();
+        setSeen();
+    }
+
+
+    public void addPair(Pair pair) {
+        pairs.add(pair);
+    }
+
+    public String getGender() {
+        Pair pair1 = pairs.get(0);
+        Pair pair2 = pairs.get(1);
+        Gender genderPair1 = pair1.getGender();
+        Gender genderPair2 = pair2.getGender();
+        Gender female = Gender.FEMALE;
+        Gender male = Gender.MALE;
+        Gender mixed = Gender.MIXED;
+
+        if (genderPair1.equals(female) && genderPair2.equals(female)) {
+            return "ff";
+        } else if (genderPair1.equals(female) && genderPair2.equals(male)) {
+            return "fma";
+        } else if (genderPair1.equals(female) && genderPair2.equals(mixed)) {
+            return "fmix";
+        } else if (genderPair1.equals(male) && genderPair2.equals(male)) {
+            return "mm";
+        } else if (genderPair1.equals(male) && genderPair2.equals(mixed)) {
+            return "mmix";
+        } else if (genderPair1.equals(mixed) && genderPair2.equals(mixed)) {
+            return "mixmix";
+        }
+        return "0";
+    }
+
+    public void setSeen() {
+        Pair p1 = pairs.get(0);
+        Pair p2 = pairs.get(1);
+        Pair p3 = pairs.get(2);
+
+        p1.seen.add(p2);
+        p1.seen.add(p3);
+
+        p2.seen.add(p1);
+        p2.seen.add(p3);
+
+        p3.seen.add(p2);
+        p3.seen.add(p1);
+    }
+
+    public void addPairs(ArrayList<Pair> pairs) {
+        this.pairs.addAll(pairs);
+    }
+
+    public int getGroupSize() {
+        return pairs.size();
     }
 
     /**
@@ -47,7 +111,6 @@ public class Group {
 
     /**
      * Calculates the average scores of the Group.
-     *
      * @param method the method the gather the data from the pairs of the group.
      * @return the average key identification of the list.
      */
@@ -67,7 +130,6 @@ public class Group {
 
     /**
      * Calculates the gender diversity score of the group.
-     *
      * @return a double representing the gender diversity score.
      */
     private double calculateGenderDiversityScore() {
@@ -88,7 +150,6 @@ public class Group {
 
     /**
      * Checks if the group contains a specific participant.
-     *
      * @param participant The participant for which should be checked.
      * @return a boolean indicating if the specified participant is in the group or not.
      */
@@ -104,7 +165,6 @@ public class Group {
 
     /**
      * Builds String of Pairs for printing
-     *
      * @return A string representing the Pairs of the group.
      */
     public String toString() {
@@ -123,6 +183,7 @@ public class Group {
     public boolean isPair() {
         return participants.size() == 2;
     }
+
 
 
     /**
@@ -166,6 +227,10 @@ public class Group {
 
     // Getter
     @JsonIgnore
+    public List<Participant> getParticipants() {
+        return participants;
+    }
+    @JsonIgnore
     public List<Pair> getPairs() {
         return pairs;
     }
@@ -183,6 +248,9 @@ public class Group {
     @JsonIgnore
     public double getAgeDifference() {
         return ageDifference;
+    }
+    public ArrayList<Pair> getPairs() {
+        return pairs;
     }
 
     @JsonIgnore

@@ -3,7 +3,7 @@ package Factory;
 import Entity.Group;
 import Entity.Pair;
 
-import Enum.FoodPreference;
+import static Enum.FoodPreference.*;
 import Misc.DinnerRound;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,11 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static Enum.FoodPreference.*;
 
-
-class GroupFactoryTest {
-    private GroupFactory groupFactory;
+class GroupFactoryOldTest {
+    private GroupFactoryOld groupFactoryOld;
     private PairListFactory pairListFactory;
     private ParticipantFactory participantFactory;
     private Double[] partyLocationCoordinates;
@@ -34,13 +32,13 @@ class GroupFactoryTest {
     }
 
     @org.junit.jupiter.api.Test
-    void GroupFactory() {
-        groupFactory = new GroupFactory(pairListFactory, 3, partyLocationCoordinates);
-        groupFactory.createGroups();
-        Assertions.assertFalse(checkGroupsContainAllPairs(groupFactory));
-        Assertions.assertFalse(checkFalseCooking(groupFactory));
-        Assertions.assertTrue(checkNewPairsEachDinnerRound(groupFactory));
-        Assertions.assertTrue(checkMixedGroupsBadFoodPref(groupFactory));
+    void GroupFactoryOld() {
+        groupFactoryOld = new GroupFactoryOld(pairListFactory, 3, partyLocationCoordinates);
+        groupFactoryOld.createGroups();
+        Assertions.assertFalse(checkGroupsContainAllPairs(groupFactoryOld));
+        Assertions.assertFalse(checkFalseCooking(groupFactoryOld));
+        Assertions.assertTrue(checkNewPairsEachDinnerRound(groupFactoryOld));
+        Assertions.assertTrue(checkMixedGroupsBadFoodPref(groupFactoryOld));
     }
 
     //Testmethoden
@@ -50,7 +48,7 @@ class GroupFactoryTest {
      *
      * @return
      */
-    private boolean checkFalseCooking(GroupFactory g) {
+    private boolean checkFalseCooking(GroupFactoryOld g) {
         List<Pair> cookingPairs = new ArrayList<>();
         for (DinnerRound dinnerRound : g.getDinnerRounds()) {
             for (Group group : dinnerRound.getGroups()) {
@@ -87,14 +85,14 @@ class GroupFactoryTest {
 
     /**
      * checks if each Pair meets new Pairs each DinnerRound
-     * @param groupFactory
+     * @param groupFactoryOld
      * @return
      */
-    private boolean checkNewPairsEachDinnerRound(GroupFactory groupFactory) {
+    private boolean checkNewPairsEachDinnerRound(GroupFactoryOld groupFactoryOld) {
         List<Pair> alreadyMetPairs = new ArrayList<>();
         List<Group> pairGroups = new ArrayList<>();
-        for (Pair pair : groupFactory.getRegisteredPairs()) {
-            for (DinnerRound dinnerRound : groupFactory.getDinnerRounds()) {
+        for (Pair pair : groupFactoryOld.getRegisteredPairs()) {
+            for (DinnerRound dinnerRound : groupFactoryOld.getDinnerRounds()) {
                 for(Group group : dinnerRound.getGroups()) {
                     if(group.getPairs().contains(pair)) {
                         pairGroups.add(group);
@@ -126,16 +124,16 @@ class GroupFactoryTest {
 
     /**
      * checks if all registered Pairs are in a Group each DinnerRound
-     * @param groupFactory
+     * @param groupFactoryOld
      * @return
      */
-    private boolean checkGroupsContainAllPairs(GroupFactory groupFactory) {
+    private boolean checkGroupsContainAllPairs(GroupFactoryOld groupFactoryOld) {
         List<Pair> pairsInGroups = new ArrayList<>();
-        for (DinnerRound dinnerRound : groupFactory.getDinnerRounds()) {
+        for (DinnerRound dinnerRound : groupFactoryOld.getDinnerRounds()) {
             for(Group group : dinnerRound.getGroups()) {
                 pairsInGroups.addAll(group.getPairs());
             }
-            for(Pair pair : groupFactory.getRegisteredPairs()) {
+            for(Pair pair : groupFactoryOld.getRegisteredPairs()) {
                 if(!pairsInGroups.contains(pair)) {
                     return false;
                 }
@@ -146,11 +144,11 @@ class GroupFactoryTest {
 
     /**
      * checks if mixed groups with vegans/veggies contain max one pair with meat/no preference
-     * @param groupFactory
+     * @param groupFactoryOld
      * @return
      */
-    private boolean checkMixedGroupsBadFoodPref(GroupFactory groupFactory) {
-        for(DinnerRound dinnerRound : groupFactory.getDinnerRounds()) {
+    private boolean checkMixedGroupsBadFoodPref(GroupFactoryOld groupFactoryOld) {
+        for(DinnerRound dinnerRound : groupFactoryOld.getDinnerRounds()) {
             for(Group group : dinnerRound.getGroups()) {
                 int noMeatPrefCount = 0;
                 int noPrefCount = 0;

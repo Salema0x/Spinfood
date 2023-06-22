@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * The GroupFactory class is responsible for creating and managing dinner rounds and groups for the dinner event.
  */
-public class GroupFactory {
+public class GroupFactoryOld {
     private final List<Pair> registeredPairs;
     private final List<DinnerRound> dinnerRounds;
     private final List<Pair> successorList;
@@ -27,7 +27,7 @@ public class GroupFactory {
      * @param maxGroupSize    The maximum size of a group.
      * @param partyLocation   The location of the party.
      */
-    public GroupFactory(PairListFactory pairListFactory, int maxGroupSize, Double[] partyLocation) {
+    public GroupFactoryOld(PairListFactory pairListFactory, int maxGroupSize, Double[] partyLocation) {
         this.registeredPairs = pairListFactory.getRegisteredPairs();
         this.successorList = new ArrayList<>();
         this.maxGroupSize = maxGroupSize;

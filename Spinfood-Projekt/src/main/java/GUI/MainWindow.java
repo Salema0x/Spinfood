@@ -1,6 +1,6 @@
 package GUI;
 
-import Factory.GroupFactory;
+import Factory.Group.GroupFactory;
 import Factory.PairListFactory;
 import Factory.ParticipantFactory;
 import Json.JacksonExport;
@@ -75,8 +75,6 @@ public class MainWindow implements ActionListener {
         JMenuItem readPartyLocation = new JMenuItem("Party Location einlesen");
         readPartyLocation.addActionListener(this);
         startMenu.add(readPartyLocation);
-
-
 
         START_PAIRS.addActionListener(this);
         START_PAIRS.setEnabled(criteriaOrdered);
@@ -158,10 +156,6 @@ public class MainWindow implements ActionListener {
             createFileChooser();
         } else if (e.getActionCommand().equals("Gruppen bilden")) {
             GROUP_FACTORY = new GroupFactory(PAIR_LIST_FACTORY, 3, PARTICIPANT_FACTORY.getPartyLocation());
-            GROUP_FACTORY.createGroups();
-            GROUP_FACTORY.updateGroupsWithClosestPairs();
-            GROUP_FACTORY.displayDinnerRounds();
-            GROUP_FACTORY.ensureEachPairCooksOnce();
             groupsGenerated = true;
         }
         else if (e.getActionCommand().equals("GruppenSpeichern")) {
