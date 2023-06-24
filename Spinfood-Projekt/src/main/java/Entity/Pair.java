@@ -1,5 +1,6 @@
 package Entity;
 
+import Enum.*;
 import java.util.ArrayList;
 
 public class Pair implements Comparable<Pair> {

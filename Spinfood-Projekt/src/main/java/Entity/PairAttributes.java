@@ -1,6 +1,7 @@
 package Entity;
 
 import java.util.Objects;
+import Enum.*;
 
 /**
  * This class is used to define pack the attributes food preference and gender of a pair together.
