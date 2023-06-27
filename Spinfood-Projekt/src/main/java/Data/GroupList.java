@@ -10,6 +10,15 @@ public class GroupList {
     private ArrayList<Group> groupList = new ArrayList<>();
     private final int groupCount;
     private final int successorCount;
+
+    public int getGroupCount() {
+        return groupCount;
+    }
+
+    public int getSuccessorCount() {
+        return successorCount;
+    }
+
     private double genderDiversity;
     private double ageDifference;
     private double preferenceDeviation;

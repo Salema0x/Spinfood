@@ -17,6 +17,35 @@ public class GroupFactory {
     private final ArrayList<Group> appetizerGroups = new ArrayList<>();
     private final ArrayList<Group> mainDishGroups = new ArrayList<>();
     private final ArrayList<Group> dessertGroups = new ArrayList<>();
+
+    public ArrayList<Pair> getPairList() {
+        return pairList;
+    }
+
+    public ArrayList<Pair> getSuccessorPairs() {
+        return successorPairs;
+    }
+
+    public Double[] getPARTY_LOCATION() {
+        return PARTY_LOCATION;
+    }
+
+    public ArrayList<Group> getAppetizerGroups() {
+        return appetizerGroups;
+    }
+
+    public ArrayList<Group> getMainDishGroups() {
+        return mainDishGroups;
+    }
+
+    public ArrayList<Group> getDessertGroups() {
+        return dessertGroups;
+    }
+
+    public ArrayList<Group> getSuccessorGroups() {
+        return successorGroups;
+    }
+
     private final ArrayList<Group> successorGroups = new ArrayList<>();
 
 

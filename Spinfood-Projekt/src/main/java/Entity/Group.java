@@ -33,9 +33,6 @@ public class Group {
     }
 
 
-    public void addPair(Pair pair) {
-        pairs.add(pair);
-    }
 
     public void setSeen() {
         Pair p1 = pairs.get(0);

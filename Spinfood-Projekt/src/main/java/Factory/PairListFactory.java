@@ -209,7 +209,7 @@ public class PairListFactory {
     /**
      * Starts making pairs by calling methods for making meatPairs, making veggie/vegan Pairs, and for the nonePairs
      */
-    private void makePairs() {
+    void makePairs() {
         makePairsMeat();
         makePairsOther();
         makePairsStarter(yesKitchenParticipants.get(0), maybeKitchenParticipants.get(0), noKitchenParticipants.get(0));
@@ -413,7 +413,7 @@ public class PairListFactory {
         Participant participant2;
 
         if (participantList2.length == 1) {
-          participant2 = participantList2[0].remove(0);
+            participant2 = participantList2[0].remove(0);
         } else if (participantList2.length == 0) {
             participant2 = participantList1.remove(0);
         } else {
@@ -432,8 +432,9 @@ public class PairListFactory {
 
     /**
      * Prints the pairs onto the console
+     * @return
      */
-    public void showPairs() {
+    public List<Pair> showPairs() {
         String leftAlignFormat = "%-9s| %-36s | %-36s | %-20s | %-20s |%n";
         int pairNr = 0;
 
@@ -452,6 +453,7 @@ public class PairListFactory {
         }
 
         System.out.format("+---------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
+        return null;
     }
 
     public List<Pair> getRegisteredPairs() {

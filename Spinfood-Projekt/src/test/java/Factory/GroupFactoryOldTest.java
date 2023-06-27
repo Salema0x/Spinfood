@@ -150,7 +150,7 @@ class GroupFactoryOldTest {
                 int noMeatPrefCount = 0;
                 int noPrefCount = 0;
                 for(Pair pair : group.getPairs()) {
-                    String foodPreference = pair.getFoodPreference();
+                    String foodPreference = String.valueOf(pair.getFoodPreference());
                     if(foodPreference.equals("vegetarisch") || foodPreference.equals("vegan")) {
                         noMeatPrefCount++;
                     }
