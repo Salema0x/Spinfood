@@ -155,6 +155,10 @@ public class Pair implements Comparable<Pair> {
         }
     }
 
+    public boolean containsParticipant(Participant participant) {
+        return this.participant1.equals(participant) || this.participant2.equals(participant);
+    }
+
     public void addParticipant(Participant participant) {
         // Checking if there is an open spot in the pair
         if (this.participant1 == null) {

@@ -77,7 +77,7 @@ public class PairListFactory {
         // Checking if pair exists in pairList and participantInPair is in the pair
         if (pairList.contains(pair) && pair.containsParticipant(participantInPair)) {
             // Checking if participantInSuccessorList exists in participantSuccessorList
-            if (participantSuccessorList.contains(participantInSuccessorList)) {
+            if (successors.contains(participantInSuccessorList)) {
                 // Swap the participants
                 // Remove the participantInPair from the pair
                 pair.removeParticipant(participantInPair);
@@ -86,10 +86,10 @@ public class PairListFactory {
                 pair.addParticipant(participantInSuccessorList);
 
                 // Remove the participantInSuccessorList from participantSuccessorList
-                participantSuccessorList.remove(participantInSuccessorList);
+                successors.remove(participantInSuccessorList);
 
                 // Add participantInPair to participantSuccessorList
-                participantSuccessorList.add(participantInPair);
+                successors.add(participantInPair);
             } else {
                 System.out.println("The participant you are trying to swap in is not in the successor list.");
             }
