@@ -1,7 +1,7 @@
 package Misc;
 
 import Entity.Group;
-import Enum.Course;
+import Entity.Enum.Course;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -3,7 +3,7 @@ package Entity;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import Enum.FoodPreference;
+import Entity.Enum.FoodPreference;
 
 @JsonPropertyOrder({"id", "name", "foodPreference", "age", "gender", "kitchen"})
 public class Participant {

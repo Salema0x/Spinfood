@@ -2,9 +2,12 @@ package Factory.Group;
 
 import Entity.*;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
-import Enum.FoodPreference;
+
+
+import Entity.Enum.*;
 
 /**
  * This class is holding methods to generate a list of groups out of the list of pairs.
@@ -13,17 +16,22 @@ import Enum.FoodPreference;
 public class GroupFactory {
     private final ArrayList<Pair> pairList;
     private final ArrayList<Pair> successorPairs = new ArrayList<>();
+
     private final Double[] PARTY_LOCATION = new Double[2];
     private final ArrayList<Group> appetizerGroups = new ArrayList<>();
     private final ArrayList<Group> mainDishGroups = new ArrayList<>();
     private final ArrayList<Group> dessertGroups = new ArrayList<>();
     private final ArrayList<Group> successorGroups = new ArrayList<>();
 
+    private final ArrayList<Group> allGroups = new ArrayList<>();
+
 
     public GroupFactory(ArrayList<Pair> pairList, Double[] partyLocation) {
         this.pairList = pairList;
         PARTY_LOCATION[0] = partyLocation[0];
         PARTY_LOCATION[1] = partyLocation[1];
+        startGroupAlgorithm();
+        addGroupsToAllGroups();
     }
 
     /**
@@ -77,9 +85,7 @@ public class GroupFactory {
                 case VEGAN -> findPairsForVeganPair(cookingPair, pairsByAttributes);
 
                 //Problem with Enum FoodPreference since it allows foodPreference NONE for Participants
-                case NONE -> {generateEmptyList();
-                    System.out.println("FoodPreference NONE is not allowed for Pairs");
-                    ;}
+                case NONE -> {throw new IllegalStateException("Illegal state reached : Pair with FoodPreference: none");}
             };
 
             for(Pair pair : groupMembers) {
@@ -774,39 +780,42 @@ public class GroupFactory {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //Helper
+    //HelperMethods
 
     /**
-     * filler method to avoid compiler error
-     * @return
+     * HelperMethods that adds all groups to the allGroups ArrayList so Json can be created
      */
-    public ArrayList<Group> generateEmptyList() {
-        return new ArrayList<>();
+    public void addGroupsToAllGroups() {
+        allGroups.addAll(appetizerGroups);
+        allGroups.addAll(mainDishGroups);
+        allGroups.addAll(dessertGroups);
+    }
+
+
+
+    //Getter
+
+    public ArrayList<Pair> getPairList() {
+        return pairList;
+    }
+
+    public ArrayList<Pair> getSuccessorPairs() {
+        return successorPairs;
+    }
+
+    public ArrayList<Group> getAppetizerGroups() {
+        return appetizerGroups;
+    }
+
+    public ArrayList<Group> getMainDishGroups() {
+        return mainDishGroups;
+    }
+
+    public ArrayList<Group> getDessertGroups() {
+        return dessertGroups;
+    }
+
+    public ArrayList<Group> getAllGroups() {
+        return allGroups;
     }
 }

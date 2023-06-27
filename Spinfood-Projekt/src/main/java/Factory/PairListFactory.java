@@ -454,9 +454,7 @@ public class PairListFactory {
         System.out.format("+---------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
     }
 
-    public List<Pair> getRegisteredPairs() {
-        return registeredPairs;
-    }
+
 
     /**
      * Identifies the successors after the pairs have been created.
@@ -481,8 +479,6 @@ public class PairListFactory {
                 participant.setSuccessor(true);
             }
         }
-
-
         participantSuccessorList.addAll(yesKitchenParticipants.get(0));
         participantSuccessorList.addAll(yesKitchenParticipants.get(1));
         participantSuccessorList.addAll(yesKitchenParticipants.get(2));
@@ -496,6 +492,13 @@ public class PairListFactory {
         participantSuccessorList.addAll(noKitchenParticipants.get(2));
     }
 
+
+
+
+    //Getter
+    public List<Pair> getPairList() {
+        return pairList;
+    }
     public PairList getPairListObject() {
         return pairListObject;
     }
@@ -503,4 +506,13 @@ public class PairListFactory {
     public ArrayList<Participant> getParticipantSuccessorList() {
         return participantSuccessorList;
     }
+
+    public ArrayList getRegisteredPairs() {
+        return registeredPairs;
+    }
+
+    public ArrayList<Pair> getPairListAsArrayList() {
+        return new ArrayList<>(pairList);
+    }
+
 }

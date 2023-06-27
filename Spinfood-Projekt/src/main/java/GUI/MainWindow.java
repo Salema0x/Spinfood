@@ -4,6 +4,7 @@ import Factory.Group.GroupFactory;
 import Factory.PairListFactory;
 import Factory.ParticipantFactory;
 import Json.JacksonExport;
+import Json.JacksonImport;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -15,20 +16,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainWindow implements ActionListener {
-
+    //FrameSetup
     private static final int WIDTH = 600;
     private static final int HEIGHT = 500;
     private static final JFrame FRAME = new JFrame("Spinfood-Projekt");
+
+    //MenuItemSetup
     private static final JMenuItem SHOW_PARTICIPANTS = new JMenuItem("Teilnehmerliste anzeigen");
     private static final JMenuItem SET_CRITERIA = new JMenuItem("Wichtigkeit der Kriterien");
     private static final JMenuItem START_PAIRS = new JMenuItem("Paare bilden");
     private static final JMenuItem START_GROUPS = new JMenuItem("Gruppen bilden");
     private static final JMenuItem SAVE_GROUPS = new JMenuItem("Gruppen speichern");
 
+
     private static final JLabel SHOW_TEXT = new JLabel(
             "Starten Sie indem Sie unter 'Start' den Punkt 'Teilnehmer einlesen' auswählen.");
     private static List<Object> CRITERIA_ORDER = new ArrayList<>();
     private static final CriteriaArranger CRITERIA_WINDOW = new CriteriaArranger();
+
+    //BooleanSetup
     private static boolean participantsRead = false;
     private static boolean pairsGenerated = false;
     private static boolean partyLocationRead = false;
@@ -36,10 +42,12 @@ public class MainWindow implements ActionListener {
     private static boolean participantsAreRead = true;
     private static boolean groupsGenerated = false;
 
+    //FactorySetup
     private static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory(1000);
     private static PairListFactory PAIR_LIST_FACTORY;
     private static GroupFactory GROUP_FACTORY;
     private static JacksonExport JACKSON_EXPORT;
+    private static JacksonImport JACKSON_IMPORT;
 
     /**
      * Will create a Main Window for the application using JFrame.
@@ -96,6 +104,8 @@ public class MainWindow implements ActionListener {
         SAVE_GROUPS.addActionListener(this);
         SAVE_GROUPS.setEnabled(true);
         pairMenu.add(SAVE_GROUPS);
+
+
         return menuBar;
     }
 
@@ -155,12 +165,11 @@ public class MainWindow implements ActionListener {
             participantsAreRead = false;
             createFileChooser();
         } else if (e.getActionCommand().equals("Gruppen bilden")) {
-            GROUP_FACTORY = new GroupFactory(PAIR_LIST_FACTORY, 3, PARTICIPANT_FACTORY.getPartyLocation());
+            GROUP_FACTORY = new GroupFactory(PAIR_LIST_FACTORY.pairList, PARTICIPANT_FACTORY.getPartyLocation());
             groupsGenerated = true;
         }
         else if (e.getActionCommand().equals("GruppenSpeichern")) {
-            JACKSON_EXPORT = new JacksonExport(GROUP_FACTORY.getDinnerRounds(),PAIR_LIST_FACTORY.getRegisteredPairs(), GROUP_FACTORY.getSuccessorList(), PAIR_LIST_FACTORY.getParticipantSuccessorList());
-
+            JACKSON_EXPORT = new JacksonExport(GROUP_FACTORY.getAllGroups(), GROUP_FACTORY.getPairList(), GROUP_FACTORY.getSuccessorPairs(), PARTICIPANT_FACTORY.getParticipantList());
         }
     }
 

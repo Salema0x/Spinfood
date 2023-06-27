@@ -1,14 +1,13 @@
 package Entity;
 
+import Entity.Enum.FoodPreference;
+import Entity.Enum.Gender;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import Enum.FoodPreference;
+import Entity.Enum.*;
 
 import java.util.ArrayList;
-
-
-import static Enum.FoodPreference.*;
 
 @JsonPropertyOrder({"premade", "foodPreference", "firstParticipant", "secondParticipant"})
 public class Pair implements Comparable<Pair> {

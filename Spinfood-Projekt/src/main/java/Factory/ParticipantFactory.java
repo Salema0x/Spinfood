@@ -2,7 +2,7 @@ package Factory;
 
 import Entity.Pair;
 import Entity.Participant;
-import Enum.FoodPreference;
+import Entity.Enum.FoodPreference;
 
 import java.io.*;
 import java.util.*;

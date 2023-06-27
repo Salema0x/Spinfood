@@ -2,6 +2,9 @@ package Entity;
 
 import java.util.Objects;
 
+import Entity.Enum.FoodPreference;
+import Entity.Enum.Gender;
+
 /**
  * This class is used to define pack the attributes food preference and gender of a pair together.
  * This is done for the group algorithm.

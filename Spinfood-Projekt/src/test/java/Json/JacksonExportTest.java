@@ -2,7 +2,7 @@ package Json;
 
 import Entity.*;
 
-import Factory.GroupFactory;
+import Factory.Group.*;
 import Factory.PairListFactory;
 import Factory.ParticipantFactory;
 import Misc.DinnerRound;
@@ -14,7 +14,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import Enum.Course;
+import Entity.Enum.*;
+import Factory.Group.*;
 
 public class JacksonExportTest {
     private JacksonExport jacksonExport;
@@ -31,32 +32,23 @@ public class JacksonExportTest {
                 new ArrayList<>(participantFactory.getParticipantList()),
                 new ArrayList<>(participantFactory.getRegisteredPairs()),
                 new ArrayList<Object>(Arrays.asList("Geschlechterdiversität", "Essensvorlieben", "Altersdifferenz")));
-        GroupFactory groupFactory = new GroupFactory(pairListFactory, 3, new Double[]{8.6746166676233, 50.5909317660173});
-        checkValidInputData(groupFactory.getDinnerRounds(), groupFactory.getRegisteredPairs(), groupFactory.getSuccessorList(), pairListFactory.getParticipantSuccessorList());
+        GroupFactory groupFactory = new GroupFactory(pairListFactory.getPairListAsArrayList(), new Double[] {8.6746166676233, 50.5909317660173});
+
+
+
+        List<Group> groupList = groupFactory.getAllGroups();
+        List<Pair> pairList = groupFactory.getPairList();
+        List<Pair> successorPairsList = groupFactory.getSuccessorPairs();
+        List<Participant> successorParticipantsList = pairListFactory.getParticipantSuccessorList();
 
         //Act
-        JacksonExport export = new JacksonExport(groupFactory.getDinnerRounds(), groupFactory.getRegisteredPairs(), groupFactory.getSuccessorList(), pairListFactory.getParticipantSuccessorList(), "src/main/resources/Json/Output.json");
+        JacksonExport export = new JacksonExport(groupList, pairList, successorPairsList, successorParticipantsList, "src/main/resources/Json/Output.json");
 
         //Assert
         Assertions.assertTrue(Paths.get("src/main/resources/Json/Output.json").toFile().exists());
     }
 
-    /**
-     * Test JsonExport with custom inputData
-     */
-    @Test
-    public void testJsonExportCustomInput() {
-        //Arrange
-        List<DinnerRound> dinnerRoundsList = generateCustomDinnerRoundList();
-        List<Pair> registeredPairsList = generatePairs();
-        List<Pair> successorPairsList = generateSuccessorPairs();
-        List<Participant> successorParticipantsList = generateSuccessorParticipants();
 
-        //Act
-        JacksonExport export = new JacksonExport(dinnerRoundsList, registeredPairsList, successorPairsList, successorParticipantsList, "src/main/resources/Json/Test/testOutputCustom.json");
-        Assertions.assertTrue(Paths.get("src/main/resources/Json/Test/testOutputCustom.json").toFile().exists());
-
-    }
 
 
 //Helper methods

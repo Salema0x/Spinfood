@@ -1,4 +1,4 @@
-package Enum;
+package Entity.Enum;
 
 public enum Course {
     FIRST, MAIN, DESSERT

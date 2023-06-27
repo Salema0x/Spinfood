@@ -24,13 +24,9 @@ public class JacksonExport {
     /**
      * Constructor
      */
-    public JacksonExport(List<DinnerRound> dinnerRoundList, List<Pair> registeredPairsList, List<Pair> successorPairsList, List<Participant> successorParticipantsList) {
+    public JacksonExport(List<Group> groupList , List<Pair> registeredPairsList, List<Pair> successorPairsList, List<Participant> successorParticipantsList) {
         objectMapper = new ObjectMapper();
         objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
-        List<Group> groupList = new ArrayList<>();
-        for(DinnerRound dinnerRound : dinnerRoundList) {
-            groupList.addAll(dinnerRound.getGroups());
-        }
         root = new Root(groupList, registeredPairsList, successorPairsList, successorParticipantsList);
         export();
     }
@@ -40,8 +36,8 @@ public class JacksonExport {
      *
      * @param filePath
      */
-    public JacksonExport(List<DinnerRound> dinnerRoundList, List<Pair> registeredPairsList, List<Pair> successorPairsList, List<Participant> successorParticipantsList, String filePath) {
-        this(dinnerRoundList, registeredPairsList, successorPairsList, successorParticipantsList);
+    public JacksonExport(List<Group> groupList, List<Pair> registeredPairsList, List<Pair> successorPairsList, List<Participant> successorParticipantsList, String filePath) {
+        this(groupList, registeredPairsList, successorPairsList, successorParticipantsList);
         this.filePath = filePath;
     }
 

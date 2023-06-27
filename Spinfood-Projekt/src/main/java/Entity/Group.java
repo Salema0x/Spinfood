@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import Enum.Course;
-
-import Enum.FoodPreference;
+import Entity.Enum.*;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -21,7 +19,6 @@ public class Group {
     private final double preferenceDeviation;
     private FoodPreference foodPreference;
     private Course course;
-    private String gender;
 
     public Group(Pair initialPair, Course course) {
         pairs.add(initialPair);
