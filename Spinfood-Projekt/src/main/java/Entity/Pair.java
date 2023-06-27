@@ -4,8 +4,8 @@ import Enum.*;
 import java.util.ArrayList;
 
 public class Pair implements Comparable<Pair> {
-    private final Participant participant1;
-    private final Participant participant2;
+    private Participant participant1;
+    private Participant participant2;
     private double ageDifference;
     private double preferenceDeviation;
     private double genderDiversityScore;
@@ -152,6 +152,28 @@ public class Pair implements Comparable<Pair> {
             return true;
         } else {
             return participant2.getId().equals(pair.getParticipant1().getId()) || participant2.getId().equals(pair.getParticipant2().getId());
+        }
+    }
+
+    public void addParticipant(Participant participant) {
+        // Checking if there is an open spot in the pair
+        if (this.participant1 == null) {
+            this.participant1 = participant;
+        } else if (this.participant2 == null) {
+            this.participant2 = participant;
+        } else {
+            System.out.println("The pair is already full. Cannot add another participant.");
+        }
+    }
+
+    public void removeParticipant(Participant participant) {
+        // Checking if the participant is in the pair
+        if (this.participant1 != null && this.participant1.equals(participant)) {
+            this.participant1 = null;
+        } else if (this.participant2 != null && this.participant2.equals(participant)) {
+            this.participant2 = null;
+        } else {
+            System.out.println("The participant is not in the pair. Cannot remove the participant.");
         }
     }
 
