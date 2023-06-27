@@ -72,6 +72,32 @@ public class PairListFactory {
         System.out.println(pairListObject.getCountPairs() + " " + pairListObject.getCountSuccessors() + " " + pairListObject.getPreferenceDeviation() + " " + pairListObject.getAgeDifference() + " " + pairListObject.getGenderDiversityScore());
     }
 
+    //DAVID TO-DO
+    public void swapParticipants(Pair pair, Participant participantInPair, Participant participantInSuccessorList) {
+        // Checking if pair exists in pairList and participantInPair is in the pair
+        if (pairList.contains(pair) && pair.containsParticipant(participantInPair)) {
+            // Checking if participantInSuccessorList exists in participantSuccessorList
+            if (participantSuccessorList.contains(participantInSuccessorList)) {
+                // Swap the participants
+                // Remove the participantInPair from the pair
+                pair.removeParticipant(participantInPair);
+
+                // Add participantInSuccessorList to the pair
+                pair.addParticipant(participantInSuccessorList);
+
+                // Remove the participantInSuccessorList from participantSuccessorList
+                participantSuccessorList.remove(participantInSuccessorList);
+
+                // Add participantInPair to participantSuccessorList
+                participantSuccessorList.add(participantInPair);
+            } else {
+                System.out.println("The participant you are trying to swap in is not in the successor list.");
+            }
+        } else {
+            System.out.println("The pair does not exist in the pair list or the participant is not in the given pair.");
+        }
+    }
+
     /**
      * Concatenates the pair list after the pair algorithm with pairs from the registration.
      */
