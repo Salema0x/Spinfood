@@ -22,14 +22,6 @@ public class GroupFactory {
         return pairList;
     }
 
-    public ArrayList<Pair> getSuccessorPairs() {
-        return successorPairs;
-    }
-
-    public Double[] getPARTY_LOCATION() {
-        return PARTY_LOCATION;
-    }
-
     public ArrayList<Group> getAppetizerGroups() {
         return appetizerGroups;
     }
