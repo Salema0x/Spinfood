@@ -18,9 +18,6 @@ public class GroupFactory {
     private final ArrayList<Group> mainDishGroups = new ArrayList<>();
     private final ArrayList<Group> dessertGroups = new ArrayList<>();
 
-    public ArrayList<Pair> getPairList() {
-        return pairList;
-    }
 
     public ArrayList<Group> getAppetizerGroups() {
         return appetizerGroups;

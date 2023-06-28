@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import java.util.function.Function;
 
 public class GroupList {
-    private ArrayList<Group> groupList = new ArrayList<>();
+    private final ArrayList<Group> groupList;
     private final int groupCount;
     private final int successorCount;
     private final double genderDiversity;
     private final double ageDifference;
     private final double preferenceDeviation;
-    private double pathLength;
+
 
     public GroupList(ArrayList<Group> groupList, ArrayList<Participant> successors) {
         this.groupList = groupList;
@@ -65,13 +65,6 @@ public class GroupList {
         return ageDifference;
     }
 
-    public double getPreferenceDeviation() {
-        return preferenceDeviation;
-    }
-
-    public double getGenderDiversity() {
-        return genderDiversity;
-    }
     public int getSuccessorCount() {
         return successorCount;
     }

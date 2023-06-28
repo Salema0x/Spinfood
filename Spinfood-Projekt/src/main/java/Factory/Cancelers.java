@@ -25,9 +25,7 @@ public class Cancelers {
     List<Object> criteria;
     private static final int maxCapacity = 400;
     private int participantCounter = 0;
-    private static PairListFactory pairListFactory;
-    private static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory(1000);
-    private static final List<Object> CRITERIA_ORDER = new ArrayList<>();
+
     /**
      * Constructs a Cancelers object with the provided parameters.
      *
@@ -47,35 +45,15 @@ public class Cancelers {
      * It updates the group list, waiting list, and completes groups.
      */
     public void performAdjustment() {
-        updateGroupList();
-        updateWaitingList();
+        updateLists();
         completeGroups();
-    }
-    /**
-     * Updates the group list based on the absences of participants.
-     * If a participant is absent, the corresponding group is removed from the group list and added to the backup group list.
-     */
-    void updateGroupList() {
-        for (Participant absence : absences) {
-            Group groupToRemove = null;
-            for (Group group : groupList) {
-                if (group.containsParticipant(absence)) {
-                    groupToRemove = group;
-                    break;
-                }
-            }
-            if (groupToRemove != null) {
-                groupList.remove(groupToRemove);
-                backupGroupList.add(groupToRemove);
-            }
-        }
     }
     /**
      * Updates the waiting list based on the absences of participants in the group list.
      * If a participant is absent and belongs to a pair group, the group is removed from the group list and added to the backup group list.
      * If a participant is absent and belongs to a non-pair group, the group is removed from the group list and added to the backup group list.
      */
-    void updateWaitingList() {
+    void updateLists() {
         for (Participant participant : participantList) {
             if (!participant.hasPartner() && absences.contains(participant)) {
                 System.out.println("The participant signed up alone and has canceled.");
@@ -186,11 +164,8 @@ public class Cancelers {
      * @return a list of participants representing a valid pair if found, null otherwise
      */
     public List<Pair> applyPairAlgorithm() {
-        pairListFactory = new PairListFactory(
-                new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
-                new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
-                new ArrayList<>(CRITERIA_ORDER));
-        return null;
+        PairListFactory pairListFactory = new PairListFactory((ArrayList<Participant>) participantList, (ArrayList<Pair>) registeredPairs, (ArrayList<Object>) criteria);
+        return pairListFactory.makePairs();
     }
 
     /**

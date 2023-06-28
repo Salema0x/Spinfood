@@ -6,6 +6,7 @@ import Entity.Participant;
 import Misc.DinnerRound;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -17,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class CancelersTest {
     private List<Pair> absencePairs = new ArrayList<>();
-    private List<Participant> absenceParticipants = new ArrayList<>();
+    private final List<Participant> absenceParticipants = new ArrayList<>();
     private List<Pair> successorList = new ArrayList<>();
-    private List<Object> criteria = new ArrayList<>();
+    private final List<Object> criteria = new ArrayList<>();
     private List<DinnerRound> dinnerRounds;
     private String participantFilePath = "/testlists/CancelersTestLists/testliste2.csv";
     private File participantFile;
@@ -55,22 +56,11 @@ class CancelersTest {
     }
 
     /**
-     * tests if all Groups no longer contain absent participants
-     */
-    @org.junit.jupiter.api.Test
-    void updateGroupList() {
-        cancelers.updateGroupList();
-        testIfAbsentParticipantsAreRemoved();
-
-    }
-
-    /**
      * tests if all dinnerRounds no longer contain groups with absent participants
      */
     @org.junit.jupiter.api.Test
-    void updateWaitingList() {
-        cancelers.updateGroupList();
-        cancelers.updateWaitingList();
+    void updateLists() {
+        cancelers.updateLists();
         testIfGroupsWithAbsentParticipantsAreRemoved();
     }
 
@@ -79,8 +69,7 @@ class CancelersTest {
      */
     @org.junit.jupiter.api.Test
     void completeGroups() {
-        cancelers.updateGroupList();
-        cancelers.updateWaitingList();
+        cancelers.updateLists();
         cancelers.completeGroups();
         testIfGroupsAreRefilled();
 
@@ -92,6 +81,7 @@ class CancelersTest {
     /**
      * tests if absent participants were removed from the groups
      */
+    @Test
     public void testIfAbsentParticipantsAreRemoved() {
         for (Participant participant : absenceParticipants) {
             assertFalse(searchForParticipantInGroupList(participant));
@@ -246,9 +236,4 @@ class CancelersTest {
         }
         return false;
     }
-
-    //GroupTestMethods to check updated groups
-
-
-
 }

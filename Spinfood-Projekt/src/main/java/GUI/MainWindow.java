@@ -38,9 +38,6 @@ public class MainWindow implements ActionListener {
     private static boolean partyLocationRead = true;
     private static boolean criteriaOrdered = false;
     private static boolean participantsAreRead = true;
-    private final List<Pair> otherPairList = new ArrayList<>();
-
-
 
     /**
      * Will create a Main Window for the application using JFrame.
@@ -89,7 +86,6 @@ public class MainWindow implements ActionListener {
                     pairInt++
             });
         }
-
         PairList keyFigures = new PairList(pairListFactory.pairList, participantsWithoutPair);
 
         JFrame frame = new JFrame("Pairs Table");
@@ -119,91 +115,6 @@ public class MainWindow implements ActionListener {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
-
-    /**
-     * Compares two pair lists visually by displaying them in a table with highlighted differences based on key figures.
-     * @param pairList1 The first pair list to compare.
-     * @param pairList2 The second pair list to compare.
-     */
-  /*  private void comparePairLists(List<Pair> pairList1, List<Pair> pairList2) {
-        DefaultTableModel model = new DefaultTableModel();
-        JTable table = new JTable(model);
-
-        model.addColumn("Pair Nr.");
-        model.addColumn("Participant 1");
-        model.addColumn("Participant 2");
-        model.addColumn("ID 1");
-        model.addColumn("ID 2");
-        model.addColumn("Food Preference");
-        model.addColumn("Gender Diversity Score");
-        model.addColumn("Preference Deviation");
-
-        for (int i = 0; i < pairList1.size(); i++) {
-            Pair pair = pairList1.get(i);
-            model.addRow(new Object[]{
-                    i + 1,
-                    pair.getParticipant1().getName(),
-                    pair.getParticipant2().getName(),
-                    pair.getParticipant1().getId(),
-                    pair.getParticipant2().getId(),
-                    pair.getFoodPreference(),
-                    pair.getGenderDiversityScore(),
-                    pair.getPreferenceDeviation()
-            });
-        }
-
-        // Highlight differences in pairs from pairList2
-        for (int i = 0; i < pairList2.size(); i++) {
-            Pair pair = pairList2.get(i);
-            boolean isDifferent = false;
-
-
-            Pair correspondingPair = pairList1.get(i);
-            if (pair.getFoodPreference() != correspondingPair.getFoodPreference() ||
-                    pair.getGenderDiversityScore() != correspondingPair.getGenderDiversityScore() ||
-                    pair.getPreferenceDeviation() != correspondingPair.getPreferenceDeviation()) {
-                isDifferent = true;
-            }
-
-            if (isDifferent) {
-                model.addRow(new Object[]{
-                        i + 1,
-                        "<html><b>" + pair.getParticipant1().getName() + "</b></html>",
-                        "<html><b>" + pair.getParticipant2().getName() + "</b></html>",
-                        "<html><b>" + pair.getParticipant1().getId() + "</b></html>",
-                        "<html><b>" + pair.getParticipant2().getId() + "</b></html>",
-                        "<html><b>" + pair.getFoodPreference() + "</b></html>",
-                        "<html><b>" + pair.getGenderDiversityScore() + "</b></html>",
-                        "<html><b>" + pair.getPreferenceDeviation() + "</b></html>"
-                });
-            } else {
-                model.addRow(new Object[]{
-                        i + 1,
-                        pair.getParticipant1().getName(),
-                        pair.getParticipant2().getName(),
-                        pair.getParticipant1().getId(),
-                        pair.getParticipant2().getId(),
-                        pair.getFoodPreference(),
-                        pair.getGenderDiversityScore(),
-                        pair.getPreferenceDeviation()
-                });
-            }
-        }
-
-        JFrame frame = new JFrame("Pair Lists Comparison");
-        frame.setLayout(new BorderLayout());
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        JScrollPane tableScrollPane = new JScrollPane(table);
-        frame.add(tableScrollPane, BorderLayout.CENTER);
-
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-    }*/
-
-
-
     /**
      * Displays the table of groups with their relevant information and the pairs not in groups.
      */
@@ -284,13 +195,10 @@ public class MainWindow implements ActionListener {
         JFrame mainFrame = new JFrame("Groups and Pairs Not in Groups");
         mainFrame.setLayout(new BorderLayout());
         mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
         JScrollPane tableScrollPane = new JScrollPane(table);
         mainFrame.add(tableScrollPane, BorderLayout.NORTH);
-
         JScrollPane pairsTableScrollPane = new JScrollPane(pairsTable);
         mainFrame.add(pairsTableScrollPane, BorderLayout.SOUTH);
-
         mainFrame.pack();
         mainFrame.setLocationRelativeTo(null);
         mainFrame.setVisible(true);
@@ -304,7 +212,7 @@ public class MainWindow implements ActionListener {
             JLabel labelGroupCount = new JLabel("Groups Count: " + groupNr + ",");
             JLabel labelSuccessor = new JLabel("Successor Count: " + groupList.getSuccessorCount() + ",");
             JLabel labelGenderDiversity = new JLabel("Gender Diversity Score: " + group.getGenderDiversityScore() + ",");
-            JLabel labelAgeDifference = new JLabel("Age Difference: " + group.getAgeDifference());
+            JLabel labelAgeDifference = new JLabel("Age Difference: " + groupList.getAgeDifference());
 
             southPanel.add(labelGroupCount);
             southPanel.add(labelSuccessor);
@@ -326,11 +234,6 @@ public class MainWindow implements ActionListener {
 
         JMenu startMenu = new JMenu("Start");
         JMenu pairMenu = new JMenu("Algorithmus");
-
-        JMenuItem comparePairListsItem = new JMenuItem("Compare Pair Lists");
-
-        pairMenu.add(comparePairListsItem);
-        comparePairListsItem.addActionListener(this);
 
         menuBar.add(startMenu);
         menuBar.add(pairMenu);
@@ -416,15 +319,11 @@ public class MainWindow implements ActionListener {
             pairsGenerated = true;
             updateJMenu();
             displayPairTable();
-
         } else if (e.getActionCommand().equals("Party Location einlesen")) {
             participantsAreRead = false;
             createFileChooser();
         } else if (e.getActionCommand().equals("Gruppen bilden")) {
             displayGroupTable();
-        }
-        else if (e.getActionCommand().equals("Compare Pair Lists")) {
-            //comparePairLists(pairListFactory.pairList, pairListFactory.pairList);
         }
     }
 

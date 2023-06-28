@@ -32,8 +32,6 @@ public class Group {
         setSeen();
     }
 
-
-
     public void setSeen() {
         Pair p1 = pairs.get(0);
         Pair p2 = pairs.get(1);
@@ -47,14 +45,6 @@ public class Group {
 
         p3.seen.add(p2);
         p3.seen.add(p1);
-    }
-
-    public void addPairs(ArrayList<Pair> pairs) {
-        this.pairs.addAll(pairs);
-    }
-
-    public int getGroupSize() {
-        return pairs.size();
     }
 
     /**
@@ -157,10 +147,6 @@ public class Group {
         } else {
             throw new IllegalArgumentException("The provided pair is not part of this group.");
         }
-    }
-
-    public boolean containsPair(Pair pair) {
-        return this.pairs.contains(pair);
     }
 
     public double getGenderDiversityScore() {

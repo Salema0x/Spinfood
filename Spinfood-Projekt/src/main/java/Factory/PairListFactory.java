@@ -208,8 +208,9 @@ public class PairListFactory {
 
     /**
      * Starts making pairs by calling methods for making meatPairs, making veggie/vegan Pairs, and for the nonePairs
+     * @return
      */
-    void makePairs() {
+    List<Pair> makePairs() {
         makePairsMeat();
         makePairsOther();
         makePairsStarter(yesKitchenParticipants.get(0), maybeKitchenParticipants.get(0), noKitchenParticipants.get(0));
@@ -219,6 +220,7 @@ public class PairListFactory {
             maybeKitchenParticipants.get(0).remove(participant);
             noKitchenParticipants.get(0).remove(participant);
         }
+        return null;
     }
 
     /**
