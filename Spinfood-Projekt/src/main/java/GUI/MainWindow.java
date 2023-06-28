@@ -28,6 +28,8 @@ public class MainWindow implements ActionListener {
     private static final JMenuItem SET_CRITERIA = new JMenuItem("Wichtigkeit der Kriterien");
     private static final JMenuItem START_PAIRS = new JMenuItem("Paare bilden");
     private static final JMenuItem START_GROUPS = new JMenuItem("Gruppen bilden");
+    private static final JMenuItem RESORT_PAIRS = new JMenuItem("Paare neu sortieren");
+
     private static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory(1000);
     private static PairListFactory pairListFactory;
     private static final JLabel SHOW_TEXT = new JLabel(
@@ -39,6 +41,8 @@ public class MainWindow implements ActionListener {
     private static boolean partyLocationRead = true;
     private static boolean criteriaOrdered = false;
     private static boolean participantsAreRead = true;
+
+
 
 
     /**
@@ -267,6 +271,16 @@ public class MainWindow implements ActionListener {
         startMenu.add(SHOW_PARTICIPANTS);
         pairMenu.add(START_GROUPS);
 
+        //Resort pairs
+        RESORT_PAIRS.addActionListener(this);
+        RESORT_PAIRS.setEnabled(false);
+        pairMenu.add(RESORT_PAIRS);
+        pairMenu.add(SET_CRITERIA);
+        pairMenu.add(START_PAIRS);
+        pairMenu.add(RESORT_PAIRS);
+        pairMenu.add(START_GROUPS);
+
+
         return menuBar;
     }
 
@@ -330,6 +344,9 @@ public class MainWindow implements ActionListener {
             GroupFactory groupFactory = new GroupFactory(pairListFactory.pairList, PARTICIPANT_FACTORY.getPartyLocation());
             groupFactory.startGroupAlgorithm();
             displayGroupTable();
+        }else if (e.getActionCommand().equals("Paare neu sortieren")) {
+
+            displayPairTable();
         }
     }
 
@@ -351,6 +368,7 @@ public class MainWindow implements ActionListener {
 
         if (pairsGenerated) {
             START_GROUPS.setEnabled(true);
+            RESORT_PAIRS.setEnabled(true);
         }
     }
 
