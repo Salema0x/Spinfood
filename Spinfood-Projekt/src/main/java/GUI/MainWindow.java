@@ -1,4 +1,4 @@
-package GUI;
+﻿package GUI;
 
 import Data.GroupList;
 import Data.PairList;
@@ -17,6 +17,8 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class MainWindow implements ActionListener {
 
@@ -38,11 +40,13 @@ public class MainWindow implements ActionListener {
     private static boolean partyLocationRead = true;
     private static boolean criteriaOrdered = false;
     private static boolean participantsAreRead = true;
+    private static ResourceBundle bundle;
 
     /**
      * Will create a Main Window for the application using JFrame.
      */
     public void displayWindow() {
+        loadLanguageResources("en");
         FRAME.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         FRAME.pack();
         FRAME.setMinimumSize(new Dimension(WIDTH, HEIGHT));
@@ -129,9 +133,12 @@ public class MainWindow implements ActionListener {
 
         JTable table = new JTable(model);
         model.addColumn("Group Nr");
-        model.addColumn("Pair 1");
-        model.addColumn("Pair 2");
-        model.addColumn("Pair 3");
+        model.addColumn("Pair 1 - Participant 1");
+        model.addColumn("Pair 1 - Participant 2");
+        model.addColumn("Pair 2 - Participant 1");
+        model.addColumn("Pair 2 - Participant 2");
+        model.addColumn("Pair 3 - Participant 1");
+        model.addColumn("Pair 3 - Participant 2");
         model.addColumn("Course");
         model.addColumn("Food Preference");
         model.addColumn("KochPaar");
@@ -141,12 +148,15 @@ public class MainWindow implements ActionListener {
         for (Group group : appetizerGroups) {
             model.addRow(new Object[]{
                     groupNr,
-                    group.getPairs().get(0),
-                    group.getPairs().get(1),
-                    group.getPairs().get(2),
+                    group.getPairs().get(0).getParticipant1().getName(),
+                    group.getPairs().get(0).getParticipant2().getName(),
+                    group.getPairs().get(1).getParticipant1().getName(),
+                    group.getPairs().get(1).getParticipant2().getName(),
+                    group.getPairs().get(2).getParticipant1().getName(),
+                    group.getPairs().get(2).getParticipant2().getName(),
                     "Appetizer",
                     group.getCookingPair().getFoodPreference(),
-                    group.getCookingPair()
+                    group.getCookingPair().getParticipant1().getName() + ", " + group.getCookingPair().getParticipant2().getName()
             });
             groupNr++;
         }
@@ -154,12 +164,15 @@ public class MainWindow implements ActionListener {
         for (Group group : mainDishGroups) {
             model.addRow(new Object[]{
                     groupNr,
-                    group.getPairs().get(0),
-                    group.getPairs().get(1),
-                    group.getPairs().get(2),
-                    "Main Dish",
+                    group.getPairs().get(0).getParticipant1().getName(),
+                    group.getPairs().get(0).getParticipant2().getName(),
+                    group.getPairs().get(1).getParticipant1().getName(),
+                    group.getPairs().get(1).getParticipant2().getName(),
+                    group.getPairs().get(2).getParticipant1().getName(),
+                    group.getPairs().get(2).getParticipant2().getName(),
+                    "MAIN DISH",
                     group.getCookingPair().getFoodPreference(),
-                    group.getCookingPair()
+                    group.getCookingPair().getParticipant1().getName() + ", " + group.getCookingPair().getParticipant2().getName()
             });
             groupNr++;
         }
@@ -167,12 +180,15 @@ public class MainWindow implements ActionListener {
         for (Group group : dessertGroups) {
             model.addRow(new Object[]{
                     groupNr,
-                    group.getPairs().get(0),
-                    group.getPairs().get(1),
-                    group.getPairs().get(2),
-                    "Dessert",
+                    group.getPairs().get(0).getParticipant1().getName(),
+                    group.getPairs().get(0).getParticipant2().getName(),
+                    group.getPairs().get(1).getParticipant1().getName(),
+                    group.getPairs().get(1).getParticipant2().getName(),
+                    group.getPairs().get(2).getParticipant1().getName(),
+                    group.getPairs().get(2).getParticipant2().getName(),
+                    "DESSERT",
                     group.getCookingPair().getFoodPreference(),
-                    group.getCookingPair()
+                    group.getCookingPair().getParticipant1().getName() + ", " + group.getCookingPair().getParticipant2().getName()
             });
             groupNr++;
         }
@@ -183,12 +199,12 @@ public class MainWindow implements ActionListener {
         pairsTableModel.addColumn("Pair Names ");
 
 
-        List<Participant> participantsWithoutPair = pairListFactory.getSuccessors();
+        ArrayList<Participant> pairsWithoutGroups = pairListFactory.getSuccessors();
 
-        for (Participant pair : participantsWithoutPair) {
+        for (Participant participant : pairsWithoutGroups) {
             pairsTableModel.addRow(new Object[]{
-                    pair.getId(),
-                    pair.getName(),
+                    participant.getId(),
+                    participant.getName(),
             });
         }
 
@@ -212,7 +228,7 @@ public class MainWindow implements ActionListener {
             JLabel labelGroupCount = new JLabel("Groups Count: " + groupNr + ",");
             JLabel labelSuccessor = new JLabel("Successor Count: " + groupList.getSuccessorCount() + ",");
             JLabel labelGenderDiversity = new JLabel("Gender Diversity Score: " + group.getGenderDiversityScore() + ",");
-            JLabel labelAgeDifference = new JLabel("Age Difference: " + groupList.getAgeDifference());
+            JLabel labelAgeDifference = new JLabel("Age Difference: " + group.getAgeDifference());
 
             southPanel.add(labelGroupCount);
             southPanel.add(labelSuccessor);
@@ -225,43 +241,74 @@ public class MainWindow implements ActionListener {
         mainFrame.add(southPanel, BorderLayout.CENTER);
     }
 
+
+
+    private void loadLanguageResources(String languageCode) {
+        bundle = ResourceBundle.getBundle("messages", new Locale(languageCode));
+        FRAME.setTitle(bundle.getString("windowTitle"));
+        SHOW_TEXT.setText(bundle.getString("startMessage"));
+        SHOW_PARTICIPANTS.setText(bundle.getString("showParticipants"));
+        SET_CRITERIA.setText(bundle.getString("setCriteria"));
+        START_PAIRS.setText(bundle.getString("startPairs"));
+        START_GROUPS.setText(bundle.getString("startGroups"));
+    }
+
     /**
      * Will create a MenuBar using JMenuBar.
      * @return a JMenuBar which could be used in the Main Window.
      */
+
     private JMenuBar createJMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-        JMenu startMenu = new JMenu("Start");
-        JMenu pairMenu = new JMenu("Algorithmus");
+        // Start menu
+        JMenu startMenu = new JMenu(bundle.getString("startMenu"));
+        JMenuItem readParticipantsItem = new JMenuItem(bundle.getString("readParticipants"));
+        readParticipantsItem.setActionCommand("readParticipants");
+        readParticipantsItem.addActionListener(this);
+        startMenu.add(readParticipantsItem);
+
+        JMenuItem readPartyLocationItem = new JMenuItem(bundle.getString("readPartyLocation"));
+        readPartyLocationItem.setActionCommand("readPartyLocation");
+        readPartyLocationItem.addActionListener(this);
+        startMenu.add(readPartyLocationItem);
 
         menuBar.add(startMenu);
-        menuBar.add(pairMenu);
 
-        JMenuItem readParticipants = new JMenuItem("Teilnehmer einlesen");
-        readParticipants.addActionListener(this);
-        startMenu.add(readParticipants);
-
-        JMenuItem readPartyLocation = new JMenuItem("Party Location einlesen");
-        readPartyLocation.addActionListener(this);
-        startMenu.add(readPartyLocation);
+        // Algorithmus menu (Algorithm Menu)
+        JMenu algorithmMenu = new JMenu(bundle.getString("algorithmMenu"));
 
         START_PAIRS.addActionListener(this);
         START_PAIRS.setEnabled(criteriaOrdered);
+        algorithmMenu.add(START_PAIRS);
 
         START_GROUPS.addActionListener(this);
         START_GROUPS.setEnabled(pairsGenerated);
+        algorithmMenu.add(START_GROUPS);
 
         SET_CRITERIA.addActionListener(this);
         SET_CRITERIA.setEnabled(participantsRead);
-        pairMenu.add(SET_CRITERIA);
-        pairMenu.add(START_PAIRS);
-
+        algorithmMenu.add(SET_CRITERIA);
 
         SHOW_PARTICIPANTS.addActionListener(this);
         SHOW_PARTICIPANTS.setEnabled(participantsRead);
         startMenu.add(SHOW_PARTICIPANTS);
-        pairMenu.add(START_GROUPS);
+
+        menuBar.add(algorithmMenu);
+
+        // Language menu
+        JMenu languageMenu = new JMenu(bundle.getString("languageMenu"));
+        JMenuItem englishItem = new JMenuItem("English");
+        englishItem.addActionListener(e -> loadLanguageResources("en"));
+        JMenuItem arabicItem = new JMenuItem("Arabic");
+        arabicItem.addActionListener(e -> loadLanguageResources("ar"));
+        JMenuItem germanItem = new JMenuItem("German");
+        germanItem.addActionListener(e -> loadLanguageResources("de"));
+        languageMenu.add(englishItem);
+        languageMenu.add(arabicItem);
+        languageMenu.add(germanItem);
+
+        menuBar.add(languageMenu);
 
         return menuBar;
     }
@@ -305,13 +352,17 @@ public class MainWindow implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals("Teilnehmer einlesen")) {
+        String command = e.getActionCommand();
+        if ("readParticipants".equals(command)) {
             createFileChooser();
-        } else if (e.getActionCommand().equals("Teilnehmerliste anzeigen")) {
+        } else if ("readPartyLocation".equals(command)) {
+            participantsAreRead = false;
+            createFileChooser();
+        } else if (bundle.getString("showParticipants").equals(command)) {
             PARTICIPANT_FACTORY.showCSV();
-        } else if (e.getActionCommand().equals("Wichtigkeit der Kriterien")) {
+        } else if (bundle.getString("setCriteria").equals(command)) {
             CRITERIA_WINDOW.display();
-        } else if (e.getActionCommand().equals("Paare bilden")) {
+        } else if (bundle.getString("startPairs").equals(command)) {
             pairListFactory = new PairListFactory(
                     new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
                     new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
@@ -319,13 +370,11 @@ public class MainWindow implements ActionListener {
             pairsGenerated = true;
             updateJMenu();
             displayPairTable();
-        } else if (e.getActionCommand().equals("Party Location einlesen")) {
-            participantsAreRead = false;
-            createFileChooser();
-        } else if (e.getActionCommand().equals("Gruppen bilden")) {
+        } else if (bundle.getString("startGroups").equals(command)) {
             displayGroupTable();
         }
     }
+
 
     /**
      * Will enable, disable submenus in the MenuBar.
