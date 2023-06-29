@@ -1,4 +1,4 @@
-﻿package GUI;
+package GUI;
 
 import Data.GroupList;
 import Data.PairList;
@@ -42,11 +42,18 @@ public class MainWindow implements ActionListener {
     private static boolean participantsAreRead = true;
     private static ResourceBundle bundle;
 
+    private static final JMenuItem readPartyLocationItem = new JMenuItem("Party Location einlesen");
+    private static final JMenuItem readParticipantsItem = new JMenuItem("Teilnehmerliste einlesen");
+    private static final JMenu languageMenu = new JMenu(("languageMenu"));
+    private static final JMenu algorithmMenu = new JMenu(("algorithmMenu"));
+    private static final JMenu startMenu = new JMenu(("startMenu"));
+
+
     /**
      * Will create a Main Window for the application using JFrame.
      */
     public void displayWindow() {
-        loadLanguageResources("en");
+        loadLanguageResources("de");
         FRAME.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         FRAME.pack();
         FRAME.setMinimumSize(new Dimension(WIDTH, HEIGHT));
@@ -251,7 +258,35 @@ public class MainWindow implements ActionListener {
         SET_CRITERIA.setText(bundle.getString("setCriteria"));
         START_PAIRS.setText(bundle.getString("startPairs"));
         START_GROUPS.setText(bundle.getString("startGroups"));
+        readParticipantsItem.setText(bundle.getString("readParticipants"));
+        readParticipantsItem.setActionCommand(bundle.getString("readParticipants"));
+        readPartyLocationItem.setText(bundle.getString("readPartyLocation"));
+        readPartyLocationItem.setActionCommand(bundle.getString("readPartyLocation"));
+
+        // Update language menu items
+        languageMenu.setText(bundle.getString("languageMenu"));
+        for (int i = 0; i < languageMenu.getItemCount(); i++) {
+            JMenuItem menuItem = languageMenu.getItem(i);
+            if (menuItem != null) {
+                if (i == 0) {
+                    menuItem.setText(bundle.getString("english"));
+                } else if (i == 1) {
+                    menuItem.setText(bundle.getString("arabic"));
+                } else if (i == 2) {
+                    menuItem.setText(bundle.getString("german"));
+                }
+            }
+        }
+
+        // Update algorithm and start menu items
+        algorithmMenu.setText(bundle.getString("algorithmMenu"));
+        startMenu.setText(bundle.getString("startMenu"));
     }
+
+
+
+
+
 
     /**
      * Will create a MenuBar using JMenuBar.
@@ -261,22 +296,18 @@ public class MainWindow implements ActionListener {
     private JMenuBar createJMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-        // Start menu
-        JMenu startMenu = new JMenu(bundle.getString("startMenu"));
-        JMenuItem readParticipantsItem = new JMenuItem(bundle.getString("readParticipants"));
-        readParticipantsItem.setActionCommand("readParticipants");
+        // Update action command of the menu item
+        readParticipantsItem.setActionCommand(bundle.getString("readParticipants"));
         readParticipantsItem.addActionListener(this);
         startMenu.add(readParticipantsItem);
 
-        JMenuItem readPartyLocationItem = new JMenuItem(bundle.getString("readPartyLocation"));
-        readPartyLocationItem.setActionCommand("readPartyLocation");
+
+        readPartyLocationItem.setActionCommand(bundle.getString("readPartyLocation"));
         readPartyLocationItem.addActionListener(this);
         startMenu.add(readPartyLocationItem);
 
         menuBar.add(startMenu);
 
-        // Algorithmus menu (Algorithm Menu)
-        JMenu algorithmMenu = new JMenu(bundle.getString("algorithmMenu"));
 
         START_PAIRS.addActionListener(this);
         START_PAIRS.setEnabled(criteriaOrdered);
@@ -296,8 +327,7 @@ public class MainWindow implements ActionListener {
 
         menuBar.add(algorithmMenu);
 
-        // Language menu
-        JMenu languageMenu = new JMenu(bundle.getString("languageMenu"));
+
         JMenuItem englishItem = new JMenuItem("English");
         englishItem.addActionListener(e -> loadLanguageResources("en"));
         JMenuItem arabicItem = new JMenuItem("Arabic");
@@ -353,9 +383,9 @@ public class MainWindow implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
-        if ("readParticipants".equals(command)) {
+        if (bundle.getString("readParticipants").equals(command)) {
             createFileChooser();
-        } else if ("readPartyLocation".equals(command)) {
+        } else if (bundle.getString("readPartyLocation").equals(command)) {
             participantsAreRead = false;
             createFileChooser();
         } else if (bundle.getString("showParticipants").equals(command)) {
@@ -373,7 +403,13 @@ public class MainWindow implements ActionListener {
         } else if (bundle.getString("startGroups").equals(command)) {
             displayGroupTable();
         }
+
+        // Update menu items' text
+        readParticipantsItem.setText(bundle.getString("readParticipants"));
+        readPartyLocationItem.setText(bundle.getString("readPartyLocation"));
     }
+
+
 
 
     /**
