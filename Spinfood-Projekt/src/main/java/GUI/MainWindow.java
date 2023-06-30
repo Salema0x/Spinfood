@@ -43,8 +43,6 @@ public class MainWindow implements ActionListener {
     private static boolean participantsAreRead = true;
 
 
-
-
     /**
      * Will create a Main Window for the application using JFrame.
      */
@@ -62,7 +60,7 @@ public class MainWindow implements ActionListener {
     /**
      * Displays the table of pairs with their relevant information.
      */
-    private void displayPairTable() {
+    private void displayPairTable(boolean enableSwapButton) {
         DefaultTableModel model = new DefaultTableModel();
         JTable table = new JTable(model);
 
@@ -93,6 +91,7 @@ public class MainWindow implements ActionListener {
             });
         }
 
+
         PairList keyFigures = new PairList(pairListFactory.pairList, participantsWithoutPair);
 
         JFrame frame = new JFrame("Pairs Table");
@@ -100,25 +99,102 @@ public class MainWindow implements ActionListener {
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         JScrollPane tableScrollPane = new JScrollPane(table);
+
         frame.add(tableScrollPane, BorderLayout.CENTER);
+
+        JButton swapButton = new JButton("Swap");
+
+        swapButton.addActionListener(e -> {
+            displaySwapPairDialog(frame);
+        });
 
         JPanel southPanel = new JPanel();
         southPanel.setLayout(new FlowLayout());
 
-        JLabel labelPairs = new JLabel("Pairs Count: " + keyFigures.getCountPairs() +",");
-        JLabel labelSuccessors = new JLabel("Successors count: " + keyFigures.getCountSuccessors()+",");
-        JLabel labelDiversity = new JLabel("Gender Diversity Score: " + keyFigures.getGenderDiversityScore()+",");
+        JLabel labelPairs = new JLabel("Pairs Count: " + keyFigures.getCountPairs() + ",");
+        JLabel labelSuccessors = new JLabel("Successors count: " + keyFigures.getCountSuccessors() + ",");
+        JLabel labelDiversity = new JLabel("Gender Diversity Score: " + keyFigures.getGenderDiversityScore() + ",");
         JLabel labelAgeDifference = new JLabel("Age Difference: " + keyFigures.getAgeDifference());
-
 
         southPanel.add(labelPairs);
         southPanel.add(labelSuccessors);
         southPanel.add(labelDiversity);
         southPanel.add(labelAgeDifference);
 
-
+        if (enableSwapButton) {
+            frame.add(swapButton, BorderLayout.NORTH);
+        }
         frame.add(southPanel, BorderLayout.SOUTH);
         frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
+    private void displaySwapPairDialog(JFrame pairTableJFrame) {
+
+        // Create the JFrame
+        JFrame frame = new JFrame("Dropdown Popup");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new FlowLayout());
+
+        // Create the first dropdown list
+        JLabel label1 = new JLabel("Welches paar");
+        String[] pairList = pairListFactory.pairList.stream().map(pair -> pair.getParticipant1().getName() + " + " + pair.getParticipant2().getName()).toList().toArray(new String[0]);
+        JComboBox<String> dropdown1 = new JComboBox<>(pairList);
+        JPanel panel1 = new JPanel();
+        panel1.add(label1);
+        panel1.add(dropdown1);
+
+        // Create the second dropdown list
+        JLabel label2 = new JLabel("Welcher Teilnehmer");
+        JComboBox<String> dropdown2 = new JComboBox<>(new String[]{"User 1", "User 2"});
+        JPanel panel2 = new JPanel();
+        panel2.add(label2);
+        panel2.add(dropdown2);
+
+        // Create the third dropdown list
+        String[] succPairList = pairListFactory.getSuccessors().stream().map(Participant::getName).toList().toArray(new String[0]);
+        JLabel label3 = new JLabel("Ersetzen durch");
+        JComboBox<String> dropdown3 = new JComboBox<>(succPairList);
+        JPanel panel3 = new JPanel();
+        panel3.add(label3);
+        panel3.add(dropdown3);
+
+        // Create the button
+        JButton button = new JButton("Submit");
+        button.addActionListener(e -> {
+            // Get the selected values from the dropdown lists
+            int selectedOldPair = dropdown1.getSelectedIndex();
+            String participant = (String) dropdown2.getSelectedItem();
+            int indexNewParticipant = dropdown3.getSelectedIndex();
+
+            Pair oldPair = pairListFactory.pairList.get(selectedOldPair);
+            Participant newParticipant = pairListFactory.getSuccessors().get(indexNewParticipant);
+            System.out.println(oldPair.toString());
+            assert participant != null;
+            Participant oldParticipant = participant.equals("User 1") ? oldPair.getParticipant1() : oldPair.getParticipant2();
+            // 救命，我被迫在中国幸运饼干工厂编码。请帮助我”我只吃了 3 周的幸运饼干，但还是没有运气 FML！
+
+            pairListFactory.swapParticipants(oldPair, oldParticipant, newParticipant);
+            // Display the selected values in a message dialog
+            String message = "Geändert\n" +
+                    "Alte Paarkombination: " + selectedOldPair +
+                    "\nPaarmit glied " + oldParticipant.getName() +
+                    "\nErsetzt durch: " + newParticipant.getName();
+            JOptionPane.showMessageDialog(frame, message);
+            frame.dispose();
+            pairTableJFrame.dispose();
+            displayPairTable(true);
+        });
+
+        // Add the components to the frame
+        frame.add(panel1);
+        frame.add(panel2);
+        frame.add(panel3);
+        frame.add(button);
+
+        // Set the frame size and make it visible
+        frame.setSize(300, 200);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
@@ -235,6 +311,7 @@ public class MainWindow implements ActionListener {
 
     /**
      * Will create a MenuBar using JMenuBar.
+     *
      * @return a JMenuBar which could be used in the Main Window.
      */
     private JMenuBar createJMenuBar() {
@@ -336,7 +413,7 @@ public class MainWindow implements ActionListener {
                     new ArrayList<>(CRITERIA_ORDER));
             pairsGenerated = true;
             updateJMenu();
-            displayPairTable();
+            displayPairTable(false);
         } else if (e.getActionCommand().equals("Party Location einlesen")) {
             participantsAreRead = false;
             createFileChooser();
@@ -344,9 +421,9 @@ public class MainWindow implements ActionListener {
             GroupFactory groupFactory = new GroupFactory(pairListFactory.pairList, PARTICIPANT_FACTORY.getPartyLocation());
             groupFactory.startGroupAlgorithm();
             displayGroupTable();
-        }else if (e.getActionCommand().equals("Paare neu sortieren")) {
+        } else if (e.getActionCommand().equals("Paare neu sortieren")) {
 
-            displayPairTable();
+            displayPairTable(true);
         }
     }
 
