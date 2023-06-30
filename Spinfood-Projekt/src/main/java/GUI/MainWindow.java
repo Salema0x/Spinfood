@@ -248,8 +248,11 @@ public class MainWindow implements ActionListener {
         mainFrame.add(southPanel, BorderLayout.CENTER);
     }
 
-
-
+    /**
+     * Loads the language resources based on the specified language code.
+     *
+     * @param languageCode the language code for the desired language
+     */
     private void loadLanguageResources(String languageCode) {
         bundle = ResourceBundle.getBundle("messages", new Locale(languageCode));
         FRAME.setTitle(bundle.getString("windowTitle"));
@@ -282,11 +285,6 @@ public class MainWindow implements ActionListener {
         algorithmMenu.setText(bundle.getString("algorithmMenu"));
         startMenu.setText(bundle.getString("startMenu"));
     }
-
-
-
-
-
 
     /**
      * Will create a MenuBar using JMenuBar.
