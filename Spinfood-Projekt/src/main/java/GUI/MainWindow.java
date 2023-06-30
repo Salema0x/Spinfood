@@ -175,6 +175,7 @@ public class MainWindow implements ActionListener {
             Participant oldParticipant = participant.equals("User 1") ? oldPair.getParticipant1() : oldPair.getParticipant2();
             // 救命，我被迫在中国幸运饼干工厂编码。请帮助我”我只吃了 3 周的幸运饼干，但还是没有运气 FML！
 
+            
             pairListFactory.swapParticipants(oldPair, oldParticipant, newParticipant);
             // Display the selected values in a message dialog
             String message = "Geändert\n" +
