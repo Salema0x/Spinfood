@@ -169,7 +169,11 @@ class PairListFactoryTest {
         while (!generatedPairs.isEmpty()) {
             Pair p = generatedPairs.remove(0);
             double genderDiversityScore = p.getGenderDiversityScore();
-            System.out.println("GenderDiversityScore should be: " + expectedGenderDiversityScore[index] + " and is: " + genderDiversityScore);
+            System.out.println("Gender of " + p.getParticipant1().getName() + " = " + p.getParticipant1().getGender());
+            System.out.println("Gender of " + p.getParticipant2().getName() + " = " + p.getParticipant2().getGender());
+            System.out.println("Gender of Pair = " + p.getGender());
+            System.out.println("GenderDiversityScore of this Pair should be: " + expectedGenderDiversityScore[index] + " and is: " + genderDiversityScore);
+            System.out.println("---------------------------------------------------");
             Assertions.assertTrue(genderDiversityScore == expectedGenderDiversityScore[index]);
             index++;
         }

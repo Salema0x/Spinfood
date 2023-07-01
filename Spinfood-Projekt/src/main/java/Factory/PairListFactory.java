@@ -130,7 +130,7 @@ public class PairListFactory {
 
         Function<Participant, Integer> getFoodPreferenceNumber = Participant::getFoodPreferenceNumber;
         Function<Participant, Integer> getAgeRange = Participant::getAgeRange;
-        Function<Participant, Integer> getSex = Participant::getGenderAsNumber;
+        Function<Participant, Integer> getSex = Participant::getGenderNumber;
 
         if (indexCriteria5 < indexCriteria6 && indexCriteria5 < indexCriteria7) {
             assignFields(indexCriteria6, indexCriteria7, getFoodPreferenceNumber, getAgeRange, getSex);

@@ -157,7 +157,7 @@ public class Pair implements Comparable<Pair> {
         if (!participant1.getGender().equals(participant2.getGender()) || !participant2.getGender().equals(participant1.getGender())) {
             this.genderDiversityScore = 0.5;
             this.gender = Gender.MIXED;
-        } else if (participant1.getGender().equals(participant2.getGender()) && participant1.getGender().equals("female")) {
+        } else if (participant1.getGender().equals(participant2.getGender()) && participant1.getGender().equals(Gender.FEMALE)) {
             this.genderDiversityScore = 1;
             this.gender = Gender.FEMALE;
         } else {

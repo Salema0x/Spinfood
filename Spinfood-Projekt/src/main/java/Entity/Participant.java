@@ -12,6 +12,7 @@ public class Participant {
     private final String name;
     private final FoodPreference foodPreference;
     private final Gender gender;
+    private final int genderNumber;
     private final String hasKitchen;
     private final byte age;
     private byte kitchenStory;
@@ -50,11 +51,13 @@ public class Participant {
         if(values[5].equals("male")) {
             gender = Gender.MALE;
         } else if (values[5].equals("female")) {
-            gender = Gender.MALE;
+            gender = Gender.FEMALE;
         }
         else {
             gender = Gender.OTHER;
         }
+        genderNumber = gender.asNumber();
+
         this.hasKitchen = values[6];
 
         //avoid index out of bound exception when no kitchen is given
@@ -258,8 +261,8 @@ public class Participant {
     }
 
     @JsonIgnore
-    public int getGenderAsNumber() {
-        return gender.asNumber();
+    public int getGenderNumber() {
+        return genderNumber;
     }
     @JsonIgnore
     public boolean getIsSuccessor() {
