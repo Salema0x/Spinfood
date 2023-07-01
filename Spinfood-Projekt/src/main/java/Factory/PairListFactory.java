@@ -3,6 +3,7 @@ package Factory;
 import Data.PairList;
 import Entity.Pair;
 import Entity.Participant;
+import Entity.Enum.*;
 import Misc.ParticipantComparator;
 
 import java.util.ArrayList;
@@ -10,6 +11,8 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static Entity.Enum.FoodPreference.*;
 
 public class PairListFactory {
     public ArrayList<Pair> registeredPairs;
@@ -36,29 +39,29 @@ public class PairListFactory {
         cleanParticipantListFromRegisteredPairs();
         cleanParticipantListFromSuccessors();
 
-        yesKitchenParticipants.add(createList("yes", "none"));
-        yesKitchenParticipants.add(createList("yes", "meat"));
+        yesKitchenParticipants.add(createList("yes", NONE));
+        yesKitchenParticipants.add(createList("yes", MEAT));
 
-        ArrayList<Participant> veggieList = createList("yes", "veggie");
-        ArrayList<Participant> veganList = createList("yes", "vegan");
+        ArrayList<Participant> veggieList = createList("yes", VEGGIE);
+        ArrayList<Participant> veganList = createList("yes", VEGAN);
         ArrayList<Participant> veggieVeganList = new ArrayList<>(Stream.concat(veggieList.stream(), veganList.stream()).toList());
 
         yesKitchenParticipants.add(veggieVeganList);
 
-        maybeKitchenParticipants.add(createList("maybe", "none"));
-        maybeKitchenParticipants.add(createList("maybe", "meat"));
+        maybeKitchenParticipants.add(createList("maybe", NONE));
+        maybeKitchenParticipants.add(createList("maybe", MEAT));
 
-        veggieList = createList("maybe", "veggie");
-        veganList = createList("maybe", "vegan");
+        veggieList = createList("maybe", VEGGIE);
+        veganList = createList("maybe", VEGAN);
         veggieVeganList = new ArrayList<>(Stream.concat(veggieList.stream(), veganList.stream()).toList());
 
         maybeKitchenParticipants.add(veggieVeganList);
 
-        noKitchenParticipants.add(createList("no", "none"));
-        noKitchenParticipants.add(createList("no", "meat"));
+        noKitchenParticipants.add(createList("no", NONE));
+        noKitchenParticipants.add(createList("no", MEAT));
 
-        veggieList = createList("no", "veggie");
-        veganList = createList("no", "vegan");
+        veggieList = createList("no", VEGGIE);
+        veganList = createList("no", VEGAN);
         veggieVeganList = new ArrayList<>(Stream.concat(veggieList.stream(), veganList.stream()).toList());
 
         noKitchenParticipants.add(veggieVeganList);
@@ -108,7 +111,7 @@ public class PairListFactory {
      * @param foodIdentification Indicates the food preference of the Participants which should be in the list.
      * @return a List of participants with the specified attributes.
      */
-    private ArrayList<Participant> createList(String kitchenIdentification, String foodIdentification) {
+    private ArrayList<Participant> createList(String kitchenIdentification, FoodPreference foodIdentification) {
         return participantList
                 .stream()
                 .filter(p -> p.getHasKitchen().equals(kitchenIdentification))
