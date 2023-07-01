@@ -41,7 +41,6 @@ public class Pair implements Comparable<Pair> {
     public Pair(Participant participant1, Participant participant2) {
         this.participant1 = participant1;
         this.participant2 = participant2;
-
         this.id = participant1.getId();
 
         decideFoodPreference();

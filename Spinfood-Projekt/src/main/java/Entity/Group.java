@@ -43,29 +43,9 @@ public class Group {
         setSeen();
     }
 
-    public String getGender() {
-        Pair pair1 = pairs.get(0);
-        Pair pair2 = pairs.get(1);
-        Gender genderPair1 = pair1.getGender();
-        Gender genderPair2 = pair2.getGender();
-        Gender female = Gender.female;
-        Gender male = Gender.male;
-        Gender mixed = Gender.mixed;
 
-        if (genderPair1.equals(female) && genderPair2.equals(female)) {
-            return "ff";
-        } else if (genderPair1.equals(female) && genderPair2.equals(male)) {
-            return "fma";
-        } else if (genderPair1.equals(female) && genderPair2.equals(mixed)) {
-            return "fmix";
-        } else if (genderPair1.equals(male) && genderPair2.equals(male)) {
-            return "mm";
-        } else if (genderPair1.equals(male) && genderPair2.equals(mixed)) {
-            return "mmix";
-        } else if (genderPair1.equals(mixed) && genderPair2.equals(mixed)) {
-            return "mixmix";
-        }
-        return "0";
+    public void addPair(Pair pair) {
+        pairs.add(pair);
     }
 
     public void setSeen() {

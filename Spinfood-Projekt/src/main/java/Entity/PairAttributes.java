@@ -1,6 +1,7 @@
 package Entity;
 
 import java.util.Objects;
+import Enum.*;
 
 import Entity.Enum.FoodPreference;
 import Entity.Enum.Gender;

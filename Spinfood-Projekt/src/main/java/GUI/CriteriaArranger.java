@@ -9,6 +9,10 @@ import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Class to display the JList in which the user can set the importance of the criteria.
+ * @author David Krell
+ */
 public class CriteriaArranger extends JPanel {
 
     private static final DefaultListModel<String> LIST_MODEL = new DefaultListModel<>();

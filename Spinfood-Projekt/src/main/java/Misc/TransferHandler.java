@@ -7,6 +7,10 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
+/**
+ * Class to handle the drag and drop of the JList for the criteria.
+ * @author David Krell
+ */
 public class TransferHandler extends javax.swing.TransferHandler {
 
     private int index;
