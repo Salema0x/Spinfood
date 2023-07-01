@@ -1,5 +1,5 @@
 package Entity.Enum;
 
 public enum Gender {
-    MALE, FEMALE, MIXED
+    MALE, FEMALE, OTHER, MIXED
 }

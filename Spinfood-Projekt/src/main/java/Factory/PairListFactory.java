@@ -373,12 +373,12 @@ public class PairListFactory {
     private ArrayList<ArrayList<Participant>> splitListForSex(ArrayList<Participant> participants) {
         ArrayList<Participant> females = new ArrayList<>(participants
                 .stream()
-                .filter(p -> p.getSex().equals("female"))
+                .filter(p -> p.getGender().equals(Gender.FEMALE))
                 .toList());
 
         ArrayList<Participant> males = new ArrayList<>(participants
                 .stream()
-                .filter(p -> p.getSex().equals("male") || p.getSex().equals("other"))
+                .filter(p -> p.getGender().equals(Gender.MALE) || p.getGender().equals(Gender.OTHER))
                 .toList());
 
         return new ArrayList<>(List.of(females, males));

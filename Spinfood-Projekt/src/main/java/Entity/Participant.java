@@ -1,5 +1,6 @@
 package Entity;
 
+import Entity.Enum.Gender;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -10,7 +11,7 @@ public class Participant {
     private final String id;
     private final String name;
     private final FoodPreference foodPreference;
-    private final String sex;
+    private final Gender gender;
     private final String hasKitchen;
     private final byte age;
     private byte kitchenStory;
@@ -30,21 +31,31 @@ public class Participant {
         this.name = values[2];
 
         //Initialize food preference
+
         if(values[3].equals("meat")) {
-            this.foodPreference = FoodPreference.MEAT;
+            foodPreference = FoodPreference.MEAT;
         }
         else if(values[3].equals("veggie")) {
-            this.foodPreference = FoodPreference.VEGGIE;
+            foodPreference = FoodPreference.VEGGIE;
         }
         else if(values[3].equals("vegan")) {
-            this.foodPreference = FoodPreference.VEGAN;
+            foodPreference = FoodPreference.VEGAN;
         }
         else {
-            this.foodPreference = FoodPreference.NONE;
+            foodPreference = FoodPreference.NONE;
         }
 
         this.age = Byte.parseByte(values[4]);
-        this.sex = values[5];
+
+        //initialize Gender
+        if(values[5].equals("male")) {
+            gender = Gender.MALE;
+        } else if (values[5].equals("female")) {
+            gender = Gender.MALE;
+        }
+        else {
+            gender = Gender.OTHER;
+        }
         this.hasKitchen = values[6];
 
         //avoid index out of bound exception when no kitchen is given
@@ -63,11 +74,11 @@ public class Participant {
 
         this.isSuccessor = isSuccessor;
 
-        calculateFoodPreferenceNumber(foodPreference);
+        calculateFoodPreferenceNumber();
 
         calculateAgeRangeNumber(age);
 
-        calculateSexNumber(sex);
+        calculateGenderNumber();
 
     }
 
@@ -166,7 +177,7 @@ public class Participant {
      *
      * @param foodPreference A String representing the foodPreference of the participant.
      */
-    private void calculateFoodPreferenceNumber(FoodPreference foodPreference) {
+    private void calculateFoodPreferenceNumber() {
         switch(foodPreference) {
             case MEAT:
                 this.foodPreferenceNumber = 1;
@@ -210,10 +221,10 @@ public class Participant {
         }
     }
 
-    private void calculateSexNumber(String sex) {
-        switch (sex) {
-            case "female" -> this.sexNumber = 0;
-            case "male", "other" -> this.sexNumber = 1;
+    private void calculateGenderNumber() {
+        switch (gender) {
+            case FEMALE -> this.sexNumber = 0;
+            case MALE, OTHER -> this.sexNumber = 1;
         }
     }
 
@@ -305,8 +316,8 @@ public class Participant {
         return age;
     }
     @JsonGetter("gender")
-    public String getSex() {
-        return sex;
+    public Gender getGender() {
+        return gender;
     }
     @JsonGetter("kitchen")
     public Kitchen getKitchen() {

@@ -5,7 +5,6 @@ import Entity.Enum.Gender;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import Entity.Enum.*;
 
 import java.util.ArrayList;
 
@@ -155,10 +154,10 @@ public class Pair implements Comparable<Pair> {
      * Calculates the genderDiversityScore of a pair.
      */
     private void calculateGenderDiversityScore() {
-        if (!participant1.getSex().equals(participant2.getSex()) || !participant2.getSex().equals(participant1.getSex())) {
+        if (!participant1.getGender().equals(participant2.getGender()) || !participant2.getGender().equals(participant1.getGender())) {
             this.genderDiversityScore = 0.5;
             this.gender = Gender.MIXED;
-        } else if (participant1.getSex().equals(participant2.getSex()) && participant1.getSex().equals("female")) {
+        } else if (participant1.getGender().equals(participant2.getGender()) && participant1.getGender().equals("female")) {
             this.genderDiversityScore = 1;
             this.gender = Gender.FEMALE;
         } else {

@@ -306,7 +306,7 @@ public class ParticipantFactory {
                     String id = participant.getId();
                     String name = participant.getName();
                     FoodPreference foodPreference = participant.getFoodPreference();
-                    String sex = participant.getSex();
+                    String gender = participant.getGender().toString();
                     String hasKitchen = participant.getHasKitchen();
                     String longitude = String.valueOf(participant.getKitchenLongitude());
                     String latitude = String.valueOf(participant.getKitchenLatitude());
@@ -315,7 +315,7 @@ public class ParticipantFactory {
                     byte age = participant.getAge();
                     byte kitchenStory = participant.getKitchenStory();
 
-                    System.out.format(leftAlignFormat, id, name, foodPreference, age, sex, hasKitchen, kitchenStory, longitude, latitude, isSuccessor);
+                    System.out.format(leftAlignFormat, id, name, foodPreference, age, gender, hasKitchen, kitchenStory, longitude, latitude, isSuccessor);
                 }
 
                 System.out.format("+--------------------------------------+----------------------+--------+-----+---------+----------+---------------+-------------------+---------------------+-----------+%n");
