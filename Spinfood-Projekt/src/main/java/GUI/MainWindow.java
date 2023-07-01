@@ -486,9 +486,12 @@ public class MainWindow implements ActionListener {
                     new ArrayList<>(CRITERIA_ORDER));
             pairsGenerated = true;
             updateJMenu();
-            displayPairTable(true);
+            displayPairTable(false);
         } else if (bundle.getString("startGroups").equals(command)) {
             displayGroupTable();
+        }
+        else if (bundle.getString("resortPairs").equals(command)) {
+            displayPairTable(true);
         }
         readParticipantsItem.setText(bundle.getString("readParticipants"));
         readPartyLocationItem.setText(bundle.getString("readPartyLocation"));
