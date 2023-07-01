@@ -16,6 +16,6 @@ import java.util.Objects;
 
 
 class GroupFactoryTest {
-    //TODO: write new tests for new GroupFactory
+
 
 }

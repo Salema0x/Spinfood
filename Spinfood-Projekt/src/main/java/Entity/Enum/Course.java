@@ -1,5 +1,5 @@
 package Entity.Enum;
 
 public enum Course {
-    FIRST, MAIN, DESSERT
+    first, main, dessert
 }

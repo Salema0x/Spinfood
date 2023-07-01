@@ -48,9 +48,9 @@ public class Group {
         Pair pair2 = pairs.get(1);
         Gender genderPair1 = pair1.getGender();
         Gender genderPair2 = pair2.getGender();
-        Gender female = Gender.FEMALE;
-        Gender male = Gender.MALE;
-        Gender mixed = Gender.MIXED;
+        Gender female = Gender.female;
+        Gender male = Gender.male;
+        Gender mixed = Gender.mixed;
 
         if (genderPair1.equals(female) && genderPair2.equals(female)) {
             return "ff";
@@ -198,11 +198,11 @@ public class Group {
         double median = (double) sum / pairs.size();
 
         if (median < 1.5) {
-            this.foodPreference = FoodPreference.MEAT;
+            this.foodPreference = FoodPreference.meat;
         } else if (median >= 1.5 && median < 2.5) {
-            this.foodPreference = FoodPreference.VEGGIE;
+            this.foodPreference = FoodPreference.veggie;
         } else {
-            this.foodPreference = FoodPreference.VEGAN;
+            this.foodPreference = FoodPreference.vegan;
         }
     }
 

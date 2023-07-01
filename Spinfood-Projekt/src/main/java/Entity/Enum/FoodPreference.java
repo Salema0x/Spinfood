@@ -1,7 +1,7 @@
 package Entity.Enum;
 
 public enum FoodPreference {
-    NONE, MEAT, VEGAN, VEGGIE;
+    none, meat, vegan, veggie;
 
     /**
      * Returns the food preference as a number
@@ -9,9 +9,9 @@ public enum FoodPreference {
      */
     public int asNumber() {
         switch(this) {
-            case NONE, MEAT: return 0;
-            case VEGGIE: return 1;
-            case VEGAN: return 2;
+            case none, meat: return 0;
+            case veggie: return 1;
+            case vegan: return 2;
             default: return -1;
         }
     }

@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import Entity.Enum.*;
-import Factory.Group.*;
 
 public class JacksonExportTest {
     private JacksonExport jacksonExport;
@@ -56,12 +55,12 @@ public class JacksonExportTest {
     public List<DinnerRound> generateCustomDinnerRoundList() {
         List<Pair> pairList = generatePairs();
         List<DinnerRound> dinnerRounds = new ArrayList<>();
-        DinnerRound dinnerRound1 = new DinnerRound(Course.FIRST);
-        DinnerRound dinnerRound2 = new DinnerRound(Course.MAIN);
-        DinnerRound dinnerRound3 = new DinnerRound(Course.DESSERT);
-        dinnerRound1.addGroupList(initializeCustomGroups(Course.FIRST, pairList));
-        dinnerRound2.addGroupList(initializeCustomGroups(Course.MAIN, pairList));
-        dinnerRound3.addGroupList(initializeCustomGroups(Course.DESSERT, pairList));
+        DinnerRound dinnerRound1 = new DinnerRound(Course.first);
+        DinnerRound dinnerRound2 = new DinnerRound(Course.main);
+        DinnerRound dinnerRound3 = new DinnerRound(Course.dessert);
+        dinnerRound1.addGroupList(initializeCustomGroups(Course.first, pairList));
+        dinnerRound2.addGroupList(initializeCustomGroups(Course.main, pairList));
+        dinnerRound3.addGroupList(initializeCustomGroups(Course.dessert, pairList));
         dinnerRounds.add(dinnerRound1);
         dinnerRounds.add(dinnerRound2);
         dinnerRounds.add(dinnerRound3);
@@ -74,12 +73,12 @@ public class JacksonExportTest {
 
 
         // Create groups
-        if (course.equals(Course.FIRST)) {
+        if (course.equals(Course.first)) {
 
-            Group group1 = new Group(pairs.get(0), Course.FIRST);
+            Group group1 = new Group(pairs.get(0), Course.first);
             group1.addPair(pairs.get(1));
             group1.addPair(pairs.get(2));
-            Group group2 = new Group(pairs.get(3), Course.FIRST);
+            Group group2 = new Group(pairs.get(3), Course.first);
             group2.addPair(pairs.get(4));
             group2.addPair(pairs.get(5));
             return new ArrayList<Group>() {{
@@ -87,12 +86,12 @@ public class JacksonExportTest {
                 add(group2);
             }};
 
-        } else if (course.equals(Course.MAIN)) {
+        } else if (course.equals(Course.main)) {
 
-            Group group3 = new Group(pairs.get(1), Course.MAIN);
+            Group group3 = new Group(pairs.get(1), Course.main);
             group3.addPair(pairs.get(3));
             group3.addPair(pairs.get(4));
-            Group group4 = new Group(pairs.get(2), Course.MAIN);
+            Group group4 = new Group(pairs.get(2), Course.main);
             group4.addPair(pairs.get(5));
             group4.addPair(pairs.get(0));
             return new ArrayList<Group>() {{
@@ -102,8 +101,8 @@ public class JacksonExportTest {
 
         }
 
-        Group group5 = new Group(pairs.get(2), Course.DESSERT);
-        Group group6 = new Group(pairs.get(5), Course.DESSERT);
+        Group group5 = new Group(pairs.get(2), Course.dessert);
+        Group group6 = new Group(pairs.get(5), Course.dessert);
         group5.addPair(pairs.get(0));
         group5.addPair(pairs.get(1));
         group6.addPair(pairs.get(3));

@@ -33,28 +33,28 @@ public class Participant {
         //Initialize food preference
 
         if(values[3].equals("meat")) {
-            foodPreference = FoodPreference.MEAT;
+            foodPreference = FoodPreference.meat;
         }
         else if(values[3].equals("veggie")) {
-            foodPreference = FoodPreference.VEGGIE;
+            foodPreference = FoodPreference.veggie;
         }
         else if(values[3].equals("vegan")) {
-            foodPreference = FoodPreference.VEGAN;
+            foodPreference = FoodPreference.vegan;
         }
         else {
-            foodPreference = FoodPreference.NONE;
+            foodPreference = FoodPreference.none;
         }
 
         this.age = Byte.parseByte(values[4]);
 
         //initialize Gender
         if(values[5].equals("male")) {
-            gender = Gender.MALE;
+            gender = Gender.male;
         } else if (values[5].equals("female")) {
-            gender = Gender.FEMALE;
+            gender = Gender.female;
         }
         else {
-            gender = Gender.OTHER;
+            gender = Gender.other;
         }
         genderNumber = gender.asNumber();
 

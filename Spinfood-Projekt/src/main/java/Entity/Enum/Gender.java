@@ -1,11 +1,11 @@
 package Entity.Enum;
 
 public enum Gender {
-    MALE, FEMALE, OTHER, MIXED;
+    male, female, other, mixed;
     public int asNumber() {
         switch (this) {
-            case FEMALE : return 0;
-            case MALE, OTHER : return 1;
+            case female: return 0;
+            case male, other: return 1;
             default: return -1;
         }
     }

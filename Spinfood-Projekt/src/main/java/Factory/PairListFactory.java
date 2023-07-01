@@ -39,29 +39,29 @@ public class PairListFactory {
         cleanParticipantListFromRegisteredPairs();
         cleanParticipantListFromSuccessors();
 
-        yesKitchenParticipants.add(createList("yes", NONE));
-        yesKitchenParticipants.add(createList("yes", MEAT));
+        yesKitchenParticipants.add(createList("yes", none));
+        yesKitchenParticipants.add(createList("yes", meat));
 
-        ArrayList<Participant> veggieList = createList("yes", VEGGIE);
-        ArrayList<Participant> veganList = createList("yes", VEGAN);
+        ArrayList<Participant> veggieList = createList("yes", veggie);
+        ArrayList<Participant> veganList = createList("yes", vegan);
         ArrayList<Participant> veggieVeganList = new ArrayList<>(Stream.concat(veggieList.stream(), veganList.stream()).toList());
 
         yesKitchenParticipants.add(veggieVeganList);
 
-        maybeKitchenParticipants.add(createList("maybe", NONE));
-        maybeKitchenParticipants.add(createList("maybe", MEAT));
+        maybeKitchenParticipants.add(createList("maybe", none));
+        maybeKitchenParticipants.add(createList("maybe", meat));
 
-        veggieList = createList("maybe", VEGGIE);
-        veganList = createList("maybe", VEGAN);
+        veggieList = createList("maybe", veggie);
+        veganList = createList("maybe", vegan);
         veggieVeganList = new ArrayList<>(Stream.concat(veggieList.stream(), veganList.stream()).toList());
 
         maybeKitchenParticipants.add(veggieVeganList);
 
-        noKitchenParticipants.add(createList("no", NONE));
-        noKitchenParticipants.add(createList("no", MEAT));
+        noKitchenParticipants.add(createList("no", none));
+        noKitchenParticipants.add(createList("no", meat));
 
-        veggieList = createList("no", VEGGIE);
-        veganList = createList("no", VEGAN);
+        veggieList = createList("no", veggie);
+        veganList = createList("no", vegan);
         veggieVeganList = new ArrayList<>(Stream.concat(veggieList.stream(), veganList.stream()).toList());
 
         noKitchenParticipants.add(veggieVeganList);
@@ -373,12 +373,12 @@ public class PairListFactory {
     private ArrayList<ArrayList<Participant>> splitListForSex(ArrayList<Participant> participants) {
         ArrayList<Participant> females = new ArrayList<>(participants
                 .stream()
-                .filter(p -> p.getGender().equals(Gender.FEMALE))
+                .filter(p -> p.getGender().equals(Gender.female))
                 .toList());
 
         ArrayList<Participant> males = new ArrayList<>(participants
                 .stream()
-                .filter(p -> p.getGender().equals(Gender.MALE) || p.getGender().equals(Gender.OTHER))
+                .filter(p -> p.getGender().equals(Gender.male) || p.getGender().equals(Gender.other))
                 .toList());
 
         return new ArrayList<>(List.of(females, males));

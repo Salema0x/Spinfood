@@ -262,11 +262,11 @@ class PairListFactoryTest {
      * @return a boolean indicating if the pair has valid food preferences or not.
      */
     private boolean checkFoodNoGo(FoodPreference foodPreference1, FoodPreference foodPreference2) {
-        if (foodPreference1.equals(FoodPreference.VEGAN) || foodPreference1.equals(FoodPreference.VEGGIE)) {
-            return foodPreference2.equals(FoodPreference.MEAT);
+        if (foodPreference1.equals(FoodPreference.vegan) || foodPreference1.equals(FoodPreference.veggie)) {
+            return foodPreference2.equals(FoodPreference.meat);
         }
-        if (foodPreference2.equals(FoodPreference.VEGAN) || foodPreference2.equals(FoodPreference.VEGGIE)) {
-            return foodPreference1.equals(FoodPreference.MEAT);
+        if (foodPreference2.equals(FoodPreference.vegan) || foodPreference2.equals(FoodPreference.veggie)) {
+            return foodPreference1.equals(FoodPreference.meat);
         }
         return false;
     }

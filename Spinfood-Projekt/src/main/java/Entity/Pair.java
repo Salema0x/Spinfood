@@ -113,27 +113,27 @@ public class Pair implements Comparable<Pair> {
         FoodPreference part2Pref = participant2.getFoodPreference();
 
         switch (part1Pref) {
-            case VEGAN -> {
+            case vegan -> {
                 switch (part2Pref) {
-                    case VEGAN, VEGGIE, NONE -> this.foodPreference = FoodPreference.VEGAN;
+                    case vegan, veggie, none -> this.foodPreference = FoodPreference.vegan;
                 }
             }
-            case VEGGIE -> {
+            case veggie -> {
                 switch (part2Pref) {
-                    case VEGAN -> this.foodPreference = FoodPreference.VEGAN;
-                    case VEGGIE, NONE -> this.foodPreference = FoodPreference.VEGGIE;
+                    case vegan -> this.foodPreference = FoodPreference.vegan;
+                    case veggie, none -> this.foodPreference = FoodPreference.veggie;
                 }
             }
-            case MEAT -> {
+            case meat -> {
                 switch (part2Pref) {
-                    case MEAT, NONE -> this.foodPreference = FoodPreference.MEAT;
+                    case meat, none -> this.foodPreference = FoodPreference.meat;
                 }
             }
-            case NONE -> {
+            case none -> {
                 switch (part2Pref) {
-                    case VEGAN -> this.foodPreference = FoodPreference.VEGAN;
-                    case VEGGIE -> this.foodPreference = FoodPreference.VEGGIE;
-                    case MEAT, NONE -> this.foodPreference = FoodPreference.MEAT;
+                    case vegan -> this.foodPreference = FoodPreference.vegan;
+                    case veggie -> this.foodPreference = FoodPreference.veggie;
+                    case meat, none -> this.foodPreference = FoodPreference.meat;
                 }
             }
         }
@@ -156,13 +156,13 @@ public class Pair implements Comparable<Pair> {
     private void calculateGenderDiversityScore() {
         if (!participant1.getGender().equals(participant2.getGender()) || !participant2.getGender().equals(participant1.getGender())) {
             this.genderDiversityScore = 0.5;
-            this.gender = Gender.MIXED;
-        } else if (participant1.getGender().equals(participant2.getGender()) && participant1.getGender().equals(Gender.FEMALE)) {
+            this.gender = Gender.mixed;
+        } else if (participant1.getGender().equals(participant2.getGender()) && participant1.getGender().equals(Gender.female)) {
             this.genderDiversityScore = 1;
-            this.gender = Gender.FEMALE;
+            this.gender = Gender.female;
         } else {
             this.genderDiversityScore = 0;
-            this.gender = Gender.MALE;
+            this.gender = Gender.male;
         }
     }
 
