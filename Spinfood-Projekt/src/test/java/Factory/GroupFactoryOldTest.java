@@ -2,6 +2,7 @@ package Factory;
 
 import Entity.Group;
 import Entity.Pair;
+import Enum.FoodPreference;
 import Misc.DinnerRound;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -150,8 +151,8 @@ class GroupFactoryOldTest {
                 int noMeatPrefCount = 0;
                 int noPrefCount = 0;
                 for(Pair pair : group.getPairs()) {
-                    String foodPreference = pair.getFoodPreference();
-                    if(foodPreference.equals("vegetarisch") || foodPreference.equals("vegan")) {
+                    FoodPreference foodPreference = pair.getFoodPreference();
+                    if(foodPreference.equals(FoodPreference.VEGGIE) || foodPreference.equals("vegan")) {
                         noMeatPrefCount++;
                     }
                     if(foodPreference.equals("none") || foodPreference.equals("meat")) {
