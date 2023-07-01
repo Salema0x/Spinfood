@@ -16,8 +16,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * The main window of the application.
@@ -31,11 +33,9 @@ public class MainWindow implements ActionListener {
     private static final JMenuItem SET_CRITERIA = new JMenuItem();
     private static final JMenuItem START_PAIRS = new JMenuItem();
     private static final JMenuItem START_GROUPS = new JMenuItem();
-    private static final JMenuItem ADJUST_PAIRS = new JMenuItem();
     private static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory(1000);
     private static PairListFactory pairListFactory;
-    private static final JLabel SHOW_TEXT = new JLabel(
-            );
+    private static final JLabel SHOW_TEXT = new JLabel();
     private static List<Object> CRITERIA_ORDER = new ArrayList<>();
     private static final CriteriaArranger CRITERIA_WINDOW = new CriteriaArranger();
     private static boolean participantsRead = false;
@@ -45,21 +45,17 @@ public class MainWindow implements ActionListener {
     private static boolean participantsAreRead = true;
     private static ResourceBundle bundle;
 
-    private static final JMenuItem readPartyLocationItem = new JMenuItem("Party Location einlesen");
-    private static final JMenuItem readParticipantsItem = new JMenuItem("Teilnehmerliste einlesen");
-    private static final JMenu languageMenu = new JMenu(("languageMenu"));
-    private static final JMenu algorithmMenu = new JMenu(("algorithmMenu"));
-    private static final JMenu startMenu = new JMenu(("startMenu"));
-    private List<Pair> pairList;
-    private Stack<List<Pair>> undoStack;
-    private Stack<List<Pair>> redoStack;
+    private static final JMenuItem readPartyLocationItem = new JMenuItem();
+    private static final JMenuItem readParticipantsItem = new JMenuItem();
+    private static final JMenu languageMenu = new JMenu();
+    private static final JMenu algorithmMenu = new JMenu();
+    private static final JMenu startMenu = new JMenu();
 
     /**
      * Displays the main window of the application.
      */
     public void displayWindow() {
         loadLanguageResources("de");
-        initializePairList();
         FRAME.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         FRAME.pack();
         FRAME.setMinimumSize(new Dimension(WIDTH, HEIGHT));
@@ -68,109 +64,6 @@ public class MainWindow implements ActionListener {
         FRAME.getContentPane().add(SHOW_TEXT, BorderLayout.SOUTH);
         FRAME.setVisible(true);
         FRAME.setLocationRelativeTo(null);
-    }
-
-    /**
-     * Initializes the pair list and undo/redo stacks.
-     */
-    private void initializePairList() {
-        pairList = new ArrayList<>();
-        undoStack = new Stack<>();
-        redoStack = new Stack<>();
-    }
-
-    /**
-     * Adds a new pair to the pair list.
-     *
-     * @param pair the pair to be added
-     */
-    private void addPairToList(Pair pair) {
-        pairList.add(pair);
-        undoStack.push(new ArrayList<>(pairList)); // Save current pair list for undo
-        redoStack.clear(); // Clear redo stack when a new change is made
-        updatePairTable();
-    }
-
-    /**
-     * Removes a pair from the pair list.
-     *
-     * @param pair the pair to be removed
-     */
-    private void removePairFromList(Pair pair) {
-        pairList.remove(pair);
-        undoStack.push(new ArrayList<>(pairList)); // Save current pair list for undo
-        redoStack.clear(); // Clear redo stack when a new change is made
-        updatePairTable();
-    }
-
-    /**
-     * Undoes the last change made to the pair list.
-     */
-    private void undoLastChange() {
-        if (!undoStack.isEmpty()) {
-            redoStack.push(new ArrayList<>(pairList)); // Save current pair list for redo
-            pairList = undoStack.pop(); // Restore previous pair list
-            updatePairTable();
-        }
-    }
-
-    /**
-     * Redoes the last undone change to the pair list.
-     */
-    private void redoLastChange() {
-        if (!redoStack.isEmpty()) {
-            undoStack.push(new ArrayList<>(pairList)); // Save current pair list for undo
-            pairList = redoStack.pop(); // Restore previous pair list
-            updatePairTable();
-        }
-    }
-    private void updatePairTable() {
-        DefaultTableModel model = new DefaultTableModel();
-        JTable table = new JTable(model);
-
-        model.addColumn("Pair Nr.");
-        model.addColumn("Participant 1");
-        model.addColumn("Participant 2");
-        model.addColumn("ID 1");
-        model.addColumn("ID 2");
-        model.addColumn("Food Preference");
-        model.addColumn("Gender Diversity Score");
-        model.addColumn("Preference Deviation");
-
-        int pairInt = 0;
-
-        for (Pair pair : pairList) {
-            model.addRow(new Object[]{
-                    pairInt,
-                    pair.getParticipant1().getName(),
-                    pair.getParticipant2().getName(),
-                    pair.getParticipant1().getId(),
-                    pair.getParticipant2().getId(),
-                    pair.getFoodPreference(),
-                    pair.getGenderDiversityScore(),
-                    pair.getPreferenceDeviation(),
-                    pairInt++
-            });
-        }
-
-        JFrame frame = new JFrame("Pairs Table");
-        frame.setLayout(new BorderLayout());
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        JScrollPane tableScrollPane = new JScrollPane(table);
-        frame.add(tableScrollPane, BorderLayout.CENTER);
-
-        JPanel southPanel = new JPanel();
-        southPanel.setLayout(new FlowLayout());
-
-        JLabel labelPairs = new JLabel("Pairs Count: " + pairList.size());
-
-        southPanel.add(labelPairs);
-
-        frame.add(southPanel, BorderLayout.SOUTH);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
     }
 
     /**
@@ -368,13 +261,11 @@ public class MainWindow implements ActionListener {
         SET_CRITERIA.setText(bundle.getString("setCriteria"));
         START_PAIRS.setText(bundle.getString("startPairs"));
         START_GROUPS.setText(bundle.getString("startGroups"));
-        ADJUST_PAIRS.setText(bundle.getString("adjustPairs"));
         readParticipantsItem.setText(bundle.getString("readParticipants"));
         readParticipantsItem.setActionCommand(bundle.getString("readParticipants"));
         readPartyLocationItem.setText(bundle.getString("readPartyLocation"));
         readPartyLocationItem.setActionCommand(bundle.getString("readPartyLocation"));
 
-        // Update language menu items
         languageMenu.setText(bundle.getString("languageMenu"));
         for (int i = 0; i < languageMenu.getItemCount(); i++) {
             JMenuItem menuItem = languageMenu.getItem(i);
@@ -388,8 +279,6 @@ public class MainWindow implements ActionListener {
                 }
             }
         }
-
-        // Update algorithm and start menu items
         algorithmMenu.setText(bundle.getString("algorithmMenu"));
         startMenu.setText(bundle.getString("startMenu"));
     }
@@ -421,10 +310,6 @@ public class MainWindow implements ActionListener {
         START_GROUPS.setEnabled(pairsGenerated);
         algorithmMenu.add(START_GROUPS);
 
-        ADJUST_PAIRS.addActionListener(this);
-        ADJUST_PAIRS.setEnabled(pairsGenerated);
-        algorithmMenu.add(ADJUST_PAIRS);
-
         SET_CRITERIA.addActionListener(this);
         SET_CRITERIA.setEnabled(participantsRead);
         algorithmMenu.add(SET_CRITERIA);
@@ -434,7 +319,9 @@ public class MainWindow implements ActionListener {
         startMenu.add(SHOW_PARTICIPANTS);
 
         menuBar.add(algorithmMenu);
-
+        /**
+         * Added the ActionListener here for calling each language
+         * */
         JMenuItem englishItem = new JMenuItem("English");
         englishItem.addActionListener(e -> loadLanguageResources("en"));
         JMenuItem arabicItem = new JMenuItem("Arabic");
@@ -509,111 +396,10 @@ public class MainWindow implements ActionListener {
             displayPairTable();
         } else if (bundle.getString("startGroups").equals(command)) {
             displayGroupTable();
-        } else if (bundle.getString("adjustPairs").equals(command)) {
-            adjustPairs();
         }
-
-        // Update menu items' text
         readParticipantsItem.setText(bundle.getString("readParticipants"));
         readPartyLocationItem.setText(bundle.getString("readPartyLocation"));
     }
-
-    /**
-     * Allows the user to manually adjust the pair list.
-     */
-    private void adjustPairs() {
-        DefaultTableModel model = new DefaultTableModel();
-        JTable table = new JTable(model);
-
-        model.addColumn(bundle.getString("pairNumber"));
-        model.addColumn(bundle.getString("participant1"));
-        model.addColumn(bundle.getString("participant2"));
-
-        for (int i = 0; i < pairListFactory.pairList.size(); i++) {
-            Pair pair = pairListFactory.pairList.get(i);
-            model.addRow(new Object[]{
-                    i + 1, // Pair number starts from 1
-                    pair.getParticipant1().getName(),
-                    pair.getParticipant2().getName()
-            });
-        }
-
-        JFrame frame = new JFrame(bundle.getString("adjustPairsTitle"));
-        frame.setLayout(new BorderLayout());
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        JScrollPane tableScrollPane = new JScrollPane(table);
-        frame.add(tableScrollPane, BorderLayout.CENTER);
-
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout());
-
-        JButton removeButton = new JButton(bundle.getString("removePairButton"));
-        removeButton.addActionListener(e -> removeSelectedPair(table));
-
-        JButton createPairButton = new JButton(bundle.getString("createPairButton"));
-        createPairButton.addActionListener(e -> createNewPair(table));
-
-        buttonPanel.add(removeButton);
-        buttonPanel.add(createPairButton);
-
-        frame.add(buttonPanel, BorderLayout.SOUTH);
-
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-    }
-
-    /**
-     * Removes the selected pair from the pair list.
-     *
-     * @param table the table displaying the pair list
-     */
-    private void removeSelectedPair(JTable table) {
-        int selectedRow = table.getSelectedRow();
-
-        if (selectedRow != -1) {
-            pairListFactory.pairList.remove(selectedRow);
-            ((DefaultTableModel) table.getModel()).removeRow(selectedRow);
-        }
-    }
-
-    /**
-     * Creates a new pair based on the selected participants from the table.
-     *
-     * @param table the table displaying the pair list
-     */
-    private void createNewPair(JTable table) {
-        int[] selectedRows = table.getSelectedRows();
-
-        if (selectedRows.length == 2) {
-            String participant1Name = (String) table.getValueAt(selectedRows[0], 1);
-            String participant2Name = (String) table.getValueAt(selectedRows[1], 1);
-
-            Participant participant1 = null;
-            Participant participant2 = null;
-
-            for (Participant participant : PARTICIPANT_FACTORY.getParticipantList()) {
-                if (participant.getName().equals(participant1Name)) {
-                    participant1 = participant;
-                } else if (participant.getName().equals(participant2Name)) {
-                    participant2 = participant;
-                }
-            }
-
-            if (participant1 != null && participant2 != null) {
-                Pair newPair = new Pair(participant1, participant2);
-                pairListFactory.pairList.add(newPair);
-                ((DefaultTableModel) table.getModel()).addRow(new Object[]{
-                        pairListFactory.pairList.size(), // Pair number is the size of the pair list
-                        newPair.getParticipant1().getName(),
-                        newPair.getParticipant2().getName()
-                });
-            }
-        }
-    }
-
-
 
     /**
      * Updates the enabled status of submenus in the menu bar based on the current state.
@@ -629,7 +415,6 @@ public class MainWindow implements ActionListener {
 
         if (criteriaOrdered) {
             START_PAIRS.setEnabled(true);
-            ADJUST_PAIRS.setEnabled(true);
         }
 
         if (pairsGenerated) {
