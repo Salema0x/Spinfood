@@ -19,7 +19,6 @@ public class Participant {
     private double kitchenLongitude;
     private double kitchenLatitude;
     private int countWg = 1;
-    private int foodPreferenceNumber;
     private int sexNumber;
     private boolean isSuccessor;
     private Participant partner = null;
@@ -74,11 +73,8 @@ public class Participant {
 
         this.isSuccessor = isSuccessor;
 
-        calculateFoodPreferenceNumber();
-
         calculateAgeRangeNumber(age);
 
-        calculateGenderNumber();
 
     }
 
@@ -172,27 +168,7 @@ public class Participant {
         }
     }
 
-    /**
-     * Generates a number according to the foodPreference of the participant.
-     *
-     * @param foodPreference A String representing the foodPreference of the participant.
-     */
-    private void calculateFoodPreferenceNumber() {
-        switch(foodPreference) {
-            case MEAT:
-                this.foodPreferenceNumber = 1;
-                break;
-            case VEGGIE:
-                this.foodPreferenceNumber = 2;
-                break;
-            case VEGAN:
-                this.foodPreferenceNumber = 3;
-                break;
-            default:
-                this.foodPreferenceNumber = 0;
-                break;
-        }
-    }
+
 
     /**
      * Depending on the age every participant is getting assigned to an age range.
@@ -218,13 +194,6 @@ public class Participant {
             this.ageRange = 7;
         } else {
             this.ageRange = 8;
-        }
-    }
-
-    private void calculateGenderNumber() {
-        switch (gender) {
-            case FEMALE -> this.sexNumber = 0;
-            case MALE, OTHER -> this.sexNumber = 1;
         }
     }
 
@@ -258,7 +227,7 @@ public class Participant {
     }
     @JsonIgnore
     public int getFoodPreferenceNumber() {
-        return foodPreferenceNumber;
+        return foodPreference.asNumber();
     }
     @JsonIgnore
     public double getKitchenLongitude() {
@@ -289,8 +258,8 @@ public class Participant {
     }
 
     @JsonIgnore
-    public int getSexNumber() {
-        return sexNumber;
+    public int getGenderAsNumber() {
+        return gender.asNumber();
     }
     @JsonIgnore
     public boolean getIsSuccessor() {

@@ -9,10 +9,9 @@ public enum FoodPreference {
      */
     public int asNumber() {
         switch(this) {
-            case NONE: return 0;
-            case MEAT: return 1;
-            case VEGGIE: return 2;
-            case VEGAN: return 3;
+            case NONE, MEAT: return 0;
+            case VEGGIE: return 1;
+            case VEGAN: return 2;
             default: return -1;
         }
     }
