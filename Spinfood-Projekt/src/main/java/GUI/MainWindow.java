@@ -12,9 +12,12 @@ import Factory.ParticipantFactory;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,37 +64,12 @@ public class MainWindow implements ActionListener {
      * Displays the table of pairs with their relevant information.
      */
     private void displayPairTable(boolean enableSwapButton) {
-        DefaultTableModel model = new DefaultTableModel();
-        JTable table = new JTable(model);
-
-        model.addColumn("Pair Nr.");
-        model.addColumn("Participant 1");
-        model.addColumn("Participant 2");
-        model.addColumn("ID 1");
-        model.addColumn("ID 2");
-        model.addColumn("Food Preference");
-        model.addColumn("Gender Diversity Score");
-        model.addColumn("Preference Deviation");
-
-        int pairInt = 0;
-
         List<Participant> participantsWithoutPair = pairListFactory.getSuccessors();
 
-        for (Pair pair : pairListFactory.pairList) {
-            model.addRow(new Object[]{
-                    pairInt,
-                    pair.getParticipant1().getName(),
-                    pair.getParticipant2().getName(),
-                    pair.getParticipant1().getId(),
-                    pair.getParticipant2().getId(),
-                    pair.getFoodPreference(),
-                    pair.getGenderDiversityScore(),
-                    pair.getPreferenceDeviation(),
-                    pairInt++
-            });
-        }
+        JTable table = new JTable();
 
-
+        refreshPairTable(table);
+        refreshPairTable(table);
         PairList keyFigures = new PairList(pairListFactory.pairList, participantsWithoutPair);
 
         JFrame frame = new JFrame("Pairs Table");
@@ -102,10 +80,25 @@ public class MainWindow implements ActionListener {
 
         frame.add(tableScrollPane, BorderLayout.CENTER);
 
+        JButton undoButton = new JButton("Undo swap");
+        Runnable runnable = () -> {
+            refreshPairTable(table);
+        };
+
+        undoButton.addActionListener(e -> {
+            pairListFactory.undoLatestSwapPairDialog(runnable);
+        });
+
         JButton swapButton = new JButton("Swap");
 
         swapButton.addActionListener(e -> {
-            displaySwapPairDialog(frame);
+            displaySwapPairDialog(frame, runnable);
+        });
+
+        JButton redoButton = new JButton("Redo swap");
+
+        redoButton.addActionListener(e -> {
+            pairListFactory.redoLatestSwapPairDialog(runnable);
         });
 
         JPanel southPanel = new JPanel();
@@ -122,15 +115,88 @@ public class MainWindow implements ActionListener {
         southPanel.add(labelAgeDifference);
 
         if (enableSwapButton) {
-            frame.add(swapButton, BorderLayout.NORTH);
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.setLayout(new FlowLayout());
+            buttonPanel.add(undoButton);
+            buttonPanel.add(swapButton);
+            buttonPanel.add(redoButton);
+            frame.add(buttonPanel, BorderLayout.NORTH);
         }
         frame.add(southPanel, BorderLayout.SOUTH);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        frame.addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosed(WindowEvent windowEvent) {
+                pairListFactory.clearRedoAndUndoList();
+            }
+        });
     }
 
-    private void displaySwapPairDialog(JFrame pairTableJFrame) {
+    private static DefaultTableModel generateJTable() {
+        DefaultTableModel model = new DefaultTableModel();
+
+        model.addColumn("Pair Nr.");
+        model.addColumn("Participant 1");
+        model.addColumn("Participant 2");
+        model.addColumn("ID 1");
+        model.addColumn("ID 2");
+        model.addColumn("Food Preference");
+        model.addColumn("Gender Diversity Score");
+        model.addColumn("Preference Deviation");
+
+        int pairInt = 0;
+
+
+        for (Pair pair : pairListFactory.pairList) {
+            model.addRow(new Object[]{
+                    pairInt,
+                    pair.getParticipant1().getName(),
+                    pair.getParticipant2().getName(),
+                    pair.getParticipant1().getId(),
+                    pair.getParticipant2().getId(),
+                    pair.getFoodPreference(),
+                    pair.getGenderDiversityScore(),
+                    pair.getPreferenceDeviation(),
+                    pairInt++
+            });
+        }
+        return model;
+    }
+
+    public void refreshPairTable(JTable table) {
+        DefaultTableModel model = new DefaultTableModel();
+        table.setModel(model);
+        model.addColumn("Pair Nr.");
+        model.addColumn("Participant 1");
+        model.addColumn("Participant 2");
+        model.addColumn("ID 1");
+        model.addColumn("ID 2");
+        model.addColumn("Food Preference");
+        model.addColumn("Gender Diversity Score");
+        model.addColumn("Preference Deviation");
+
+        int pairInt = 0;
+
+
+        for (Pair pair : pairListFactory.pairList) {
+            model.addRow(new Object[]{
+                    pairInt,
+                    pair.getParticipant1().getName(),
+                    pair.getParticipant2().getName(),
+                    pair.getParticipant1().getId(),
+                    pair.getParticipant2().getId(),
+                    pair.getFoodPreference(),
+                    pair.getGenderDiversityScore(),
+                    pair.getPreferenceDeviation(),
+                    pairInt++
+            });
+        }
+    }
+
+    private void displaySwapPairDialog(JFrame pairTableJFrame, Runnable refreshFunktion) {
 
         // Create the JFrame
         JFrame frame = new JFrame("Dropdown Popup");
@@ -175,7 +241,7 @@ public class MainWindow implements ActionListener {
             Participant oldParticipant = participant.equals("User 1") ? oldPair.getParticipant1() : oldPair.getParticipant2();
             // 救命，我被迫在中国幸运饼干工厂编码。请帮助我”我只吃了 3 周的幸运饼干，但还是没有运气 FML！
 
-            
+
             pairListFactory.swapParticipants(oldPair, oldParticipant, newParticipant);
             // Display the selected values in a message dialog
             String message = "Geändert\n" +
@@ -184,8 +250,8 @@ public class MainWindow implements ActionListener {
                     "\nErsetzt durch: " + newParticipant.getName();
             JOptionPane.showMessageDialog(frame, message);
             frame.dispose();
-            pairTableJFrame.dispose();
-            displayPairTable(true);
+            refreshFunktion.run();
+            SwingUtilities.updateComponentTreeUI(pairTableJFrame);
         });
 
         // Add the components to the frame

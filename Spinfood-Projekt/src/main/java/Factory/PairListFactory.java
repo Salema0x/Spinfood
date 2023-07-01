@@ -9,7 +9,6 @@ import Misc.ParticipantComparator;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,7 +30,8 @@ public class PairListFactory {
     private ArrayList<Participant> successors = new ArrayList<>();
     private final PairList pairListObject;
 
-    private Queue<Swap> swapList = new LinkedList<>();
+    private LinkedList<Swap> swapList = new LinkedList<>();
+    private LinkedList<Swap> swapListFuture = new LinkedList<>();
 
     public PairListFactory(ArrayList<Participant> participantList, ArrayList<Pair> registeredPairs, ArrayList<Object> criteriaOrder) {
         this.participantList = participantList;
@@ -77,7 +77,51 @@ public class PairListFactory {
         System.out.println(pairListObject.getCountPairs() + " " + pairListObject.getCountSuccessors() + " " + pairListObject.getPreferenceDeviation() + " " + pairListObject.getAgeDifference() + " " + pairListObject.getGenderDiversityScore());
     }
 
-    //DAVID TO-DO
+
+    public void undoLatestSwapPairDialog(Runnable runnable) {
+        if (swapList.isEmpty()) {
+            return;
+        }
+
+        Swap last = swapList.getLast();
+        Pair pair = last.getPair();
+        pair.removeParticipant(last.getNewParticipant());
+        pair.addParticipant(last.getSwappedParticipant());
+        successors.add(last.getNewParticipant());
+        successors.remove(last.getSwappedParticipant());
+
+        swapList.removeLast();
+        swapListFuture.add(last);
+        pair.updateCalculations();
+        runnable.run();
+    }
+
+
+    public void redoLatestSwapPairDialog(Runnable runnable) {
+        if (swapListFuture.isEmpty()) {
+            return;
+        }
+
+
+        Swap last = swapListFuture.getLast();
+        Pair pair = last.getPair();
+        pair.removeParticipant(last.getSwappedParticipant());
+        pair.addParticipant(last.getNewParticipant());
+        pair.updateCalculations();
+        successors.add(last.getSwappedParticipant());
+        successors.remove(last.getNewParticipant());
+        swapListFuture.removeLast();
+        System.out.println(last);
+        swapList.add(last);
+        runnable.run();
+    }
+
+    public void clearRedoAndUndoList() {
+        swapListFuture.clear();
+        swapList.clear();
+    }
+
+    //DAVID TO-DONE
     public void swapParticipants(Pair pair, Participant participantInPair, Participant participantInSuccessorList) {
         // Checking if pair exists in pairList and participantInPair is in the pair
         if (!pairList.contains(pair) || !pair.containsParticipant(participantInPair)) {
@@ -103,8 +147,9 @@ public class PairListFactory {
 
         // Add participantInPair to participantSuccessorList
         successors.add(participantInPair);
-
+        pair.updateCalculations();
         swapList.add(new Swap(pair, participantInPair, participantInSuccessorList));
+
     }
 
     /**

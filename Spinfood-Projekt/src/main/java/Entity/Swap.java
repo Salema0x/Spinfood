@@ -34,4 +34,13 @@ public class Swap {
     public void setNewParticipant(Participant newParticipant) {
         this.newParticipant = newParticipant;
     }
+
+    @Override
+    public String toString() {
+        return "Swap{" +
+                "pair=" + pair +
+                ", swappedParticipant=" + swappedParticipant +
+                ", newParticipant=" + newParticipant +
+                '}';
+    }
 }
