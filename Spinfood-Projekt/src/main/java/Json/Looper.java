@@ -1,6 +1,7 @@
 package Json;
 
 
+import Entity.Pair;
 import Entity.Participant;
 import Factory.*;
 import Factory.Group.GroupFactory;
@@ -33,12 +34,12 @@ public class Looper {
 
     public void startLoop() {
         int index = 0;
+        JacksonExport jacksonExport = new JacksonExport();
         for (ArrayList<Object> criteriaOrder : pairCriteriaOrder) {
             PairListFactory pairListFactory = pairListFactoryInitializer(criteriaOrder);
             GroupFactory groupFactory = groupFactoryInitializer(pairListFactory);
             groupFactory.startGroupAlgorithm();
-            JacksonExport jacksonExport = new JacksonExport();
-            jacksonExport.export(groupFactory.getGroupList(), pairListFactory.getPairListAsArrayList(), pairListFactory.getSuccessorPairs(), pairListFactory.getSuccessorParticipants(), filePaths[index]);
+            jacksonExport.exportToPath(groupFactory.getGroups(), groupFactory.getPairList(), groupFactory.getSuccessorPairs(), pairListFactory.getParticipantSuccessorList(), filePaths[index]);
             index++;
         }
 
@@ -96,12 +97,12 @@ public class Looper {
 
 
     private PairListFactory pairListFactoryInitializer(ArrayList<Object> criteriaOrder) {
-        PairListFactory pairListFactory = new PairListFactory(participantFactory., participantFactory.getRegisteredPairs(), pairCriteriaOrder);
+        PairListFactory pairListFactory = new PairListFactory((ArrayList<Participant>) participantFactory.getParticipantList(), (ArrayList<Pair>) participantFactory.getRegisteredPairs(), criteriaOrder);
         return pairListFactory;
     }
-    
+
     private GroupFactory groupFactoryInitializer(PairListFactory pairListFactory) {
-        GroupFactory groupFactory = new GroupFactory(pairListFactory.getPairListAsArrayList(), pairListFactory.(), pairListFactory.getSuccessorParticipants());
+        GroupFactory groupFactory = new GroupFactory(pairListFactory.getPairListAsArrayList(), new Double[] {8.6746166676233,50.5909317660173});
         return groupFactory;
     }
 }

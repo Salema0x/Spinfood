@@ -35,7 +35,7 @@ public class JacksonExportTest {
 
 
 
-        List<Group> groupList = groupFactory.getAllGroups();
+        List<Group> groupList = groupFactory.getGroups();
         List<Pair> pairList = groupFactory.getPairList();
         List<Pair> successorPairsList = groupFactory.getSuccessorPairs();
         List<Participant> successorParticipantsList = pairListFactory.getParticipantSuccessorList();

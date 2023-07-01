@@ -29,8 +29,6 @@ public class GroupFactory {
         this.pairList = pairList;
         PARTY_LOCATION[0] = partyLocation[0];
         PARTY_LOCATION[1] = partyLocation[1];
-        startGroupAlgorithm();
-        addGroupsToAllGroups();
     }
 
     /**
@@ -814,7 +812,10 @@ public class GroupFactory {
         return dessertGroups;
     }
 
-    public ArrayList<Group> getAllGroups() {
-        return allGroups;
+    public ArrayList<Group> getGroups() {
+        ArrayList<Group> result = new ArrayList<>(appetizerGroups);
+        result.addAll(mainDishGroups);
+        result.addAll(dessertGroups);
+        return result;
     }
 }
