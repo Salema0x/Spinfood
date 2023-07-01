@@ -20,15 +20,13 @@ public class JacksonExport {
     private Root root;
 
 
-
     /**
      * Constructor
      */
-    public JacksonExport(List<Group> groupList , List<Pair> registeredPairsList, List<Pair> successorPairsList, List<Participant> successorParticipantsList) {
+    public JacksonExport() {
         objectMapper = new ObjectMapper();
         objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
-        root = new Root(groupList, registeredPairsList, successorPairsList, successorParticipantsList);
-        export();
+
     }
 
     /**
@@ -36,23 +34,46 @@ public class JacksonExport {
      *
      * @param filePath
      */
-    public JacksonExport(List<Group> groupList, List<Pair> registeredPairsList, List<Pair> successorPairsList, List<Participant> successorParticipantsList, String filePath) {
-        this(groupList, registeredPairsList, successorPairsList, successorParticipantsList);
+    public JacksonExport(String filePath) {
+        this();
         this.filePath = filePath;
+    }
+
+    /**
+     * generates a new Root Obj and then writes its Json-Repr into a file at default path
+     * @param groupList List containing all Groups
+     * @param registeredPairsList List containing all registered Pairs
+     * @param successorPairsList List containing all successor Pairs
+     * @param successorParticipantsList List containing all successor Participants
+     */
+    public void export(List<Group> groupList, List<Pair> registeredPairsList, List<Pair> successorPairsList, List<Participant> successorParticipantsList) {
+        root = new Root(groupList, registeredPairsList, successorPairsList, successorParticipantsList);
+        jsonWriter();
+    }
+
+    /**
+     * generates a new Root Obj and then writes its Json-Repr into a file at given path
+     * @param groupList List containing all Groups
+     * @param registeredPairsList List containing all registered Pairs
+     * @param successorPairsList List containing all successor Pairs
+     * @param successorParticipantsList List containing all successor Participants
+     * @param filePath path where the file should be written to
+     */
+    public void exportToPath(List<Group> groupList, List<Pair> registeredPairsList, List<Pair> successorPairsList, List<Participant> successorParticipantsList,String filePath) {
+        filePath = filePath;
+        export(groupList,registeredPairsList,successorPairsList,successorParticipantsList);
     }
 
     /**
      * generates new File at given path and writes the data into it
      */
-    public void export() {
+    private void jsonWriter() {
         try {
             objectWriter.writeValue(new File(filePath), root);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
 
 
 }

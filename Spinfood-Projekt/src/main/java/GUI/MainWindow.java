@@ -4,7 +4,6 @@ import Factory.Group.GroupFactory;
 import Factory.PairListFactory;
 import Factory.ParticipantFactory;
 import Json.JacksonExport;
-import Json.JacksonImport;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -47,7 +46,6 @@ public class MainWindow implements ActionListener {
     private static PairListFactory PAIR_LIST_FACTORY;
     private static GroupFactory GROUP_FACTORY;
     private static JacksonExport JACKSON_EXPORT;
-    private static JacksonImport JACKSON_IMPORT;
 
     /**
      * Will create a Main Window for the application using JFrame.
