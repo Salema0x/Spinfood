@@ -37,16 +37,11 @@ public class Group {
         this.ageDifference = calculateAverageScores(Pair::getAgeDifference);
         this.preferenceDeviation = calculateAverageScores(Pair::getPreferenceDeviation);
         this.genderDiversityScore = calculateGenderDiversityScore();
-        this.course = course;
         calculateFoodPreference();
         createParticipants();
         setSeen();
     }
 
-
-    public void addPair(Pair pair) {
-        pairs.add(pair);
-    }
 
     public void setSeen() {
         Pair p1 = pairs.get(0);
@@ -193,7 +188,7 @@ public class Group {
      * @param pair
      */
     public void addPair(Pair pair) {
-        this.pairs.add(pair);
+        pairs.add(pair);
     }
 
 

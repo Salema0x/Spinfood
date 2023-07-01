@@ -1,13 +1,10 @@
 package Factory.Group;
 
+import Entity.Enum.*;
 import Entity.*;
-import Enum.*;
-
 import java.util.*;
 import java.util.stream.Collectors;
-
-
-import Entity.Enum.*;
+import static Entity.Enum.FoodPreference.*;
 
 /**
  * This class is holding methods to generate a list of groups out of the list of pairs.
@@ -40,11 +37,11 @@ public class GroupFactory {
         Ring middleRing = new Ring(ringFactory.getMiddleRing());
         Ring innerRing = new Ring(ringFactory.getInnerRing());
 
-        makeAppetizerGroups(outerRing, Course.APPETIZER);
+        makeAppetizerGroups(outerRing, Course.first);
         System.out.println("1");
-        makeAppetizerGroups(middleRing, Course.MAIN);
+        makeAppetizerGroups(middleRing, Course.main);
         System.out.println("2");
-        makeAppetizerGroups(innerRing, Course.DESSERT);
+        makeAppetizerGroups(innerRing, Course.dessert);
         printAppetizerGroups(appetizerGroups);
         printAppetizerGroups(mainDishGroups);
         printAppetizerGroups(dessertGroups);
@@ -68,12 +65,10 @@ public class GroupFactory {
             FoodPreference foodPreferenceFromCookingPair = cookingPair.getFoodPreference();
 
             ArrayList<Pair> groupMembers = switch (foodPreferenceFromCookingPair) {
-                case meat -> findPairsForMeatPair(cookingPair, pairsByAttributes);
-                case veggie -> findPairsForVeggiePair(cookingPair, pairsByAttributes);
-                case vegan -> findPairsForVeganPair(cookingPair, pairsByAttributes);
-
-                //Problem with Enum FoodPreference since it allows foodPreference NONE for Participants
-                case none -> {throw new IllegalStateException("Illegal state reached : Pair with FoodPreference: none");}
+                case meat -> findPairsForCookingPair(cookingPair, pairsByAttributes, meat, veggie, vegan, course);
+                case veggie -> findPairsForCookingPair(cookingPair, pairsByAttributes, veggie, vegan, meat, course);
+                case vegan -> findPairsForCookingPair(cookingPair, pairsByAttributes, vegan, veggie, meat, course);
+                default -> new ArrayList<>();
             };
 
             if (groupMembers.size() != 2) {
@@ -91,9 +86,9 @@ public class GroupFactory {
             group.setSeen();
 
             switch (course) {
-                case APPETIZER -> appetizerGroups.add(group);
-                case MAIN -> mainDishGroups.add(group);
-                case DESSERT -> dessertGroups.add(group);
+                case first -> appetizerGroups.add(group);
+                case main -> mainDishGroups.add(group);
+                case dessert -> dessertGroups.add(group);
             }
         }
     }
@@ -125,7 +120,7 @@ public class GroupFactory {
             return groupMembers;
         }
 
-        if (foodPreferenceFromCookingPair != FoodPreference.MEAT) {
+        if (foodPreferenceFromCookingPair != FoodPreference.meat) {
             groupMembers = findTwoPairsForFoodPreference(firstFoodPreference, secondFoodPreference, genderFromCookingPair, possibleMatchingPairs, course);
 
             if (!groupMembers.isEmpty()) {
@@ -151,7 +146,7 @@ public class GroupFactory {
             return groupMembers;
         }
 
-        if (foodPreferenceFromCookingPair == FoodPreference.MEAT) {
+        if (foodPreferenceFromCookingPair == FoodPreference.meat) {
             groupMembers = findTwoPairsForFoodPreference(thirdFoodPreference, thirdFoodPreference, genderFromCookingPair, possibleMatchingPairs, course);
         }
 
@@ -167,12 +162,12 @@ public class GroupFactory {
         ArrayList<ArrayList<Pair>> pairLists = new ArrayList<>();
 
         PairAttributes[] attributes = {
-                new PairAttributes(firstFoodPreference, Gender.FEMALE),
-                new PairAttributes(firstFoodPreference, Gender.MIXED),
-                new PairAttributes(firstFoodPreference, Gender.MALE),
-                new PairAttributes(secondFoodPreference, Gender.FEMALE),
-                new PairAttributes(secondFoodPreference, Gender.MIXED),
-                new PairAttributes(secondFoodPreference, Gender.MALE)
+                new PairAttributes(firstFoodPreference, Gender.female),
+                new PairAttributes(firstFoodPreference, Gender.mixed),
+                new PairAttributes(firstFoodPreference, Gender.male),
+                new PairAttributes(secondFoodPreference, Gender.female),
+                new PairAttributes(secondFoodPreference, Gender.mixed),
+                new PairAttributes(secondFoodPreference, Gender.male)
         };
 
         for (PairAttributes attribute : attributes) {
@@ -191,7 +186,7 @@ public class GroupFactory {
         ArrayList<Pair> selectedListTwo = null;
 
         switch (genderFromCookingPair) {
-            case MALE -> {
+            case male -> {
                 if (checkLists(firstMixedList, secondFemaleList, course)) {
                     selectedListOne = firstMixedList;
                     selectedListTwo = secondFemaleList;
@@ -212,7 +207,7 @@ public class GroupFactory {
                     selectedListTwo = secondMaleList;
                 }
             }
-            case FEMALE -> {
+            case female -> {
                 if (checkLists(firstMixedList, secondMaleList, course)) {
                     selectedListOne = firstMixedList;
                     selectedListTwo = secondMaleList;
@@ -233,7 +228,7 @@ public class GroupFactory {
                     selectedListTwo = secondFemaleList;
                 }
             }
-            case MIXED -> {
+            case mixed -> {
                 if (checkLists(firstMixedList, secondMixedList, course)) {
                     selectedListOne = firstMixedList;
                     selectedListTwo = secondMixedList;
@@ -269,7 +264,7 @@ public class GroupFactory {
     }
 
     private int[] calculateIndices(ArrayList<Pair> listOne, ArrayList<Pair> listTwo, Course course) {
-        if (course == Course.APPETIZER) {
+        if (course == Course.first) {
             if (listOne.equals(listTwo)) {
                 return new int[]{0, 1};
             } else {
@@ -290,7 +285,7 @@ public class GroupFactory {
     }
 
     private boolean checkLists(ArrayList<Pair> listOne, ArrayList<Pair> listTwo, Course course) {
-        if (course == Course.APPETIZER) {
+        if (course == Course.main) {
             if (listOne.equals(listTwo)) {
                 return listOne.size() >= 2;
             } else {
@@ -676,17 +671,6 @@ public class GroupFactory {
             }
         }
     }
-    //HelperMethods
-
-    /**
-     * HelperMethods that adds all groups to the allGroups ArrayList so Json can be created
-     */
-    public void addGroupsToAllGroups() {
-        allGroups.addAll(appetizerGroups);
-        allGroups.addAll(mainDishGroups);
-        allGroups.addAll(dessertGroups);
-    }
-
 
 
     //Getter

@@ -27,7 +27,7 @@ public class Pair implements Comparable<Pair> {
     private final Double[] coordinatesThirdRound = new Double[2];
     private final String id;
     private double distanceToPartyLocation;
-    private Gender gender;
+    private  Gender gender;
     public Double age;
     public ArrayList<Pair> seen = new ArrayList<>();
 
@@ -84,28 +84,9 @@ public class Pair implements Comparable<Pair> {
         }
     }
 
-    public Double[] getCoordinatesFirstRound() {
-        return coordinatesFirstRound;
-    }
 
-    public Double[] getCoordinatesSecondRound() {
-        return coordinatesSecondRound;
-    }
 
-    public void setCoordinatesFirstRound(Double[] coordinatesFirstRound) {
-        this.coordinatesFirstRound[0] = coordinatesFirstRound[0];
-        this.coordinatesFirstRound[1] = coordinatesFirstRound[1];
-    }
 
-    public void setCoordinatesSecondRound(Double[] coordinatesSecondRound) {
-        this.coordinatesSecondRound[0] = coordinatesSecondRound[0];
-        this.coordinatesSecondRound[1] = coordinatesSecondRound[1];
-    }
-
-    public void setCoordinatesThirdRound(Double[] coordinatesThirdRound) {
-        this.coordinatesThirdRound[0] = coordinatesThirdRound[0];
-        this.coordinatesThirdRound[1] = coordinatesThirdRound[1];
-    }
 
     private void decideFoodPreference() {
         FoodPreference part1Pref = participant1.getFoodPreference();
@@ -196,6 +177,14 @@ public class Pair implements Comparable<Pair> {
 
     //Getters
     @JsonIgnore
+    public Double[] getCoordinatesFirstRound() {
+        return coordinatesFirstRound;
+    }
+    @JsonIgnore
+    public Double[] getCoordinatesSecondRound() {
+        return coordinatesSecondRound;
+    }
+    @JsonIgnore
     public String getId() {
         return id;
     }
@@ -259,6 +248,25 @@ public class Pair implements Comparable<Pair> {
     //Setters
     public void setDistanceToPartyLocation(double distanceToPartyLocation) {
         this.distanceToPartyLocation = distanceToPartyLocation;
+    }
+
+    public void setPreMade() {
+        this.preMade = true;
+    }
+
+    public void setCoordinatesFirstRound(Double[] coordinatesFirstRound) {
+        this.coordinatesFirstRound[0] = coordinatesFirstRound[0];
+        this.coordinatesFirstRound[1] = coordinatesFirstRound[1];
+    }
+
+    public void setCoordinatesSecondRound(Double[] coordinatesSecondRound) {
+        this.coordinatesSecondRound[0] = coordinatesSecondRound[0];
+        this.coordinatesSecondRound[1] = coordinatesSecondRound[1];
+    }
+
+    public void setCoordinatesThirdRound(Double[] coordinatesThirdRound) {
+        this.coordinatesThirdRound[0] = coordinatesThirdRound[0];
+        this.coordinatesThirdRound[1] = coordinatesThirdRound[1];
     }
 }
 

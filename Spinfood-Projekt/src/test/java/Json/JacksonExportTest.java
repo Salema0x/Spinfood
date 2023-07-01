@@ -41,7 +41,8 @@ public class JacksonExportTest {
         List<Participant> successorParticipantsList = pairListFactory.getParticipantSuccessorList();
 
         //Act
-        JacksonExport export = new JacksonExport(groupList, pairList, successorPairsList, successorParticipantsList, "src/main/resources/Json/Output.json");
+        JacksonExport export = new JacksonExport("src/main/resources/Json/Output.json");
+        export.export(groupList, pairList, successorPairsList, successorParticipantsList);
 
         //Assert
         Assertions.assertTrue(Paths.get("src/main/resources/Json/Output.json").toFile().exists());
