@@ -3,10 +3,13 @@ package Factory;
 import Data.PairList;
 import Entity.Pair;
 import Entity.Participant;
+import Entity.Swap;
 import Misc.ParticipantComparator;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,6 +30,8 @@ public class PairListFactory {
     private final ArrayList<Participant> upperRemovements = new ArrayList<>();
     private ArrayList<Participant> successors = new ArrayList<>();
     private final PairList pairListObject;
+
+    private Queue<Swap> swapList = new LinkedList<>();
 
     public PairListFactory(ArrayList<Participant> participantList, ArrayList<Pair> registeredPairs, ArrayList<Object> criteriaOrder) {
         this.participantList = participantList;
@@ -72,6 +77,36 @@ public class PairListFactory {
         System.out.println(pairListObject.getCountPairs() + " " + pairListObject.getCountSuccessors() + " " + pairListObject.getPreferenceDeviation() + " " + pairListObject.getAgeDifference() + " " + pairListObject.getGenderDiversityScore());
     }
 
+    //DAVID TO-DO
+    public void swapParticipants(Pair pair, Participant participantInPair, Participant participantInSuccessorList) {
+        // Checking if pair exists in pairList and participantInPair is in the pair
+        if (!pairList.contains(pair) || !pair.containsParticipant(participantInPair)) {
+            System.out.println("The pair does not exist in the pair list or the participant is not in the given pair.");
+            return;
+        }
+
+        // Checking if participantInSuccessorList exists in participantSuccessorList
+        if (!successors.contains(participantInSuccessorList)) {
+            System.out.println("The participant you are trying to swap in is not in the successor list.");
+            return;
+        }
+
+        // Swap the participants
+        // Remove the participantInPair from the pair
+        pair.removeParticipant(participantInPair);
+
+        // Add participantInSuccessorList to the pair
+        pair.addParticipant(participantInSuccessorList);
+
+        // Remove the participantInSuccessorList from participantSuccessorList
+        successors.remove(participantInSuccessorList);
+
+        // Add participantInPair to participantSuccessorList
+        successors.add(participantInPair);
+
+        swapList.add(new Swap(pair, participantInPair, participantInSuccessorList));
+    }
+
     /**
      * Concatenates the pair list after the pair algorithm with pairs from the registration.
      */
@@ -104,8 +139,9 @@ public class PairListFactory {
 
     /**
      * Creates a List of Participants with specific attributes.
+     *
      * @param kitchenIdentification Indicates the kitchen situation of the Participants which should be in the list.
-     * @param foodIdentification Indicates the food preference of the Participants which should be in the list.
+     * @param foodIdentification    Indicates the food preference of the Participants which should be in the list.
      * @return a List of participants with the specified attributes.
      */
     private ArrayList<Participant> createList(String kitchenIdentification, String foodIdentification) {
@@ -152,11 +188,12 @@ public class PairListFactory {
 
     /**
      * Assigns the fields, and starts the sorters.
-     * @param indexCriteria6 the index of criteria6 in the criteriaOrder list
-     * @param indexCriteria7 the index of criteria7 in the criteriaOrder list
+     *
+     * @param indexCriteria6          the index of criteria6 in the criteriaOrder list
+     * @param indexCriteria7          the index of criteria7 in the criteriaOrder list
      * @param getFoodPreferenceNumber the first method with which the sorter gets started
-     * @param getAgeRange the second method with which the sorter gets started
-     * @param getSex the third method with which the sorter gets started
+     * @param getAgeRange             the second method with which the sorter gets started
+     * @param getSex                  the third method with which the sorter gets started
      */
     private void assignFields(int indexCriteria6, int indexCriteria7, Function<Participant, Integer> getFoodPreferenceNumber, Function<Participant, Integer> getAgeRange, Function<Participant, Integer> getSex) {
         if (indexCriteria6 < indexCriteria7) {
@@ -177,8 +214,9 @@ public class PairListFactory {
 
     /**
      * Starts the sorter Method. With the three main lists.
+     *
      * @param sexFunctionIndex the importance of the get Sex method.
-     * @param methods A Function Interface showing which functions should be used for comparing.
+     * @param methods          A Function Interface showing which functions should be used for comparing.
      */
     @SafeVarargs
     private void sorterStarter(int sexFunctionIndex, Function<Participant, Integer>... methods) {
@@ -189,9 +227,10 @@ public class PairListFactory {
 
     /**
      * Sorts the Lists contained in the given list with the given functions.
+     *
      * @param kitchenParticipants the list of lists which should get sorted.
-     * @param sexFunctionIndex the importance of the get Sex method.
-     * @param methods The functions which should be used for sorting.
+     * @param sexFunctionIndex    the importance of the get Sex method.
+     * @param methods             The functions which should be used for sorting.
      */
     @SafeVarargs
     private void sorter(ArrayList<ArrayList<Participant>> kitchenParticipants, int sexFunctionIndex, Function<Participant, Integer>... methods) {
@@ -208,6 +247,7 @@ public class PairListFactory {
 
     /**
      * Starts making pairs by calling methods for making meatPairs, making veggie/vegan Pairs, and for the nonePairs
+     *
      * @return
      */
     List<Pair> makePairs() {
@@ -257,6 +297,7 @@ public class PairListFactory {
 
     /**
      * Removes already used participants from all lists and starts pairing the remaining ones
+     *
      * @param lists a list of lists containing those lists from which the participants should get removed from
      */
     private void removeFromUpperLists(ArrayList<ArrayList<Participant>> lists) {
@@ -271,10 +312,11 @@ public class PairListFactory {
 
     /**
      * Starts with making restPairs. If one category is not fully paired it will get paired with the none eaters.
-     * @param noneParticipantsYesKitchen The participants with no preference and yes kitchen.
-     * @param meatParticipantsYesKitchen The participants with meat preference and yes kitchen.
-     * @param noneParticipantsNoKitchen The participants with no preference and no kitchen.
-     * @param meatParticipantsNoKitchen The participants with meat preference and no kitchen.
+     *
+     * @param noneParticipantsYesKitchen   The participants with no preference and yes kitchen.
+     * @param meatParticipantsYesKitchen   The participants with meat preference and yes kitchen.
+     * @param noneParticipantsNoKitchen    The participants with no preference and no kitchen.
+     * @param meatParticipantsNoKitchen    The participants with meat preference and no kitchen.
      * @param noneParticipantsMaybeKitchen The participants with no preference and maybe kitchen.
      * @param meatParticipantsMaybeKitchen The participants with meat preference and maybe kitchen.
      */
@@ -297,6 +339,7 @@ public class PairListFactory {
 
     /**
      * Makes pairs out of the leftover participants from other categories (meat or veggie/vegan) with the no preference eaters
+     *
      * @param noneParticipants List of Lists with participants with no preference
      * @param restParticipants List of Lists with the leftover participants
      */
@@ -332,9 +375,10 @@ public class PairListFactory {
 
     /**
      * Starts the makePairs() Method which makes the actual pairs.
-     * @param yesKitchen Participants which have a kitchen.
+     *
+     * @param yesKitchen   Participants which have a kitchen.
      * @param maybeKitchen Participants which maybe have a kitchen.
-     * @param noKitchen Participants which have no kitchen.
+     * @param noKitchen    Participants which have no kitchen.
      */
     private void makePairsStarter(ArrayList<Participant> yesKitchen, ArrayList<Participant> maybeKitchen, ArrayList<Participant> noKitchen) {
         ParticipantComparator comparator = new ParticipantComparator(false, sexFunctionIndex, firstMethod, secondMethod, thirdMethod);
@@ -366,6 +410,7 @@ public class PairListFactory {
 
     /**
      * Splits a list in two lists according to the sex.
+     *
      * @param participants The list of participants which should get split.
      * @return A List of Lists containing the both lists.
      */
@@ -385,6 +430,7 @@ public class PairListFactory {
 
     /**
      * Generates the actual pairs and adds them to the pairList.
+     *
      * @param participantList1 The firs list of participants.
      * @param participantList2 An optional second participant List. Is optional because we can also form pairs from one single list.
      */
@@ -397,7 +443,7 @@ public class PairListFactory {
                 participantList1.remove(participant);
             }
 
-            for (Participant participant : removements)  {
+            for (Participant participant : removements) {
                 upperRemovements.add(participant);
                 participantList2.remove(participant);
             }
@@ -406,6 +452,7 @@ public class PairListFactory {
 
     /**
      * Makes the list of second participants modifiable and generates the pairs and sets fields.
+     *
      * @param participantList1 First participant list.
      * @param participantList2 Second participant list.
      */
@@ -434,6 +481,7 @@ public class PairListFactory {
 
     /**
      * Prints the pairs onto the console
+     *
      * @return
      */
     public List<Pair> showPairs() {
@@ -444,14 +492,14 @@ public class PairListFactory {
         System.out.format("|Pair Nr.| ID1                                  | ID2                                  | Name1                | Name2                |%n");
         System.out.format("+--------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
 
-        for (Pair pair: pairList ) {
+        for (Pair pair : pairList) {
             String id1 = pair.getParticipant1().getId();
             String id2 = pair.getParticipant2().getId();
             String name1 = pair.getParticipant1().getName();
             String name2 = pair.getParticipant2().getName();
             pairNr++;
 
-            System.out.format(leftAlignFormat,pairNr, id1, id2, name1, name2);
+            System.out.format(leftAlignFormat, pairNr, id1, id2, name1, name2);
         }
 
         System.out.format("+---------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
