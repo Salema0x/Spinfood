@@ -347,6 +347,7 @@ public class MainWindow implements ActionListener {
         readParticipantsItem.setActionCommand(bundle.getString("readParticipants"));
         readPartyLocationItem.setText(bundle.getString("readPartyLocation"));
         readPartyLocationItem.setActionCommand(bundle.getString("readPartyLocation"));
+        RESORT_PAIRS.setText(bundle.getString("resortPairs"));
 
         languageMenu.setText(bundle.getString("languageMenu"));
         for (int i = 0; i < languageMenu.getItemCount(); i++) {
@@ -401,7 +402,7 @@ public class MainWindow implements ActionListener {
         startMenu.add(SHOW_PARTICIPANTS);
         //Resort pairs
         RESORT_PAIRS.addActionListener(this);
-        RESORT_PAIRS.setEnabled(false);
+        RESORT_PAIRS.setEnabled(true);
         algorithmMenu.add(RESORT_PAIRS);
         algorithmMenu.add(SET_CRITERIA);
         algorithmMenu.add(START_PAIRS);
