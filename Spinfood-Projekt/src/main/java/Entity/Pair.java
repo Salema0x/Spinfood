@@ -5,32 +5,35 @@ import Entity.Enum.Gender;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
 import java.util.ArrayList;
-import java.util.List;
+
 
 @JsonPropertyOrder({"premade", "foodPreference", "firstParticipant", "secondParticipant"})
 public class Pair implements Comparable<Pair> {
 
-
+    //PairAttributes
     private final Participant participant1;
     private final Participant participant2;
-    private double ageDifference;
-    private double preferenceDeviation;
-    private double genderDiversityScore;
-    private final Double[] placeOfCooking = new Double[2];
+    private final String id;
+    private final boolean preMade;
+    private Double age;
+    private Gender gender;
     private FoodPreference foodPreference;
-    private boolean preMade = false;
     private Kitchen kitchen;
-
     private final Double[] coordinatesFirstRound = new Double[2];
     private final Double[] coordinatesSecondRound = new Double[2];
     private final Double[] coordinatesThirdRound = new Double[2];
-    private final String id;
     private double distanceToPartyLocation;
-    private  Gender gender;
-    private Double age;
     private ArrayList<Pair> seen = new ArrayList<>();
+
+    //IndexNumbers
+    private double ageDifference;
+    private double preferenceDeviation;
+    private double genderDiversityScore;
+
+
+
+
 
     /**
      * Constructur without preMade option
@@ -43,13 +46,11 @@ public class Pair implements Comparable<Pair> {
         this.participant1 = participant1;
         this.participant2 = participant2;
         this.id = participant1.getId();
+        this.preMade = false;
 
-        decideFoodPreference();
-        decidePlaceOfCooking();
-        calculateAgeDifference();
-        calculateGenderDiversityScore();
-        calculatePreferenceDeviation();
-        calculateAge();
+
+        initializePairAttributes();
+        initializeIndexNumbers();
     }
 
     /**
@@ -60,36 +61,32 @@ public class Pair implements Comparable<Pair> {
      * @param preMade
      */
     public Pair(Participant participant1, Participant participant2, boolean preMade) {
-        this(participant1, participant2);
+        this.participant1 = participant1;
+        this.participant2 = participant2;
+        this.id = participant1.getId();
         this.preMade = preMade;
+
+
+        initializePairAttributes();
+        initializeIndexNumbers();
     }
 
-
-    private void decidePlaceOfCooking() {
+    /**
+     * Method to initialize the Attributes of the Pair
+     */
+    private void initializePairAttributes() {
+        //decides witch Kitchen is used
         if (participant1.getHasKitchen().equals("yes")) {
-            placeOfCooking[0] = participant1.getKitchenLatitude();
-            placeOfCooking[1] = participant1.getKitchenLongitude();
             kitchen = participant1.getKitchen();
         } else if (participant2.getHasKitchen().equals("yes")) {
-            placeOfCooking[0] = participant2.getKitchenLatitude();
-            placeOfCooking[1] = participant2.getKitchenLongitude();
             kitchen = participant2.getKitchen();
         } else if (participant1.getHasKitchen().equals("maybe")) {
-            placeOfCooking[0] = participant1.getKitchenLatitude();
-            placeOfCooking[1] = participant1.getKitchenLongitude();
             kitchen = participant1.getKitchen();
         } else if (participant2.getHasKitchen().equals("maybe")) {
-            placeOfCooking[0] = participant2.getKitchenLatitude();
-            placeOfCooking[1] = participant2.getKitchenLongitude();
             kitchen = participant2.getKitchen();
         }
-    }
 
-
-
-
-
-    private void decideFoodPreference() {
+        //calculates the foodPreference of the Pair
         FoodPreference part1Pref = participant1.getFoodPreference();
         FoodPreference part2Pref = participant2.getFoodPreference();
 
@@ -118,42 +115,43 @@ public class Pair implements Comparable<Pair> {
                 }
             }
         }
-    }
 
-    private void calculateAge() {
-        this.age = (double) (participant1.getAge() + participant2.getAge()) / 2;
-    }
-
-    /**
-     * Calculates the ageDifference of a pair.
-     */
-    private void calculateAgeDifference() {
-        this.ageDifference = Math.abs(participant1.getAgeRange() - participant2.getAgeRange());
-    }
-
-    /**
-     * Calculates the genderDiversityScore of a pair.
-     */
-    private void calculateGenderDiversityScore() {
+        //sets the Gender of the Pair
         if (!participant1.getGender().equals(participant2.getGender()) || !participant2.getGender().equals(participant1.getGender())) {
-            this.genderDiversityScore = 0.5;
             this.gender = Gender.mixed;
         } else if (participant1.getGender().equals(participant2.getGender()) && participant1.getGender().equals(Gender.female)) {
-            this.genderDiversityScore = 1;
             this.gender = Gender.female;
         } else {
-            this.genderDiversityScore = 0;
             this.gender = Gender.male;
         }
+
+        //calculates the Age of the pair
+        this.age = (double) (participant1.getAge() + participant2.getAge()) / 2;
+
     }
 
     /**
-     * Calculates the preferenceDeviation of a pair.
+     * Method to initialize the IndexNumbers of the Pair
      */
-    private void calculatePreferenceDeviation() {
-        this.preferenceDeviation = Math.abs(participant1.getFoodPreferenceNumber() - participant2.getFoodPreferenceNumber());
+    private void initializeIndexNumbers() {
+        //sets the ageDifference IndexNumber
+        this.ageDifference = Math.abs(participant1.getAgeRange() - participant2.getAgeRange());
+
+        //sets the genderDiversityScore IndexNumber
+        switch(gender) {
+            case mixed -> genderDiversityScore = 0.5;
+            case female -> genderDiversityScore = 1;
+            case male -> genderDiversityScore = 0;
+            default -> genderDiversityScore = -1;
+        }
+
+        //sets the preferenceDeviation IndexNumber
+        preferenceDeviation = Math.abs(participant1.getFoodPreferenceNumber() - participant2.getFoodPreferenceNumber());
+
     }
 
+
+    //Utility-Methods
     @Override
     public String toString() {
         return "Pair{" +
@@ -216,10 +214,6 @@ public class Pair implements Comparable<Pair> {
     }
 
     @JsonIgnore
-    public Double[] getPlaceOfCooking() {
-        return placeOfCooking;
-    }
-    @JsonIgnore
     public ArrayList<Pair> getSeen() {
         return seen;
     }
@@ -257,9 +251,6 @@ public class Pair implements Comparable<Pair> {
         this.distanceToPartyLocation = distanceToPartyLocation;
     }
 
-    public void setPreMade() {
-        this.preMade = true;
-    }
 
     public void setCoordinatesFirstRound(Double[] coordinatesFirstRound) {
         this.coordinatesFirstRound[0] = coordinatesFirstRound[0];

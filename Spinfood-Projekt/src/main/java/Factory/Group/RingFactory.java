@@ -49,8 +49,8 @@ public class RingFactory {
     private void setDistancesOfAllPairs() {
         for (Pair pair : pairList) {
 
-            double startLatitude = pair.getPlaceOfCooking()[0];
-            double startLongitude = pair.getPlaceOfCooking()[1];
+            double startLatitude = pair.getKitchen().getLatitude();
+            double startLongitude = pair.getKitchen().getLongitude();
 
             double endLatitude = PARTY_LOCATION[0];
             double endLongitude = PARTY_LOCATION[1];

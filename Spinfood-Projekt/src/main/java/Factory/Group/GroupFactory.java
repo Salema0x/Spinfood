@@ -86,7 +86,7 @@ public class GroupFactory {
             }
 
             groupMembers.add(cookingPair);
-            Group group = new Group(groupMembers);
+            Group group = new Group(groupMembers, course);
             group.setSeen();
 
             switch (course) {
