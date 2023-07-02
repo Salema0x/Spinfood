@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @JsonPropertyOrder({"premade", "foodPreference", "firstParticipant", "secondParticipant"})
 public class Pair implements Comparable<Pair> {
@@ -28,8 +29,8 @@ public class Pair implements Comparable<Pair> {
     private final String id;
     private double distanceToPartyLocation;
     private  Gender gender;
-    public Double age;
-    public ArrayList<Pair> seen = new ArrayList<>();
+    private Double age;
+    private ArrayList<Pair> seen = new ArrayList<>();
 
     /**
      * Constructur without preMade option
@@ -218,6 +219,10 @@ public class Pair implements Comparable<Pair> {
     public Double[] getPlaceOfCooking() {
         return placeOfCooking;
     }
+    @JsonIgnore
+    public ArrayList<Pair> getSeen() {
+        return seen;
+    }
 
     @JsonIgnore
     public Kitchen getKitchen() {
@@ -244,6 +249,8 @@ public class Pair implements Comparable<Pair> {
     public Participant getParticipant2() {
         return participant2;
     }
+
+
 
     //Setters
     public void setDistanceToPartyLocation(double distanceToPartyLocation) {

@@ -49,6 +49,7 @@ public class JacksonExport {
     public void export(List<Group> groupList, List<Pair> registeredPairsList, List<Pair> successorPairsList, List<Participant> successorParticipantsList) {
         root = new Root(groupList, registeredPairsList, successorPairsList, successorParticipantsList);
         jsonWriter();
+        System.out.println("Groups Saved at default Path: " + this.filePath);
     }
 
     /**
@@ -62,6 +63,7 @@ public class JacksonExport {
     public void exportToPath(List<Group> groupList, List<Pair> registeredPairsList, List<Pair> successorPairsList, List<Participant> successorParticipantsList,String filePath) {
         filePath = filePath;
         export(groupList,registeredPairsList,successorPairsList,successorParticipantsList);
+        System.out.println("Groups saved at given Path: " + filePath);
     }
 
     /**

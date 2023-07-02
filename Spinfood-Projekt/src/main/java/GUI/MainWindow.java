@@ -167,7 +167,7 @@ public class MainWindow implements ActionListener {
             GROUP_FACTORY.startGroupAlgorithm();
             groupsGenerated = true;
         }
-        else if (e.getActionCommand().equals("GruppenSpeichern")) {
+        else if (e.getActionCommand().equals("Gruppen speichern")) {
             JACKSON_EXPORT = new JacksonExport();
             JACKSON_EXPORT.export(GROUP_FACTORY.getGroups(), GROUP_FACTORY.getPairList(), GROUP_FACTORY.getSuccessorPairs(), PARTICIPANT_FACTORY.getParticipantList());
         }
