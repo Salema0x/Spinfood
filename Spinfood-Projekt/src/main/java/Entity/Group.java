@@ -41,9 +41,7 @@ public class Group {
         this.pairs.addAll(pairs);
     }
 
-    public int getGroupSize() {
-        return pairs.size();
-    }
+
 
     /**
      * Extracts the participants from the pairs.
@@ -121,16 +119,6 @@ public class Group {
         return result.toString();
     }
 
-    //TODO: Remove this method if useless?
-    /**
-     * Method to check if a group contains only one pair
-     * @return
-     */
-    public boolean isPair() {
-        return participants.size() == 2;
-    }
-
-
 
     /**
      * Method to manually add a Participant to the group
@@ -181,6 +169,11 @@ public class Group {
     @JsonIgnore
     public double getPreferenceDeviation() {
         return preferenceDeviation;
+    }
+
+    @JsonIgnore
+    public int getGroupSize() {
+        return pairs.size();
     }
 
     @JsonIgnore
