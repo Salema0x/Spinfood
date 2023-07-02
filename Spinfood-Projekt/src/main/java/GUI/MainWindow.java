@@ -164,6 +164,7 @@ public class MainWindow implements ActionListener {
             createFileChooser();
         } else if (e.getActionCommand().equals("Gruppen bilden")) {
             GROUP_FACTORY = new GroupFactory(PAIR_LIST_FACTORY.pairList, PARTICIPANT_FACTORY.getPartyLocation());
+            GROUP_FACTORY.startGroupAlgorithm();
             groupsGenerated = true;
         }
         else if (e.getActionCommand().equals("GruppenSpeichern")) {
