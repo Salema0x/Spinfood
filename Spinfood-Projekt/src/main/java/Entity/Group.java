@@ -123,6 +123,24 @@ public class Group {
         return contains;
     }
 
+    //7.2.6
+    public boolean containsPair(Pair pair) {
+        return pairs.contains(pair);
+    }
+
+    public void removePair(Pair pair) {
+        pairs.remove(pair);
+        participants.remove(pair.getParticipant1());
+        participants.remove(pair.getParticipant2());
+    }
+
+    public void addPair(Pair pair) {
+        pairs.add(pair);
+        participants.add(pair.getParticipant1());
+        participants.add(pair.getParticipant2());
+    }
+
+
     /**
      * Builds String of Pairs for printing
      * @return A string representing the Pairs of the group.
@@ -159,9 +177,6 @@ public class Group {
         }
     }
 
-    public boolean containsPair(Pair pair) {
-        return this.pairs.contains(pair);
-    }
 
     public double getGenderDiversityScore() {
         return genderDiversityScore;

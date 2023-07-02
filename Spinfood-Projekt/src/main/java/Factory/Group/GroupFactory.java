@@ -17,6 +17,8 @@ public class GroupFactory {
     private final ArrayList<Group> appetizerGroups = new ArrayList<>();
     private final ArrayList<Group> mainDishGroups = new ArrayList<>();
     private final ArrayList<Group> dessertGroups = new ArrayList<>();
+    private LinkedList<GroupSwap> swapList = new LinkedList<>();
+    private LinkedList<GroupSwap> swapListFuture = new LinkedList<>();
 
     public ArrayList<Pair> getPairList() {
         return pairList;
@@ -354,6 +356,92 @@ public class GroupFactory {
             System.out.format(leftAlignFormat, counter, id1, id2, id3, pref1, pref2, pref3);
         }
         System.out.format("+--------------+--------------------------------------+--------------------------------------+--------------------------------------+%n");
+    }
+
+    public void clearRedoAndUndoList() {
+        swapListFuture.clear();
+        swapList.clear();
+    }
+
+    public void swapPairs(Group group, Pair pairInGroup, Pair pairInSuccessorList) {
+        // Checking if the group exists in one of the three group lists
+        ArrayList<Group> targetGroupList = null;
+        if (appetizerGroups.contains(group)) {
+            targetGroupList = appetizerGroups;
+        } else if (mainDishGroups.contains(group)) {
+            targetGroupList = mainDishGroups;
+        } else if (dessertGroups.contains(group)) {
+            targetGroupList = dessertGroups;
+        } else {
+            System.out.println("Group does not exist in any group list.");
+            return;
+        }
+
+        // Checking if the pairInGroup is in the selected group
+        if (!group.containsPair(pairInGroup)) {
+            System.out.println("Pair does not exist in the selected group.");
+            return;
+        }
+
+        // Checking if the pairInSuccessorList is actually in the successorList
+        if (!successorPairs.contains(pairInSuccessorList)) {
+            System.out.println("Pair does not exist in the successor list.");
+            return;
+        }
+
+        // Removing the pair from the group
+        group.removePair(pairInGroup);
+
+        // Adding the removed pair to the successorList
+        successorPairs.add(pairInGroup);
+
+        // Removing pairInSuccessor from the successorList
+        successorPairs.remove(pairInSuccessorList);
+
+        // Adding pairInSuccessor to the group
+        group.addPair(pairInSuccessorList);
+
+        // Updating the target group list
+        targetGroupList.remove(group);
+        targetGroupList.add(group);
+        //TODO update values
+        swapList.add(new GroupSwap(group, pairInGroup, pairInSuccessorList));
+    }
+
+    public void undoLatestSwapPairDialog(Runnable runnable) {
+        if (swapList.isEmpty()) {
+            return;
+        }
+
+        GroupSwap last = swapList.getLast();
+        Group group = last.getGroup();
+        group.removePair(last.getNewPair());
+        group.addPair(last.getSwappedPair());
+        successorPairs.add(last.getNewPair());
+        successorPairs.remove(last.getSwappedPair());
+
+        swapList.removeLast();
+        swapListFuture.add(last);
+        //TODO group.updateCalculations();
+        runnable.run();
+    }
+
+    public void redoLatestSwapPairDialog(Runnable runnable) {
+        if (swapListFuture.isEmpty()) {
+            return;
+        }
+
+        GroupSwap last = swapListFuture.getLast();
+        Group group = last.getGroup();
+        group.removePair(last.getSwappedPair());
+        group.addPair(last.getNewPair());
+        //TODO group.updateCalculations();
+        successorPairs.add(last.getSwappedPair());
+        successorPairs.remove(last.getNewPair());
+        swapListFuture.removeLast();
+        System.out.println(last);
+        swapList.add(last);
+        runnable.run();
     }
 
 }

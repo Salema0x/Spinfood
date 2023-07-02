@@ -3,7 +3,7 @@ package Factory;
 import Data.PairList;
 import Entity.Pair;
 import Entity.Participant;
-import Entity.Swap;
+import Entity.PairSwap;
 import Misc.ParticipantComparator;
 
 import java.util.ArrayList;
@@ -30,8 +30,8 @@ public class PairListFactory {
     private ArrayList<Participant> successors = new ArrayList<>();
     private final PairList pairListObject;
 
-    private LinkedList<Swap> swapList = new LinkedList<>();
-    private LinkedList<Swap> swapListFuture = new LinkedList<>();
+    private LinkedList<PairSwap> swapList = new LinkedList<>();
+    private LinkedList<PairSwap> swapListFuture = new LinkedList<>();
 
     public PairListFactory(ArrayList<Participant> participantList, ArrayList<Pair> registeredPairs, ArrayList<Object> criteriaOrder) {
         this.participantList = participantList;
@@ -83,7 +83,7 @@ public class PairListFactory {
             return;
         }
 
-        Swap last = swapList.getLast();
+        PairSwap last = swapList.getLast();
         Pair pair = last.getPair();
         pair.removeParticipant(last.getNewParticipant());
         pair.addParticipant(last.getSwappedParticipant());
@@ -103,7 +103,7 @@ public class PairListFactory {
         }
 
 
-        Swap last = swapListFuture.getLast();
+        PairSwap last = swapListFuture.getLast();
         Pair pair = last.getPair();
         pair.removeParticipant(last.getSwappedParticipant());
         pair.addParticipant(last.getNewParticipant());
@@ -148,7 +148,7 @@ public class PairListFactory {
         // Add participantInPair to participantSuccessorList
         successors.add(participantInPair);
         pair.updateCalculations();
-        swapList.add(new Swap(pair, participantInPair, participantInSuccessorList));
+        swapList.add(new PairSwap(pair, participantInPair, participantInSuccessorList));
 
     }
 

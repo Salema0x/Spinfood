@@ -1,11 +1,11 @@
 package Entity;
 
-public class Swap {
+public class PairSwap {
     private Pair pair;
     private Participant swappedParticipant;
     private Participant newParticipant;
 
-    public Swap(Pair pair, Participant swappedParticipant, Participant newParticipant) {
+    public PairSwap(Pair pair, Participant swappedParticipant, Participant newParticipant) {
         this.pair = pair;
         this.swappedParticipant = swappedParticipant;
         this.newParticipant = newParticipant;
