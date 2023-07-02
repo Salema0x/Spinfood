@@ -138,6 +138,13 @@ public class Pair implements Comparable<Pair> {
         this.preferenceDeviation = Math.abs(participant1.getFoodPreferenceNumber() - participant2.getFoodPreferenceNumber());
     }
 
+    public void updateCalculations() {
+        calculateAge();
+        calculateAgeDifference();
+        calculatePreferenceDeviation();
+        calculateGenderDiversityScore();
+    }
+
     @Override
     public String toString() {
         return "Pair{" +
