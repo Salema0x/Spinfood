@@ -29,7 +29,6 @@ public class Looper {
                 "src/main/resources/Json/looperOutput6.json",
         };
 
-
     }
 
     public void startLoop() {

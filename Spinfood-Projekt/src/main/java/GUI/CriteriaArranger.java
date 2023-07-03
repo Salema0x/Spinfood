@@ -1,24 +1,28 @@
 package GUI;
 
+import Data.PairList;
+import Factory.PairListFactory;
+import GUI.MainWindow;
 import Misc.TransferHandler;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static GUI.MainWindow.PARTICIPANT_FACTORY;
+
 /**
  * Class to display the JList in which the user can set the importance of the criteria.
- * @author David Krell
  */
 public class CriteriaArranger extends JPanel {
 
     private static final DefaultListModel<String> LIST_MODEL = new DefaultListModel<>();
     private static final JFrame FRAME = MainWindow.getFRAME();
     private JList<String> list;
-
 
     public CriteriaArranger() {
         LIST_MODEL.addElement("Essensvorlieben");
@@ -40,8 +44,9 @@ public class CriteriaArranger extends JPanel {
 
     /**
      * Creates a List where the criteria can be arranged and the order can be set.
+     *
      * @return A JPanel including the list with the criteria and a button to confirm the arrangement.
-     *         Includes a button which provides more information about the criteria.
+     * Includes a button which provides more information about the criteria.
      */
     private JPanel createList() {
         list = new JList<>(LIST_MODEL);
@@ -73,6 +78,7 @@ public class CriteriaArranger extends JPanel {
 
     /**
      * Specifies what should happen if ActionEvents occur.
+     *
      * @param e the ActionEvent that was triggered.
      */
     private void actionPerformed(ActionEvent e) {
@@ -82,10 +88,65 @@ public class CriteriaArranger extends JPanel {
             MainWindow.setCriteriaOrder(CRITERIA_ORDER);
             MainWindow.setCriteriaOrdered(true);
             MainWindow.updateJMenu();
-        } /*
-            else if (e.getActionCommand().equals("explanation")) {
+
+            // Generate pair lists for the two different criteria
+            PairListFactory pairListFactory1 = new PairListFactory(
+                    new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
+                    new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
+                    new ArrayList<>(CRITERIA_ORDER)
+            );
+
+            List<Object> criteriaOrder2 = new ArrayList<>(CRITERIA_ORDER);
+            criteriaOrder2.remove("Essensvorlieben");
+            criteriaOrder2.add("Essensvorlieben");
+
+            PairListFactory pairListFactory2 = new PairListFactory(
+                    new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
+                    new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
+                    (ArrayList<Object>) criteriaOrder2
+            );
+
+            PairList pairList1 = pairListFactory1.getPairListObject();
+            PairList pairList2 = pairListFactory2.getPairListObject();
+
+            double preferenceDeviation1 = pairList1.getPreferenceDeviation();
+            double preferenceDeviation2 = pairList2.getPreferenceDeviation();
+            double ageDifference1 = pairList1.getAgeDifference();
+            double ageDifference2 = pairList2.getAgeDifference();
+            double genderDiversity1 = pairList1.getGenderDiversityScore();
+            double genderDiversity2 = pairList2.getGenderDiversityScore();
+            int countPairs1 = pairList1.getCountPairs();
+            int countPairs2 = pairList2.getCountPairs();
+            int countSuccessors1 = pairList1.getCountSuccessors();
+            int countSuccessors2 = pairList2.getCountSuccessors();
+
+            double maxPreferenceDeviation = Math.max(preferenceDeviation1, preferenceDeviation2);
+            double maxAgeDifference = Math.max(ageDifference1, ageDifference2);
+            double maxGenderDiversity = Math.max(genderDiversity1, genderDiversity2);
+
+            String message = "Pair List 1:\nPreference Deviation: " + preferenceDeviation1 +
+                    "\nAge Difference: " + ageDifference1 +
+                    "\nGender Diversity: " + genderDiversity1 +
+                    "\nCount Pairs: " + countPairs1 +
+                    "\nCount Successors: " + countSuccessors1 +
+                    "\n\nPair List 2:\nPreference Deviation: " + preferenceDeviation2 +
+                    "\nAge Difference: " + ageDifference2 +
+                    "\nGender Diversity: " + genderDiversity2 +
+                    "\nCount Pairs: " + countPairs2 +
+                    "\nCount Successors: " + countSuccessors2 +
+                    "\n\nMaximum Values:\nPreference Deviation: " + maxPreferenceDeviation +
+                    "\nAge Difference: " + maxAgeDifference +
+                    "\nGender Diversity: " + maxGenderDiversity;
+
+            JOptionPane.showMessageDialog(FRAME, message);
+
+        }
+    }
+
+        /*
+        else if (e.getActionCommand().equals("explanation")) {
             //TODO: Include a JOptionPane.showMessageDialog() explaining all the criteria
         }
         */
     }
-}
+

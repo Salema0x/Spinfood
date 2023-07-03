@@ -36,7 +36,7 @@ public class MainWindow implements ActionListener {
     private static final JMenuItem SET_CRITERIA = new JMenuItem();
     private static final JMenuItem START_PAIRS = new JMenuItem();
     private static final JMenuItem START_GROUPS = new JMenuItem();
-    private static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory(1000);
+    public static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory(1000);
     private static final JMenuItem RESORT_PAIRS = new JMenuItem();
 
     private static PairListFactory pairListFactory;
@@ -49,6 +49,7 @@ public class MainWindow implements ActionListener {
     private static boolean criteriaOrdered = false;
     private static boolean participantsAreRead = true;
     private static boolean groupsGenerated = false;
+    private List<JFrame> openFrames = new ArrayList<>();
 
     private static ResourceBundle bundle;
 
@@ -143,12 +144,14 @@ public class MainWindow implements ActionListener {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         frame.addWindowListener(new WindowAdapter() {
-
             @Override
             public void windowClosed(WindowEvent windowEvent) {
                 pairListFactory.clearRedoAndUndoList();
+                openFrames.remove(frame); // Remove the closed frame from the openFrames list
             }
         });
+
+        openFrames.add(frame); // Add the ne
     }
 
 
@@ -183,6 +186,8 @@ public class MainWindow implements ActionListener {
     }
 
     private void displaySwapPairDialog(JFrame pairTableJFrame, Runnable refreshFunktion) {
+        JDialog dialog = new JDialog(pairTableJFrame, "Swap Pair", Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.setLayout(new FlowLayout());
 
         // Create the JFrame
         JFrame frame = new JFrame("Dropdown Popup");
@@ -225,7 +230,6 @@ public class MainWindow implements ActionListener {
             System.out.println(oldPair.toString());
             assert participant != null;
             Participant oldParticipant = participant.equals("User 1") ? oldPair.getParticipant1() : oldPair.getParticipant2();
-            // 救命，我被迫在中国幸运饼干工厂编码。请帮助我”我只吃了 3 周的幸运饼干，但还是没有运气 FML！
 
 
             pairListFactory.swapParticipants(oldPair, oldParticipant, newParticipant);
@@ -235,9 +239,11 @@ public class MainWindow implements ActionListener {
                     "\nPaarmit glied " + oldParticipant.getName() +
                     "\nErsetzt durch: " + newParticipant.getName();
             JOptionPane.showMessageDialog(frame, message);
+
             frame.dispose();
             refreshFunktion.run();
             SwingUtilities.updateComponentTreeUI(pairTableJFrame);
+
         });
 
         // Add the components to the frame
