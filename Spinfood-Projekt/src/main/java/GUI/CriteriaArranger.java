@@ -120,9 +120,12 @@ public class CriteriaArranger extends JPanel {
             int countSuccessors1 = pairList1.getCountSuccessors();
             int countSuccessors2 = pairList2.getCountSuccessors();
 
+            // Calculate the maximum values
             double maxPreferenceDeviation = Math.max(preferenceDeviation1, preferenceDeviation2);
             double maxAgeDifference = Math.max(ageDifference1, ageDifference2);
             double maxGenderDiversity = Math.max(genderDiversity1, genderDiversity2);
+            int maxCountPairs = Math.max(countPairs1, countPairs2);
+            int maxCountSuccessors = Math.max(countSuccessors1, countSuccessors2);
 
             String message = "Pair List 1:\nPreference Deviation: " + preferenceDeviation1 +
                     "\nAge Difference: " + ageDifference1 +
@@ -136,12 +139,14 @@ public class CriteriaArranger extends JPanel {
                     "\nCount Successors: " + countSuccessors2 +
                     "\n\nMaximum Values:\nPreference Deviation: " + maxPreferenceDeviation +
                     "\nAge Difference: " + maxAgeDifference +
-                    "\nGender Diversity: " + maxGenderDiversity;
+                    "\nGender Diversity: " + maxGenderDiversity +
+                    "\nMax Count Pairs: " + maxCountPairs +
+                    "\nMax Count Successors: " + maxCountSuccessors;
 
             JOptionPane.showMessageDialog(FRAME, message);
-
         }
     }
+
 
         /*
         else if (e.getActionCommand().equals("explanation")) {
