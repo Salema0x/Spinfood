@@ -2,10 +2,6 @@ package Factory.Group;
 
 import Entity.*;
 import Enum.*;
-
-import javax.swing.undo.AbstractUndoableEdit;
-import javax.swing.undo.UndoableEdit;
-import javax.swing.undo.UndoableEditSupport;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -350,6 +346,18 @@ public class GroupFactory {
             System.out.format(leftAlignFormat, counter, id1, id2, id3, pref1, pref2, pref3);
         }
         System.out.format("+--------------+--------------------------------------+--------------------------------------+--------------------------------------+%n");
+    }
+    public ArrayList<Group> getGroups() {
+        ArrayList<Group> result = new ArrayList<>(appetizerGroups);
+        result.addAll(mainDishGroups);
+        result.addAll(dessertGroups);
+        return result;
+    }
+    public ArrayList<Pair> getPairList() {
+        return pairList;
+    }
+    public ArrayList<Pair> getSuccessorPairs() {
+        return successorPairs;
     }
 
 }

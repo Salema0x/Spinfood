@@ -8,6 +8,7 @@ import Entity.Participant;
 import Factory.Group.GroupFactory;
 import Factory.PairListFactory;
 import Factory.ParticipantFactory;
+import Json.JacksonExport;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -36,7 +37,7 @@ public class MainWindow implements ActionListener {
     private static final JMenuItem START_PAIRS = new JMenuItem();
     private static final JMenuItem START_GROUPS = new JMenuItem();
     private static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory(1000);
-    private static final JMenuItem RESORT_PAIRS = new JMenuItem("Paare neu sortieren");
+    private static final JMenuItem RESORT_PAIRS = new JMenuItem();
 
     private static PairListFactory pairListFactory;
     private static final JLabel SHOW_TEXT = new JLabel();
@@ -47,6 +48,8 @@ public class MainWindow implements ActionListener {
     private static boolean partyLocationRead = true;
     private static boolean criteriaOrdered = false;
     private static boolean participantsAreRead = true;
+    private static boolean groupsGenerated = false;
+
     private static ResourceBundle bundle;
 
     private static final JMenuItem readPartyLocationItem = new JMenuItem();
@@ -54,6 +57,9 @@ public class MainWindow implements ActionListener {
     private static final JMenu languageMenu = new JMenu();
     private static final JMenu algorithmMenu = new JMenu();
     private static final JMenu startMenu = new JMenu();
+    private static final JMenuItem SAVE_GROUPS = new JMenuItem();
+    private static GroupFactory GROUP_FACTORY;
+    private static JacksonExport JACKSON_EXPORT;
 
     /**
      * Displays the main window of the application.
@@ -69,6 +75,7 @@ public class MainWindow implements ActionListener {
         FRAME.setVisible(true);
         FRAME.setLocationRelativeTo(null);
     }
+
 
     /**
      * Displays the table of pairs with their relevant information.
@@ -174,7 +181,8 @@ public class MainWindow implements ActionListener {
             });
         }
     }
-    private void displaySwapPairDialog(JFrame pairTableJFrame, Runnable runnable) {
+
+    private void displaySwapPairDialog(JFrame pairTableJFrame, Runnable refreshFunktion) {
 
         // Create the JFrame
         JFrame frame = new JFrame("Dropdown Popup");
@@ -217,6 +225,7 @@ public class MainWindow implements ActionListener {
             System.out.println(oldPair.toString());
             assert participant != null;
             Participant oldParticipant = participant.equals("User 1") ? oldPair.getParticipant1() : oldPair.getParticipant2();
+            // 救命，我被迫在中国幸运饼干工厂编码。请帮助我”我只吃了 3 周的幸运饼干，但还是没有运气 FML！
 
 
             pairListFactory.swapParticipants(oldPair, oldParticipant, newParticipant);
@@ -227,8 +236,8 @@ public class MainWindow implements ActionListener {
                     "\nErsetzt durch: " + newParticipant.getName();
             JOptionPane.showMessageDialog(frame, message);
             frame.dispose();
-            pairTableJFrame.dispose();
-            displayPairTable(true);
+            refreshFunktion.run();
+            SwingUtilities.updateComponentTreeUI(pairTableJFrame);
         });
 
         // Add the components to the frame
@@ -242,6 +251,7 @@ public class MainWindow implements ActionListener {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
+
 
     /**
      * Displays the table of groups with their relevant information and the pairs not in groups.
@@ -383,6 +393,7 @@ public class MainWindow implements ActionListener {
         readPartyLocationItem.setText(bundle.getString("readPartyLocation"));
         readPartyLocationItem.setActionCommand(bundle.getString("readPartyLocation"));
         RESORT_PAIRS.setText(bundle.getString("resortPairs"));
+        SAVE_GROUPS.setText(bundle.getString("saveGroups"));
 
         languageMenu.setText(bundle.getString("languageMenu"));
         for (int i = 0; i < languageMenu.getItemCount(); i++) {
@@ -443,6 +454,10 @@ public class MainWindow implements ActionListener {
         algorithmMenu.add(START_PAIRS);
         algorithmMenu.add(RESORT_PAIRS);
         algorithmMenu.add(START_GROUPS);
+        // for groups
+        SAVE_GROUPS.addActionListener(this);
+        SAVE_GROUPS.setEnabled(true);
+        algorithmMenu.add(SAVE_GROUPS);
 
 
 
@@ -527,6 +542,9 @@ public class MainWindow implements ActionListener {
         }
         else if (bundle.getString("resortPairs").equals(command)) {
             displayPairTable(true);
+        }else if (bundle.getString("saveGroups").equals(command)) {
+            JACKSON_EXPORT = new JacksonExport();
+            JACKSON_EXPORT.export(GROUP_FACTORY.getGroups(), GROUP_FACTORY.getPairList(), GROUP_FACTORY.getSuccessorPairs(), PARTICIPANT_FACTORY.getParticipantList());
         }
         readParticipantsItem.setText(bundle.getString("readParticipants"));
         readPartyLocationItem.setText(bundle.getString("readPartyLocation"));
@@ -551,6 +569,10 @@ public class MainWindow implements ActionListener {
         if (pairsGenerated) {
             START_GROUPS.setEnabled(true);
         }
+        if (groupsGenerated) {
+            SAVE_GROUPS.setEnabled(true);
+        }
+
     }
 
     public static JFrame getFRAME() {
