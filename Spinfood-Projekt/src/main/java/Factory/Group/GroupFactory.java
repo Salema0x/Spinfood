@@ -37,10 +37,9 @@ public class GroupFactory {
         Ring innerRing = new Ring(ringFactory.getInnerRing());
 
         makeAppetizerGroups(outerRing, Course.APPETIZER);
-        System.out.println("1");
         makeAppetizerGroups(middleRing, Course.MAIN);
-        System.out.println("2");
         makeAppetizerGroups(innerRing, Course.DESSERT);
+
         printAppetizerGroups(appetizerGroups);
         printAppetizerGroups(mainDishGroups);
         printAppetizerGroups(dessertGroups);
@@ -60,6 +59,10 @@ public class GroupFactory {
                 .stream()
                 .collect(Collectors.groupingBy(PairAttributes::new));
 
+        for (Map.Entry<?, ?> entry : pairsByAttributes.entrySet()) {
+            System.out.println(entry.getKey() + " : " + entry.getValue());
+        }
+
         for (Pair cookingPair : outerRingPairs) {
             FoodPreference foodPreferenceFromCookingPair = cookingPair.getFoodPreference();
 
@@ -71,9 +74,13 @@ public class GroupFactory {
             };
 
             if (groupMembers.size() != 2) {
+                for (Map.Entry<?, ?> entry : pairsByAttributes.entrySet()) {
+                    System.out.println(entry.getKey() + " : " + entry.getValue());
+                }
+                System.out.println(cookingPair.getFoodPreference());
+                System.out.println(groupMembers.size());
                 continue;
             }
-
 
             for (Pair pair : groupMembers) {
                 PairAttributes attributes = new PairAttributes(pair);
@@ -89,6 +96,7 @@ public class GroupFactory {
                 case MAIN -> mainDishGroups.add(group);
                 case DESSERT -> dessertGroups.add(group);
             }
+            //TODO: Wenn weniger Nachrücker gebildet werden sollen, dann kann man die Gruppen regroupen mit einer entsprechend anderen Reihenfolge von FoodPreferences
         }
     }
 
@@ -172,7 +180,11 @@ public class GroupFactory {
         };
 
         for (PairAttributes attribute : attributes) {
-            pairLists.add(new ArrayList<>(possibleMatchingPairs.get(attribute)));
+            if (possibleMatchingPairs.get(attribute) != null) {
+                pairLists.add(new ArrayList<>(possibleMatchingPairs.get(attribute)));
+            } else {
+                pairLists.add(new ArrayList<>());
+            }
         }
 
         ArrayList<Pair> firstFemaleList = pairLists.get(0);
