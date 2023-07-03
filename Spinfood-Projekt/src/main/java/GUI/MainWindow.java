@@ -539,6 +539,8 @@ public class MainWindow implements ActionListener {
             displayPairTable(false);
         } else if (bundle.getString("startGroups").equals(command)) {
             displayGroupTable();
+            groupsGenerated= true;
+
         }
         else if (bundle.getString("resortPairs").equals(command)) {
             displayPairTable(true);

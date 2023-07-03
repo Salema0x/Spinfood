@@ -97,12 +97,10 @@ public class Looper {
 
 
     private PairListFactory pairListFactoryInitializer(ArrayList<Object> criteriaOrder) {
-        PairListFactory pairListFactory = new PairListFactory((ArrayList<Participant>) participantFactory.getParticipantList(), (ArrayList<Pair>) participantFactory.getRegisteredPairs(), criteriaOrder);
-        return pairListFactory;
+        return new PairListFactory((ArrayList<Participant>) participantFactory.getParticipantList(), (ArrayList<Pair>) participantFactory.getRegisteredPairs(), criteriaOrder);
     }
 
     private GroupFactory groupFactoryInitializer(PairListFactory pairListFactory) {
-        GroupFactory groupFactory = new GroupFactory(pairListFactory.getPairListAsArrayList(), new Double[] {8.6746166676233,50.5909317660173});
-        return groupFactory;
+        return new GroupFactory(pairListFactory.getPairListAsArrayList(), new Double[] {8.6746166676233,50.5909317660173});
     }
 }
