@@ -3,6 +3,9 @@ package Factory.Group;
 import Entity.*;
 import Enum.*;
 
+import javax.swing.undo.AbstractUndoableEdit;
+import javax.swing.undo.UndoableEdit;
+import javax.swing.undo.UndoableEditSupport;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,10 +41,14 @@ public class GroupFactory {
     private final ArrayList<Group> successorGroups = new ArrayList<>();
 
 
+
+
     public GroupFactory(ArrayList<Pair> pairList, Double[] partyLocation) {
         this.pairList = pairList;
         PARTY_LOCATION[0] = partyLocation[0];
         PARTY_LOCATION[1] = partyLocation[1];
+
+
     }
 
     /**

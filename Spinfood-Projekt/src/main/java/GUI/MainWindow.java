@@ -5,7 +5,6 @@ import Data.PairList;
 import Entity.Group;
 import Entity.Pair;
 import Entity.Participant;
-import Entity.TableEdit;
 import Factory.Group.GroupFactory;
 import Factory.PairListFactory;
 import Factory.ParticipantFactory;
@@ -13,10 +12,6 @@ import Factory.ParticipantFactory;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.undo.UndoManager;
-import javax.swing.undo.UndoableEdit;
-import javax.swing.undo.UndoableEditSupport;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,7 +37,6 @@ public class MainWindow implements ActionListener {
     private static final JMenuItem START_GROUPS = new JMenuItem();
     private static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory(1000);
     private static final JMenuItem RESORT_PAIRS = new JMenuItem("Paare neu sortieren");
-    private static final JMenuItem ADJUST_GROUPS = new JMenuItem("Gruppen anpassen");
 
     private static PairListFactory pairListFactory;
     private static final JLabel SHOW_TEXT = new JLabel();
@@ -50,7 +44,7 @@ public class MainWindow implements ActionListener {
     private static final CriteriaArranger CRITERIA_WINDOW = new CriteriaArranger();
     private static boolean participantsRead = false;
     private static boolean pairsGenerated = false;
-    private static boolean partyLocationRead = false;
+    private static boolean partyLocationRead = true;
     private static boolean criteriaOrdered = false;
     private static boolean participantsAreRead = true;
     private static ResourceBundle bundle;
@@ -165,6 +159,7 @@ public class MainWindow implements ActionListener {
 
         int pairInt = 0;
 
+
         for (Pair pair : pairListFactory.pairList) {
             model.addRow(new Object[]{
                     pairInt,
@@ -179,8 +174,7 @@ public class MainWindow implements ActionListener {
             });
         }
     }
-
-    private void displaySwapPairDialog(JFrame pairTableJFrame, Runnable refreshFunktion) {
+    private void displaySwapPairDialog(JFrame pairTableJFrame, Runnable runnable) {
 
         // Create the JFrame
         JFrame frame = new JFrame("Dropdown Popup");
@@ -224,6 +218,7 @@ public class MainWindow implements ActionListener {
             assert participant != null;
             Participant oldParticipant = participant.equals("User 1") ? oldPair.getParticipant1() : oldPair.getParticipant2();
 
+
             pairListFactory.swapParticipants(oldPair, oldParticipant, newParticipant);
             // Display the selected values in a message dialog
             String message = "Geändert\n" +
@@ -232,8 +227,8 @@ public class MainWindow implements ActionListener {
                     "\nErsetzt durch: " + newParticipant.getName();
             JOptionPane.showMessageDialog(frame, message);
             frame.dispose();
-            refreshFunktion.run();
-            SwingUtilities.updateComponentTreeUI(pairTableJFrame);
+            pairTableJFrame.dispose();
+            displayPairTable(true);
         });
 
         // Add the components to the frame
@@ -249,54 +244,27 @@ public class MainWindow implements ActionListener {
     }
 
     /**
-     * Displays the table of groups with their relevant information and allows manual adjustments.
+     * Displays the table of groups with their relevant information and the pairs not in groups.
      */
     private void displayGroupTable() {
+        DefaultTableModel model = new DefaultTableModel();
         GroupFactory GROUP_FACTORY = new GroupFactory(pairListFactory.pairList, PARTICIPANT_FACTORY.getPartyLocation());
         GROUP_FACTORY.startGroupAlgorithm();
         ArrayList<Group> appetizerGroups = GROUP_FACTORY.getAppetizerGroups();
         ArrayList<Group> mainDishGroups = GROUP_FACTORY.getMainDishGroups();
         ArrayList<Group> dessertGroups = GROUP_FACTORY.getDessertGroups();
 
-        JTable table = createGroupTable(appetizerGroups, mainDishGroups, dessertGroups);
-        JScrollPane scrollPane = new JScrollPane(table);
-
-        JFrame frame = new JFrame("Group Table");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.add(scrollPane);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-
-        // Add window listener to clear redo/undo list when the window is closed
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent windowEvent) {
-                GROUP_FACTORY.clearRedoAndUndoList();
-            }
-        });
-    }
-
-    /**
-     * Creates and returns the table of groups with their relevant information.
-     *
-     * @param appetizerGroups  the list of appetizer groups
-     * @param mainDishGroups   the list of main dish groups
-     * @param dessertGroups    the list of dessert groups
-     * @return the created JTable
-     */
-    private JTable createGroupTable(ArrayList<Group> appetizerGroups, ArrayList<Group> mainDishGroups, ArrayList<Group> dessertGroups) {
-        DefaultTableModel model = new DefaultTableModel();
+        JTable table = new JTable(model);
         model.addColumn("Group Nr");
-        model.addColumn("Participant 1 - Pair 1");
-        model.addColumn("Participant 1 - Pair 2");
-        model.addColumn("Participant 1 - Pair 3");
-        model.addColumn("Participant 2 - Pair 1");
-        model.addColumn("Participant 2 - Pair 2");
-        model.addColumn("Participant 2 - Pair 3");
+        model.addColumn("Pair 1 - Participant 1");
+        model.addColumn("Pair 1 - Participant 2");
+        model.addColumn("Pair 2 - Participant 1");
+        model.addColumn("Pair 2 - Participant 2");
+        model.addColumn("Pair 3 - Participant 1");
+        model.addColumn("Pair 3 - Participant 2");
         model.addColumn("Course");
         model.addColumn("Food Preference");
-        model.addColumn("Cooking Pair");
+        model.addColumn("KochPaar");
 
         int groupNr = 1;
 
@@ -304,10 +272,10 @@ public class MainWindow implements ActionListener {
             model.addRow(new Object[]{
                     groupNr,
                     group.getPairs().get(0).getParticipant1().getName(),
-                    group.getPairs().get(1).getParticipant1().getName(),
-                    group.getPairs().get(2).getParticipant1().getName(),
                     group.getPairs().get(0).getParticipant2().getName(),
+                    group.getPairs().get(1).getParticipant1().getName(),
                     group.getPairs().get(1).getParticipant2().getName(),
+                    group.getPairs().get(2).getParticipant1().getName(),
                     group.getPairs().get(2).getParticipant2().getName(),
                     "Appetizer",
                     group.getCookingPair().getFoodPreference(),
@@ -320,12 +288,12 @@ public class MainWindow implements ActionListener {
             model.addRow(new Object[]{
                     groupNr,
                     group.getPairs().get(0).getParticipant1().getName(),
-                    group.getPairs().get(1).getParticipant1().getName(),
-                    group.getPairs().get(2).getParticipant1().getName(),
                     group.getPairs().get(0).getParticipant2().getName(),
+                    group.getPairs().get(1).getParticipant1().getName(),
                     group.getPairs().get(1).getParticipant2().getName(),
+                    group.getPairs().get(2).getParticipant1().getName(),
                     group.getPairs().get(2).getParticipant2().getName(),
-                    "Main Dish",
+                    "MAIN DISH",
                     group.getCookingPair().getFoodPreference(),
                     group.getCookingPair().getParticipant1().getName() + ", " + group.getCookingPair().getParticipant2().getName()
             });
@@ -336,85 +304,66 @@ public class MainWindow implements ActionListener {
             model.addRow(new Object[]{
                     groupNr,
                     group.getPairs().get(0).getParticipant1().getName(),
-                    group.getPairs().get(1).getParticipant1().getName(),
-                    group.getPairs().get(2).getParticipant1().getName(),
                     group.getPairs().get(0).getParticipant2().getName(),
+                    group.getPairs().get(1).getParticipant1().getName(),
                     group.getPairs().get(1).getParticipant2().getName(),
+                    group.getPairs().get(2).getParticipant1().getName(),
                     group.getPairs().get(2).getParticipant2().getName(),
-                    "Dessert",
+                    "DESSERT",
                     group.getCookingPair().getFoodPreference(),
                     group.getCookingPair().getParticipant1().getName() + ", " + group.getCookingPair().getParticipant2().getName()
             });
             groupNr++;
         }
 
-        JTable table = new JTable(model);
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.setColumnSelectionAllowed(false);
-        table.setRowSelectionAllowed(true);
+        DefaultTableModel pairsTableModel = new DefaultTableModel();
+        JTable pairsTable = new JTable(pairsTableModel);
+        pairsTableModel.addColumn("Pair ID");
+        pairsTableModel.addColumn("Pair Names ");
 
-        // Create the undo/redo functionality for table edits
-        UndoManager undoManager = new UndoManager();
-        UndoableEditSupport undoableEditSupport = new UndoableEditSupport();
-        undoableEditSupport.addUndoableEditListener(undoManager);
 
-        table.putClientProperty("UndoManager", undoManager);
-        table.putClientProperty("UndoableEditSupport", undoableEditSupport);
+        ArrayList<Participant> pairsWithoutGroups = pairListFactory.getSuccessors();
 
-        // Create the popup menu for group table edits
-        JPopupMenu popupMenu = createGroupTablePopupMenu(table, undoManager, undoableEditSupport);
-        table.setComponentPopupMenu(popupMenu);
+        for (Participant participant : pairsWithoutGroups) {
+            pairsTableModel.addRow(new Object[]{
+                    participant.getId(),
+                    participant.getName(),
+            });
+        }
 
-        return table;
+        JFrame mainFrame = new JFrame("Groups and Pairs Not in Groups");
+        mainFrame.setLayout(new BorderLayout());
+        mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        JScrollPane tableScrollPane = new JScrollPane(table);
+        mainFrame.add(tableScrollPane, BorderLayout.NORTH);
+        JScrollPane pairsTableScrollPane = new JScrollPane(pairsTable);
+        mainFrame.add(pairsTableScrollPane, BorderLayout.SOUTH);
+        mainFrame.pack();
+        mainFrame.setLocationRelativeTo(null);
+        mainFrame.setVisible(true);
+
+        JPanel southPanel = new JPanel();
+        southPanel.setLayout(new FlowLayout());
+
+        GroupList groupList = new GroupList(GROUP_FACTORY.getSuccessorGroups(), pairListFactory.getSuccessors());
+
+        for (Group group : appetizerGroups) {
+            JLabel labelGroupCount = new JLabel("Groups Count: " + groupNr + ",");
+            JLabel labelSuccessor = new JLabel("Successor Count: " + groupList.getSuccessorCount() + ",");
+            JLabel labelGenderDiversity = new JLabel("Gender Diversity Score: " + group.getGenderDiversityScore() + ",");
+            JLabel labelAgeDifference = new JLabel("Age Difference: " + group.getAgeDifference());
+
+            southPanel.add(labelGroupCount);
+            southPanel.add(labelSuccessor);
+            southPanel.add(labelGenderDiversity);
+            southPanel.add(labelAgeDifference);
+
+            break;
+        }
+
+        mainFrame.add(southPanel, BorderLayout.CENTER);
     }
 
-    /**
-     * Creates and returns the popup menu for group table edits.
-     *
-     * @param table                the group table
-     * @param undoManager          the UndoManager for undo/redo functionality
-     * @param undoableEditSupport  the UndoableEditSupport for undo/redo functionality
-     * @return the created JPopupMenu
-     */
-    private JPopupMenu createGroupTablePopupMenu(JTable table, UndoManager undoManager, UndoableEditSupport undoableEditSupport) {
-        JPopupMenu popupMenu = new JPopupMenu();
-
-        // Undo menu item
-        JMenuItem undoItem = new JMenuItem("Undo");
-        undoItem.addActionListener(e -> {
-            if (undoManager.canUndo()) {
-                undoManager.undo();
-            }
-        });
-        popupMenu.add(undoItem);
-
-        // Redo menu item
-        JMenuItem redoItem = new JMenuItem("Redo");
-        redoItem.addActionListener(e -> {
-            if (undoManager.canRedo()) {
-                undoManager.redo();
-            }
-        });
-        popupMenu.add(redoItem);
-
-        // Separator
-        popupMenu.addSeparator();
-
-        // Add listener for table edits
-        table.getModel().addTableModelListener(e -> {
-            int row = e.getFirstRow();
-            int column = e.getColumn();
-            TableModel model = (TableModel) e.getSource();
-            Object oldValue = model.getValueAt(row, column);
-            Object newValue = model.getValueAt(row, column);
-
-            // Create and register the undoable edit for table edits
-            UndoableEdit undoableEdit = new TableEdit(undoableEditSupport, table, oldValue, newValue, row, column);
-            undoManager.addEdit(undoableEdit);
-        });
-
-        return popupMenu;
-    }
 
     /**
      * Loads the language resources based on the specified language code.
