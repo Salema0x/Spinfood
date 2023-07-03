@@ -546,7 +546,7 @@ public class MainWindow implements ActionListener {
             displayPairTable(true);
         }else if (bundle.getString("saveGroups").equals(command)) {
             JACKSON_EXPORT = new JacksonExport();
-            JACKSON_EXPORT.export(GROUP_FACTORY.getGroups(), GROUP_FACTORY.getPairList(), GROUP_FACTORY.getSuccessorPairs(), PARTICIPANT_FACTORY.getParticipantList());
+            JACKSON_EXPORT.export(GROUP_FACTORY.getAppetizerGroups(), GROUP_FACTORY.getPairList(), GROUP_FACTORY.getSuccessorPairs(), PARTICIPANT_FACTORY.getParticipantList());
         }
         readParticipantsItem.setText(bundle.getString("readParticipants"));
         readPartyLocationItem.setText(bundle.getString("readPartyLocation"));

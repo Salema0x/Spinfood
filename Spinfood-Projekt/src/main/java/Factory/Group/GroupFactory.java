@@ -2,6 +2,7 @@ package Factory.Group;
 
 import Entity.*;
 import Enum.*;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -16,35 +17,13 @@ public class GroupFactory {
     private final ArrayList<Group> appetizerGroups = new ArrayList<>();
     private final ArrayList<Group> mainDishGroups = new ArrayList<>();
     private final ArrayList<Group> dessertGroups = new ArrayList<>();
-
-
-    public ArrayList<Group> getAppetizerGroups() {
-        return appetizerGroups;
-    }
-
-    public ArrayList<Group> getMainDishGroups() {
-        return mainDishGroups;
-    }
-
-    public ArrayList<Group> getDessertGroups() {
-        return dessertGroups;
-    }
-
-    public ArrayList<Group> getSuccessorGroups() {
-        return successorGroups;
-    }
-
     private final ArrayList<Group> successorGroups = new ArrayList<>();
-
-
 
 
     public GroupFactory(ArrayList<Pair> pairList, Double[] partyLocation) {
         this.pairList = pairList;
         PARTY_LOCATION[0] = partyLocation[0];
         PARTY_LOCATION[1] = partyLocation[1];
-
-
     }
 
     /**
@@ -58,10 +37,9 @@ public class GroupFactory {
         Ring innerRing = new Ring(ringFactory.getInnerRing());
 
         makeAppetizerGroups(outerRing, Course.APPETIZER);
-        System.out.println("1");
         makeAppetizerGroups(middleRing, Course.MAIN);
-        System.out.println("2");
         makeAppetizerGroups(innerRing, Course.DESSERT);
+
         printAppetizerGroups(appetizerGroups);
         printAppetizerGroups(mainDishGroups);
         printAppetizerGroups(dessertGroups);
@@ -81,6 +59,10 @@ public class GroupFactory {
                 .stream()
                 .collect(Collectors.groupingBy(PairAttributes::new));
 
+        for (Map.Entry<?, ?> entry : pairsByAttributes.entrySet()) {
+            System.out.println(entry.getKey() + " : " + entry.getValue());
+        }
+
         for (Pair cookingPair : outerRingPairs) {
             FoodPreference foodPreferenceFromCookingPair = cookingPair.getFoodPreference();
 
@@ -92,9 +74,13 @@ public class GroupFactory {
             };
 
             if (groupMembers.size() != 2) {
+                for (Map.Entry<?, ?> entry : pairsByAttributes.entrySet()) {
+                    System.out.println(entry.getKey() + " : " + entry.getValue());
+                }
+                System.out.println(cookingPair.getFoodPreference());
+                System.out.println(groupMembers.size());
                 continue;
             }
-
 
             for (Pair pair : groupMembers) {
                 PairAttributes attributes = new PairAttributes(pair);
@@ -110,6 +96,7 @@ public class GroupFactory {
                 case MAIN -> mainDishGroups.add(group);
                 case DESSERT -> dessertGroups.add(group);
             }
+            //TODO: Wenn weniger Nachrücker gebildet werden sollen, dann kann man die Gruppen regroupen mit einer entsprechend anderen Reihenfolge von FoodPreferences
         }
     }
 
@@ -193,7 +180,11 @@ public class GroupFactory {
         };
 
         for (PairAttributes attribute : attributes) {
-            pairLists.add(new ArrayList<>(possibleMatchingPairs.get(attribute)));
+            if (possibleMatchingPairs.get(attribute) != null) {
+                pairLists.add(new ArrayList<>(possibleMatchingPairs.get(attribute)));
+            } else {
+                pairLists.add(new ArrayList<>());
+            }
         }
 
         ArrayList<Pair> firstFemaleList = pairLists.get(0);
@@ -347,17 +338,28 @@ public class GroupFactory {
         }
         System.out.format("+--------------+--------------------------------------+--------------------------------------+--------------------------------------+%n");
     }
-    public ArrayList<Group> getGroups() {
-        ArrayList<Group> result = new ArrayList<>(appetizerGroups);
-        result.addAll(mainDishGroups);
-        result.addAll(dessertGroups);
-        return result;
-    }
+
     public ArrayList<Pair> getPairList() {
         return pairList;
     }
+
     public ArrayList<Pair> getSuccessorPairs() {
         return successorPairs;
     }
 
+    public ArrayList<Group> getAppetizerGroups() {
+        return appetizerGroups;
+    }
+
+    public ArrayList<Group> getMainDishGroups() {
+        return mainDishGroups;
+    }
+
+    public ArrayList<Group> getDessertGroups() {
+        return dessertGroups;
+    }
+
+    public ArrayList<Group> getSuccessorGroups() {
+        return successorGroups;
+    }
 }

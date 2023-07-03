@@ -39,7 +39,7 @@ public class Looper {
             PairListFactory pairListFactory = pairListFactoryInitializer(criteriaOrder);
             GroupFactory groupFactory = groupFactoryInitializer(pairListFactory);
             groupFactory.startGroupAlgorithm();
-            jacksonExport.exportToPath(groupFactory.getGroups(), groupFactory.getPairList(), groupFactory.getSuccessorPairs(), pairListFactory.getSuccessors(), filePaths[index]);
+            jacksonExport.exportToPath(groupFactory.getAppetizerGroups(), groupFactory.getPairList(), groupFactory.getSuccessorPairs(), pairListFactory.getSuccessors(), filePaths[index]);
             index++;
         }
 
