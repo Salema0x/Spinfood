@@ -23,16 +23,8 @@ public class PairSwap {
         return swappedParticipant;
     }
 
-    public void setSwappedParticipant(Participant swappedParticipant) {
-        this.swappedParticipant = swappedParticipant;
-    }
-
     public Participant getNewParticipant() {
         return newParticipant;
-    }
-
-    public void setNewParticipant(Participant newParticipant) {
-        this.newParticipant = newParticipant;
     }
 
     @Override

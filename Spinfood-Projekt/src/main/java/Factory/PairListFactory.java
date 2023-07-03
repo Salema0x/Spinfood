@@ -2,6 +2,7 @@ package Factory;
 
 import Data.PairList;
 import Entity.Pair;
+import Entity.PairDissolve;
 import Entity.Participant;
 import Entity.PairSwap;
 import Misc.ParticipantComparator;
@@ -29,9 +30,8 @@ public class PairListFactory {
     private final ArrayList<Participant> upperRemovements = new ArrayList<>();
     private ArrayList<Participant> successors = new ArrayList<>();
     private final PairList pairListObject;
-
-    private LinkedList<PairSwap> swapList = new LinkedList<>();
-    private LinkedList<PairSwap> swapListFuture = new LinkedList<>();
+    private final LinkedList<Object> swapList = new LinkedList<>();
+    private final LinkedList<Object> swapListFuture = new LinkedList<>();
 
     public PairListFactory(ArrayList<Participant> participantList, ArrayList<Pair> registeredPairs, ArrayList<Object> criteriaOrder) {
         this.participantList = participantList;
@@ -87,19 +87,31 @@ public class PairListFactory {
     public void undoLatestSwapPairDialog(Runnable runnable) {
         if (swapList.isEmpty()) {
             return;
+        } else if (swapList.getLast() instanceof PairSwap) {
+            PairSwap last = (PairSwap) swapList.getLast();
+            Pair pair = last.getPair();
+            pair.removeParticipant(last.getNewParticipant());
+            pair.addParticipant(last.getSwappedParticipant());
+            successors.add(last.getNewParticipant());
+            successors.remove(last.getSwappedParticipant());
+
+            swapList.removeLast();
+            System.out.println(last);
+            swapListFuture.add(last);
+            pair.updateCalculations();
+            runnable.run();
+        } else if (swapList.getLast() instanceof PairDissolve) {
+            PairDissolve last = (PairDissolve) swapList.getLast();
+            Pair pair = new Pair(last.getDissolvedParticipant1(), last.getDissolvedParticipant2());;
+            pairList.add(pair);
+            successors.remove(last.getDissolvedParticipant1());
+            successors.remove(last.getDissolvedParticipant2());
+
+            swapList.removeLast();
+            System.out.println(last);
+            swapListFuture.add(last);
+            runnable.run();
         }
-
-        PairSwap last = swapList.getLast();
-        Pair pair = last.getPair();
-        pair.removeParticipant(last.getNewParticipant());
-        pair.addParticipant(last.getSwappedParticipant());
-        successors.add(last.getNewParticipant());
-        successors.remove(last.getSwappedParticipant());
-
-        swapList.removeLast();
-        swapListFuture.add(last);
-        pair.updateCalculations();
-        runnable.run();
     }
 
     /**
@@ -112,21 +124,39 @@ public class PairListFactory {
     public void redoLatestSwapPairDialog(Runnable runnable) {
         if (swapListFuture.isEmpty()) {
             return;
+        } else if (swapListFuture.getLast() instanceof PairSwap) {
+            PairSwap last =  (PairSwap) swapListFuture.getLast();
+
+            Pair pair = last.getPair();
+            pair.removeParticipant(last.getSwappedParticipant());
+            pair.addParticipant(last.getNewParticipant());
+            pair.updateCalculations();
+            successors.add(last.getSwappedParticipant());
+            successors.remove(last.getNewParticipant());
+
+            swapListFuture.removeLast();
+            System.out.println(last);
+            swapList.add(last);
+            pair.updateCalculations();
+            runnable.run();
+        } else if (swapListFuture.getLast() instanceof PairDissolve) {
+            PairDissolve last = (PairDissolve) swapListFuture.getLast();
+            Pair pair = last.getPair();
+            Participant participant1 = pair.getParticipant1();
+            Participant participant2 = pair.getParticipant2();
+
+            successors.add(participant1);
+            successors.add(participant2);
+
+            pairList.remove(pair);
+
+            swapListFuture.removeLast();
+            System.out.println(last);
+            swapList.add(last);
+            runnable.run();
         }
-
-
-        PairSwap last = swapListFuture.getLast();
-        Pair pair = last.getPair();
-        pair.removeParticipant(last.getSwappedParticipant());
-        pair.addParticipant(last.getNewParticipant());
-        pair.updateCalculations();
-        successors.add(last.getSwappedParticipant());
-        successors.remove(last.getNewParticipant());
-        swapListFuture.removeLast();
-        System.out.println(last);
-        swapList.add(last);
-        runnable.run();
     }
+
     /**
      * Clears the swapListFuture and swapList, removing all stored swap operations.
      * This method is used to reset the undo/redo functionality.
@@ -172,6 +202,24 @@ public class PairListFactory {
         pair.updateCalculations();
         swapList.add(new PairSwap(pair, participantInPair, participantInSuccessorList));
 
+    }
+
+    /**
+     * Dissolves a pair by removing it from the pairList and adding its participants to the successors list.
+     *
+     * @param pair The pair to be dissolved.
+     */
+    public void dissolvePair(Pair pair) {
+        if (pairList.contains(pair)) {
+            Participant participant1 = pair.getParticipant1();
+            Participant participant2 = pair.getParticipant2();
+
+            successors.add(participant1);
+            successors.add(participant2);
+
+            pairList.remove(pair);
+            swapList.add(new PairDissolve(pair, participant1, participant2));
+        }
     }
 
     /**
