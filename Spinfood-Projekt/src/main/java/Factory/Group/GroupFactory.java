@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 /**
  * This class is holding methods to generate a list of groups out of the list of pairs.
- *
  * @author David Krell
  */
 public class GroupFactory {
@@ -38,10 +37,9 @@ public class GroupFactory {
         Ring innerRing = new Ring(ringFactory.getInnerRing());
 
         makeAppetizerGroups(outerRing, Course.first);
-        System.out.println("1");
         makeAppetizerGroups(middleRing, Course.main);
-        System.out.println("2");
         makeAppetizerGroups(innerRing, Course.dessert);
+
         printAppetizerGroups(appetizerGroups);
         printAppetizerGroups(mainDishGroups);
         printAppetizerGroups(dessertGroups);
@@ -49,7 +47,6 @@ public class GroupFactory {
 
     /**
      * Makes groups for the appetizer. The pairs on the outerRing are the pair who are cooking the appetizer.
-     *
      * @param outerRing a Ring Record indicating the ring with which the groups should be generated.
      */
     private void makeAppetizerGroups(Ring outerRing, Course course) {
@@ -61,6 +58,10 @@ public class GroupFactory {
         Map<PairAttributes, List<Pair>> pairsByAttributes = possibleMatchingPairs
                 .stream()
                 .collect(Collectors.groupingBy(PairAttributes::new));
+
+        for (Map.Entry<?, ?> entry : pairsByAttributes.entrySet()) {
+            System.out.println(entry.getKey() + " : " + entry.getValue());
+        }
 
         for (Pair cookingPair : outerRingPairs) {
             FoodPreference foodPreferenceFromCookingPair = cookingPair.getFoodPreference();
@@ -76,6 +77,11 @@ public class GroupFactory {
             };
 
             if (groupMembers.size() != 2) {
+                for (Map.Entry<?, ?> entry : pairsByAttributes.entrySet()) {
+                    System.out.println(entry.getKey() + " : " + entry.getValue());
+                }
+                System.out.println(cookingPair.getFoodPreference());
+                System.out.println(groupMembers.size());
                 continue;
             }
 
@@ -94,15 +100,16 @@ public class GroupFactory {
                 case main -> mainDishGroups.add(group);
                 case dessert -> dessertGroups.add(group);
             }
+            //TODO: Wenn weniger Nachrücker gebildet werden sollen, dann kann man die Gruppen regroupen mit einer entsprechend anderen Reihenfolge von FoodPreferences
         }
     }
 
 
     /**
      * Will start the according algorithm to find two matching pairs for a given Pair. It's decided after gender which algorithm is chosen.
-     *
-     * @param cookingPair           the pair for which the two matching pairs should get found.
+     * @param cookingPair the pair for which the two matching pairs should get found.
      * @param possibleMatchingPairs all the pairs which are possible matching pairs organized in a map.
+     *
      * @return a List containing the best matching pairs.
      */
     private ArrayList<Pair> findPairsForCookingPair(Pair cookingPair,
@@ -177,7 +184,11 @@ public class GroupFactory {
         };
 
         for (PairAttributes attribute : attributes) {
-            pairLists.add(new ArrayList<>(possibleMatchingPairs.get(attribute)));
+            if (possibleMatchingPairs.get(attribute) != null) {
+                pairLists.add(new ArrayList<>(possibleMatchingPairs.get(attribute)));
+            } else {
+                pairLists.add(new ArrayList<>());
+            }
         }
 
         ArrayList<Pair> firstFemaleList = pairLists.get(0);

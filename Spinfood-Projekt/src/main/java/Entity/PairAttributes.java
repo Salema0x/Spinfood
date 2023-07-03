@@ -42,4 +42,8 @@ public class PairAttributes {
         return Objects.hash(foodPreference, gender);
     }
 
+    @Override
+    public String toString() {
+        return foodPreference + " " + gender;
+    }
 }
