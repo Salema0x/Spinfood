@@ -358,11 +358,22 @@ public class GroupFactory {
         System.out.format("+--------------+--------------------------------------+--------------------------------------+--------------------------------------+%n");
     }
 
+    /**
+     * Clears the swapListFuture and swapList, removing all stored group swap operations.
+     * This method is used to reset the undo/redo functionality for group swaps.
+     */
     public void clearRedoAndUndoList() {
         swapListFuture.clear();
         swapList.clear();
     }
 
+    /**
+     * Swaps pairs between a group and the successor list. Replaces a pair in the group with another pair from the successor list.
+     *
+     * @param group              The group in which the pairs should be swapped.
+     * @param pairInGroup        The pair currently in the group to be replaced.
+     * @param pairInSuccessorList The pair from the successor list to be placed in the group.
+     */
     public void swapPairs(Group group, Pair pairInGroup, Pair pairInSuccessorList) {
         // Checking if the group exists in one of the three group lists
         ArrayList<Group> targetGroupList = null;
@@ -408,6 +419,13 @@ public class GroupFactory {
         swapList.add(new GroupSwap(group, pairInGroup, pairInSuccessorList));
     }
 
+    /**
+     * Undoes the latest swap pair dialog operation for groups. Reverts the pairs in the group and successor list to their previous state.
+     * This method removes the latest group swap operation from the swapList and adds it to the swapListFuture for potential redo.
+     * After reverting the swap, the provided runnable is executed.
+     *
+     * @param runnable The runnable to be executed after undoing the group swap.
+     */
     public void undoLatestSwapPairDialog(Runnable runnable) {
         if (swapList.isEmpty()) {
             return;
@@ -426,6 +444,13 @@ public class GroupFactory {
         runnable.run();
     }
 
+    /**
+     * Redoes the latest swap pair dialog operation for groups. Reapplies the swap of pairs in the group and successor list.
+     * This method removes the latest group swap operation from the swapListFuture and adds it back to the swapList.
+     * After applying the swap, the provided runnable is executed.
+     *
+     * @param runnable The runnable to be executed after redoing the group swap.
+     */
     public void redoLatestSwapPairDialog(Runnable runnable) {
         if (swapListFuture.isEmpty()) {
             return;

@@ -136,7 +136,12 @@ public class MainWindow implements ActionListener {
         });
     }
 
-
+    /**
+     * Refreshes the content of the pair table with updated data from the pair list.
+     * Updates the table model with columns and rows representing the pairs and their information.
+     *
+     * @param table The JTable to be refreshed with the updated pair data.
+     */
     public void refreshPairTable(JTable table) {
         DefaultTableModel model = new DefaultTableModel();
         table.setModel(model);
@@ -167,8 +172,16 @@ public class MainWindow implements ActionListener {
         }
     }
 
-    private void displaySwapPairDialog(JFrame pairTableJFrame, Runnable refreshFunktion) {
-
+    /**
+     * Displays a dialog window for swapping pairs in the pair list.
+     * Allows the user to select a pair, a participant from the pair, and a replacement participant from the successor list.
+     * After selecting the values, the selected pair is swapped with the replacement participant.
+     * The provided refresh function is executed to update the display.
+     *
+     * @param pairTableJFrame  The JFrame of the pair table.
+     * @param refreshFunction  The runnable function to refresh the display after swapping pairs.
+     */
+    private void displaySwapPairDialog(JFrame pairTableJFrame, Runnable refreshFunction) {
         // Create the JFrame
         JFrame frame = new JFrame("Dropdown Popup");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -210,8 +223,6 @@ public class MainWindow implements ActionListener {
             System.out.println(oldPair.toString());
             assert participant != null;
             Participant oldParticipant = participant.equals("User 1") ? oldPair.getParticipant1() : oldPair.getParticipant2();
-            // 救命，我被迫在中国幸运饼干工厂编码。请帮助我”我只吃了 3 周的幸运饼干，但还是没有运气 FML！
-
 
             pairListFactory.swapParticipants(oldPair, oldParticipant, newParticipant);
             // Display the selected values in a message dialog
@@ -221,7 +232,7 @@ public class MainWindow implements ActionListener {
                     "\nErsetzt durch: " + newParticipant.getName();
             JOptionPane.showMessageDialog(frame, message);
             frame.dispose();
-            refreshFunktion.run();
+            refreshFunction.run();
             SwingUtilities.updateComponentTreeUI(pairTableJFrame);
         });
 
@@ -240,7 +251,6 @@ public class MainWindow implements ActionListener {
     /**
      * Displays the table of groups with their relevant information and the pairs not in groups.
      */
-
     private void displayGroupTable(boolean displaySwap) {
         GroupFactory GROUP_FACTORY = new GroupFactory(pairListFactory.pairList, PARTICIPANT_FACTORY.getPartyLocation());
         GROUP_FACTORY.startGroupAlgorithm();
@@ -316,8 +326,7 @@ public class MainWindow implements ActionListener {
     }
 
     //TODO
-    private void displaySwapGroupDialog(JFrame groupTableJFrame, Runnable refreshFunktion) {
-
+    private void displaySwapGroupDialog(JFrame groupTableJFrame, Runnable refreshFunction) {
         // Create the JFrame
         JFrame frame = new JFrame("Welcher Gang");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -77,7 +77,13 @@ public class PairListFactory {
         System.out.println(pairListObject.getCountPairs() + " " + pairListObject.getCountSuccessors() + " " + pairListObject.getPreferenceDeviation() + " " + pairListObject.getAgeDifference() + " " + pairListObject.getGenderDiversityScore());
     }
 
-
+    /**
+     * Undoes the latest swap pair dialog operation. Reverts the participants in the pair and successor list to their previous state.
+     * This method removes the latest swap operation from the swapList and adds it to the swapListFuture for potential redo.
+     * After reverting the swap, the calculations are updated and the provided runnable is executed.
+     *
+     * @param runnable The runnable to be executed after undoing the swap.
+     */
     public void undoLatestSwapPairDialog(Runnable runnable) {
         if (swapList.isEmpty()) {
             return;
@@ -96,7 +102,13 @@ public class PairListFactory {
         runnable.run();
     }
 
-
+    /**
+     * Redoes the latest swap pair dialog operation. Reapplies the swap of participants in the pair and successor list.
+     * This method removes the latest swap operation from the swapListFuture and adds it back to the swapList.
+     * After applying the swap, the calculations are updated and the provided runnable is executed.
+     *
+     * @param runnable The runnable to be executed after redoing the swap.
+     */
     public void redoLatestSwapPairDialog(Runnable runnable) {
         if (swapListFuture.isEmpty()) {
             return;
@@ -115,13 +127,23 @@ public class PairListFactory {
         swapList.add(last);
         runnable.run();
     }
-
+    /**
+     * Clears the swapListFuture and swapList, removing all stored swap operations.
+     * This method is used to reset the undo/redo functionality.
+     */
     public void clearRedoAndUndoList() {
         swapListFuture.clear();
         swapList.clear();
     }
 
-    //DAVID TO-DONE
+    /**
+     * Swaps the participants in a pair. Moves the specified participant from the pair to the successor list,
+     * and replaces them with another participant from the successor list.
+     *
+     * @param pair                       The pair in which the participants should be swapped.
+     * @param participantInPair          The participant currently in the pair to be replaced.
+     * @param participantInSuccessorList The participant from the successor list to be placed in the pair.
+     */
     public void swapParticipants(Pair pair, Participant participantInPair, Participant participantInSuccessorList) {
         // Checking if pair exists in pairList and participantInPair is in the pair
         if (!pairList.contains(pair) || !pair.containsParticipant(participantInPair)) {
