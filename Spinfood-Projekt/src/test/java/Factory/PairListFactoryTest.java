@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import Entity.Enum.FoodPreference;
 
 class PairListFactoryTest {
 
@@ -91,9 +92,9 @@ class PairListFactoryTest {
         participantList = participantFactory.getParticipantList();
         pairListFactory = new PairListFactory(new ArrayList<>(participantList), new ArrayList<>(participantFactory.getRegisteredPairs()), new ArrayList<>(criteria));
         Assertions.assertEquals(3, pairListFactory.pairList.size());
-        Assertions.assertTrue(pairListFactory.pairList.get(0).isEqualTo(new Pair(participantList.get(1), participantList.get(0))));
-        Assertions.assertTrue(pairListFactory.pairList.get(1).isEqualTo(new Pair(participantList.get(3), participantList.get(2))));
-        Assertions.assertTrue(pairListFactory.pairList.get(2).isEqualTo(new Pair(participantList.get(5), participantList.get(4))));
+        Assertions.assertTrue(pairListFactory.pairList.get(0).isEqualTo(new Pair(participantList.get(1), participantList.get(0), false)));
+        Assertions.assertTrue(pairListFactory.pairList.get(1).isEqualTo(new Pair(participantList.get(3), participantList.get(2), false)));
+        Assertions.assertTrue(pairListFactory.pairList.get(2).isEqualTo(new Pair(participantList.get(5), participantList.get(4) ,false)));
     }
 
     /**
@@ -168,7 +169,11 @@ class PairListFactoryTest {
         while (!generatedPairs.isEmpty()) {
             Pair p = generatedPairs.remove(0);
             double genderDiversityScore = p.getGenderDiversityScore();
-            System.out.println("GenderDiversityScore should be: " + expectedGenderDiversityScore[index] + " and is: " + genderDiversityScore);
+            System.out.println("Gender of " + p.getParticipant1().getName() + " = " + p.getParticipant1().getGender());
+            System.out.println("Gender of " + p.getParticipant2().getName() + " = " + p.getParticipant2().getGender());
+            System.out.println("Gender of Pair = " + p.getGender());
+            System.out.println("GenderDiversityScore of this Pair should be: " + expectedGenderDiversityScore[index] + " and is: " + genderDiversityScore);
+            System.out.println("---------------------------------------------------");
             Assertions.assertTrue(genderDiversityScore == expectedGenderDiversityScore[index]);
             index++;
         }
@@ -256,12 +261,12 @@ class PairListFactoryTest {
      * @param foodPreference2 the food preference of the second participant of the pair.
      * @return a boolean indicating if the pair has valid food preferences or not.
      */
-    private boolean checkFoodNoGo(String foodPreference1, String foodPreference2) {
-        if (foodPreference1.equals("vegan") || foodPreference1.equals("veggie")) {
-            return foodPreference2.equals("meat");
+    private boolean checkFoodNoGo(FoodPreference foodPreference1, FoodPreference foodPreference2) {
+        if (foodPreference1.equals(FoodPreference.vegan) || foodPreference1.equals(FoodPreference.veggie)) {
+            return foodPreference2.equals(FoodPreference.meat);
         }
-        if (foodPreference2.equals("vegan") || foodPreference2.equals("veggie")) {
-            return foodPreference1.equals("meat");
+        if (foodPreference2.equals(FoodPreference.vegan) || foodPreference2.equals(FoodPreference.veggie)) {
+            return foodPreference1.equals(FoodPreference.meat);
         }
         return false;
     }

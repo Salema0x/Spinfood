@@ -5,7 +5,11 @@ import Entity.Participant;
 import java.util.Comparator;
 import java.util.function.Function;
 
-public class ParticipantComparator  implements Comparator<Participant> {
+/**
+ * Class to implement the Comparator interface, which is used when sorting the list of Participants in the PairListFactory.
+ * @author David Krell
+ */
+public class ParticipantComparator implements Comparator<Participant> {
 
     private final Function<Participant, Integer> firstMethod;
     private final Function<Participant, Integer> secondMethod;

@@ -2,6 +2,7 @@ package Factory;
 
 import Entity.Pair;
 import Entity.Participant;
+import Entity.Enum.FoodPreference;
 
 import java.io.*;
 import java.util.*;
@@ -82,7 +83,7 @@ public class ParticipantFactory {
                         participant2.setHasPartner(true);
                         calculateWGCountPair(participant1, participant2);
                         PARTICIPANT_LIST.add(participant1);
-                        REGISTERED_PAIRS.add(new Pair(participant1, participant2));
+                        REGISTERED_PAIRS.add(new Pair(participant1, participant2, true));
                     } else {
                         Participant participant1 = new Participant(createSubArray(values), isSuccessor);
                         PARTICIPANT_LIST.add(participant1);
@@ -245,7 +246,7 @@ public class ParticipantFactory {
         while (!wgMembers.isEmpty()) {
             Participant member = wgMembers.get(0);
 
-            if (member.hasPartner() && wgMembers.contains(member.getPartner())) {
+            if (member.getHasPartner() && wgMembers.contains(member.getPartner())) {
                 sizeWGMembers++;
                 wgMembers.remove(member);
                 wgMembers.remove(member.getPartner());
@@ -275,7 +276,7 @@ public class ParticipantFactory {
         Participant participant2 = new Participant(createSubArray(values), isSuccessor);
 
         PARTICIPANT_LIST.add(participant2);
-        REGISTERED_PAIRS.add(new Pair(participant1, participant2));
+        REGISTERED_PAIRS.add(new Pair(participant1, participant2,true));
         return participant2;
     }
 
@@ -304,8 +305,8 @@ public class ParticipantFactory {
                 for (Participant participant : PARTICIPANT_LIST) {
                     String id = participant.getId();
                     String name = participant.getName();
-                    String foodPreference = participant.getFoodPreference();
-                    String sex = participant.getSex();
+                    FoodPreference foodPreference = participant.getFoodPreference();
+                    String gender = participant.getGender().toString();
                     String hasKitchen = participant.getHasKitchen();
                     String longitude = String.valueOf(participant.getKitchenLongitude());
                     String latitude = String.valueOf(participant.getKitchenLatitude());
@@ -314,7 +315,7 @@ public class ParticipantFactory {
                     byte age = participant.getAge();
                     byte kitchenStory = participant.getKitchenStory();
 
-                    System.out.format(leftAlignFormat, id, name, foodPreference, age, sex, hasKitchen, kitchenStory, longitude, latitude, isSuccessor);
+                    System.out.format(leftAlignFormat, id, name, foodPreference, age, gender, hasKitchen, kitchenStory, longitude, latitude, isSuccessor);
                 }
 
                 System.out.format("+--------------------------------------+----------------------+--------+-----+---------+----------+---------------+-------------------+---------------------+-----------+%n");

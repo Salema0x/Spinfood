@@ -1,10 +1,18 @@
 package Entity;
 
+import Entity.Enum.Gender;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import Entity.Enum.FoodPreference;
+
+@JsonPropertyOrder({"id", "name", "foodPreference", "age", "gender", "kitchen"})
 public class Participant {
     private final String id;
     private final String name;
-    private final String foodPreference;
-    private final String sex;
+    private final FoodPreference foodPreference;
+    private final Gender gender;
+    private final int genderNumber;
     private final String hasKitchen;
     private final byte age;
     private byte kitchenStory;
@@ -12,7 +20,6 @@ public class Participant {
     private double kitchenLongitude;
     private double kitchenLatitude;
     private int countWg = 1;
-    private int foodPreferenceNumber;
     private int sexNumber;
     private boolean isSuccessor;
     private Participant partner = null;
@@ -22,9 +29,35 @@ public class Participant {
     public Participant(String[] values, boolean isSuccessor) {
         this.id = values[1];
         this.name = values[2];
-        this.foodPreference = values[3];
+
+        //Initialize food preference
+
+        if(values[3].equals("meat")) {
+            foodPreference = FoodPreference.meat;
+        }
+        else if(values[3].equals("veggie")) {
+            foodPreference = FoodPreference.veggie;
+        }
+        else if(values[3].equals("vegan")) {
+            foodPreference = FoodPreference.vegan;
+        }
+        else {
+            foodPreference = FoodPreference.none;
+        }
+
         this.age = Byte.parseByte(values[4]);
-        this.sex = values[5];
+
+        //initialize Gender
+        if(values[5].equals("male")) {
+            gender = Gender.male;
+        } else if (values[5].equals("female")) {
+            gender = Gender.female;
+        }
+        else {
+            gender = Gender.other;
+        }
+        genderNumber = gender.asNumber();
+
         this.hasKitchen = values[6];
 
         //avoid index out of bound exception when no kitchen is given
@@ -43,13 +76,11 @@ public class Participant {
 
         this.isSuccessor = isSuccessor;
 
-        calculateFoodPreferenceNumber(foodPreference);
-
         calculateAgeRangeNumber(age);
 
-        calculateSexNumber(sex);
 
     }
+
 
     /**
      * initializes the kitchen Filed of the participant
@@ -140,20 +171,7 @@ public class Participant {
         }
     }
 
-    /**
-     * Generates a number according to the foodPreference of the participant.
-     *
-     * @param foodPreference A String representing the foodPreference of the participant.
-     */
-    private void calculateFoodPreferenceNumber(String foodPreference) {
-        if (foodPreference.equals("none") || foodPreference.equals("meat")) {
-            this.foodPreferenceNumber = 0;
-        } else if (foodPreference.equals("veggie")) {
-            this.foodPreferenceNumber = 1;
-        } else {
-            this.foodPreferenceNumber = 2;
-        }
-    }
+
 
     /**
      * Depending on the age every participant is getting assigned to an age range.
@@ -182,13 +200,6 @@ public class Participant {
         }
     }
 
-    private void calculateSexNumber(String sex) {
-        switch (sex) {
-            case "female" -> this.sexNumber = 0;
-            case "male", "other" -> this.sexNumber = 1;
-        }
-    }
-
     /**
      * Checks if two participants are the same.
      *
@@ -207,91 +218,97 @@ public class Participant {
         this.countWg++;
     }
 
+    //Getter
+    @JsonIgnore
     public String getHasKitchen() {
         return hasKitchen;
     }
 
-    public String getFoodPreference() {
-        return foodPreference;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getSex() {
-        return sex;
-    }
-
+    @JsonIgnore
     public int getCountWg() {
         return countWg;
     }
-
+    @JsonIgnore
     public int getFoodPreferenceNumber() {
-        return foodPreferenceNumber;
+        return foodPreference.asNumber();
     }
-
+    @JsonIgnore
     public double getKitchenLongitude() {
         return kitchenLongitude;
     }
-
+    @JsonIgnore
     public double getKitchenLatitude() {
         return kitchenLatitude;
     }
-
+    @JsonIgnore
     public byte getKitchenStory() {
         return kitchenStory;
     }
 
-    public byte getAge() {
-        return age;
-    }
-
+    @JsonIgnore
     public int getAgeRange() {
         return ageRange;
     }
 
-    public boolean isSuccessor() {
-        return isSuccessor;
-    }
-
-    public void setSuccessor(boolean successor) {
-        isSuccessor = successor;
-    }
-
+    @JsonIgnore
     public Participant getPartner() {
         return partner;
     }
 
-    public void setPartner(Participant partner) {
-        this.partner = partner;
+    @JsonIgnore
+    public boolean getHasPartner() {
+        return hasPartner;
+    }
+
+    @JsonIgnore
+    public int getGenderNumber() {
+        return genderNumber;
+    }
+    @JsonIgnore
+    public boolean getIsSuccessor() {
+        return isSuccessor;
+    }
+
+
+    //jsonGetter
+    @JsonGetter("id")
+    public String getId() {
+        return id;
+    }
+    @JsonGetter("name")
+    public String getName() {
+        return name;
+    }
+    @JsonGetter("foodPreference")
+    public FoodPreference getFoodPreference() {
+        return foodPreference;
+    }
+    @JsonGetter("age")
+    public byte getAge() {
+        return age;
+    }
+    @JsonGetter("gender")
+    public Gender getGender() {
+        return gender;
+    }
+    @JsonGetter("kitchen")
+    public Kitchen getKitchen() {
+        return kitchen;
+    }
+
+    //Setter
+    public void setCountWg(int countWg) {
+        this.countWg += countWg;
     }
 
     public void setHasPartner(boolean hasPartner) {
         this.hasPartner = hasPartner;
     }
-
-    public boolean hasPartner() {
-        return hasPartner;
+    public void setPartner(Participant partner) {
+        this.partner = partner;
     }
 
-    public void setCountWg(int countWg) {
-        this.countWg += countWg;
-    }
-
-    public int getSexNumber() {
-        return sexNumber;
-    }
-
-    public boolean getIsSuccessor() {
-        return isSuccessor;
-    }
-
-    public Kitchen getKitchen() {
-        return kitchen;
+    public void setSuccessor(boolean successor) {
+        isSuccessor = successor;
     }
 }

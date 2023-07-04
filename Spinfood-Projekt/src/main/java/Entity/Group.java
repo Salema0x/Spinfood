@@ -4,36 +4,40 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import Enum.FoodPreference;
+import Entity.Enum.*;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+@JsonPropertyOrder({"course", "foodType", "kitchen", "cookingPair", "secondPair", "thirdPair"})
 public class Group {
-    private final List<Pair> pairs;
+    private final ArrayList<Pair> pairs = new ArrayList<>();
     private final List<Participant> participants = new ArrayList<>();
     private Pair cookingPair;
-    private double genderDiversityScore;
-    private double ageDifference;
-    private double preferenceDeviation;
-
-    public FoodPreference getFoodPreference() {
-        return foodPreference;
-    }
-
-    public void setFoodPreference(FoodPreference foodPreference) {
-        this.foodPreference = foodPreference;
-    }
-
+    private final double genderDiversityScore;
+    private final double ageDifference;
+    private final double preferenceDeviation;
     private FoodPreference foodPreference;
+    private Course course;
 
-    public Group(Pair initialPair) {
-        this.pairs = new ArrayList<>();
-        pairs.add(initialPair);
-        this.cookingPair = initialPair; // Setzen des initialPair als Kochpaar
+
+
+    public Group(ArrayList<Pair> pairs, Course course) {
+        this.pairs.addAll(pairs);
+        this.cookingPair = pairs.get(2);
         this.ageDifference = calculateAverageScores(Pair::getAgeDifference);
         this.preferenceDeviation = calculateAverageScores(Pair::getPreferenceDeviation);
         this.genderDiversityScore = calculateGenderDiversityScore();
-        createParticipants();
+        this.course = course;
         calculateFoodPreference();
+        createParticipants();
+        setSeen();
     }
+
+
+
+
+
 
     /**
      * Extracts the participants from the pairs.
@@ -47,7 +51,6 @@ public class Group {
 
     /**
      * Calculates the average scores of the Group.
-     *
      * @param method the method the gather the data from the pairs of the group.
      * @return the average key identification of the list.
      */
@@ -67,7 +70,6 @@ public class Group {
 
     /**
      * Calculates the gender diversity score of the group.
-     *
      * @return a double representing the gender diversity score.
      */
     private double calculateGenderDiversityScore() {
@@ -84,13 +86,10 @@ public class Group {
         return 0;
     }
 
-    public List<Pair> getPairs() {
-        return pairs;
-    }
+
 
     /**
      * Checks if the group contains a specific participant.
-     *
      * @param participant The participant for which should be checked.
      * @return a boolean indicating if the specified participant is in the group or not.
      */
@@ -104,9 +103,34 @@ public class Group {
         return contains;
     }
 
+    //7.2.6
+    public boolean containsPair(Pair pair) {
+        return pairs.contains(pair);
+    }
+
+    //Pair and Participant manipulators
+
+    public void removePair(Pair pair) {
+        pairs.remove(pair);
+        participants.remove(pair.getParticipant1());
+        participants.remove(pair.getParticipant2());
+    }
+
+    public void addPair(Pair pair) {
+        pairs.add(pair);
+        participants.add(pair.getParticipant1());
+        participants.add(pair.getParticipant2());
+    }
+
+    public void addPairs(ArrayList<Pair> pairs) {
+        this.pairs.addAll(pairs);
+    }
+
+
+
+
     /**
      * Builds String of Pairs for printing
-     *
      * @return A string representing the Pairs of the group.
      */
     public String toString() {
@@ -117,20 +141,106 @@ public class Group {
         return result.toString();
     }
 
-    public boolean isPair() {
-        return participants.size() == 2;
+
+
+    /**
+     * Helper method to calculate the food preference of the group.
+     */
+    public void calculateFoodPreference() {
+        int sum = 0;
+        for (Pair pair : pairs) {
+            sum += pair.getFoodPreference().asNumber();
+        }
+        double median = (double) sum / pairs.size();
+
+        if (median < 1.5) {
+            this.foodPreference = FoodPreference.meat;
+        } else if (median >= 1.5 && median < 2.5) {
+            this.foodPreference = FoodPreference.veggie;
+        } else {
+            this.foodPreference = FoodPreference.vegan;
+        }
     }
 
+
+
+
+    // Getter
+
+    @JsonIgnore
+    public double getGenderDiversityScore() {
+        return genderDiversityScore;
+    }
+
+    @JsonIgnore
+    public double getPreferenceDeviation() {
+        return preferenceDeviation;
+    }
+
+    @JsonIgnore
+    public int getGroupSize() {
+        return pairs.size();
+    }
+
+    @JsonIgnore
+    public double getAgeDifference() {
+        return ageDifference;
+    }
+    @JsonIgnore
+    public ArrayList<Pair> getPairs() {
+        return pairs;
+    }
+
+    @JsonIgnore
+    public Pair getCookingPair() {
+        return this.cookingPair;
+    }
+
+    @JsonIgnore
     public List<Participant> getParticipants() {
         return participants;
     }
 
-    public void addParticipant(Participant participant) {
-        this.participants.add(participant);
+    //JsonGetter
+    @JsonGetter("course")
+    public Course getCourse() {
+        return course;
     }
 
-    public Pair getCookingPair() {
-        return this.cookingPair;
+    @JsonGetter("foodType")
+    public FoodPreference getFoodPreference() {
+        return foodPreference;
+    }
+
+    @JsonGetter("kitchen")
+    public Kitchen getKitchen() {
+        return cookingPair.getKitchen();
+    }
+
+    @JsonGetter("cookingPair")
+    public Pair getCookingPairJson() {
+        return cookingPair;
+    }
+
+    @JsonGetter("secondPair")
+    public Pair getSecondPair() {
+        if (pairs.size() > 1) {
+            return pairs.get(1);
+        }
+        return null;
+    }
+
+    @JsonGetter("thirdPair")
+    public Pair getThirdPair() {
+        if (pairs.size() > 2) {
+            return pairs.get(2);
+        }
+        return null;
+    }
+
+    //Setter
+    public void setFoodPreference(FoodPreference foodPreference) {
+        this.foodPreference = foodPreference;
     }
 
     public void setCookingPair(Pair pair) {
@@ -141,59 +251,18 @@ public class Group {
         }
     }
 
-    public boolean containsPair(Pair pair) {
-        return this.pairs.contains(pair);
-    }
+    public void setSeen() {
+        Pair p1 = pairs.get(0);
+        Pair p2 = pairs.get(1);
+        Pair p3 = pairs.get(2);
 
-    public double getGenderDiversityScore() {
-        return genderDiversityScore;
-    }
+        p1.getSeen().add(p2);
+        p1.getSeen().add(p3);
 
-    public double getPreferenceDeviation() {
-        return preferenceDeviation;
-    }
+        p2.getSeen().add(p1);
+        p2.getSeen().add(p3);
 
-    public double getAgeDifference() {
-        return ageDifference;
-    }
-
-
-    /**
-     * Helper method to calculate the food preference of the group.
-     */
-    public void calculateFoodPreference() {
-        int sum = 0;
-        for (Pair pair : pairs) {
-            sum += parseFoodPreference(pair.getFoodPreference());
-        }
-        double median = (double) sum / pairs.size();
-
-        if(median < 1.5) {
-            this.foodPreference = FoodPreference.MEAT;
-        } else if(median >= 1.5 && median < 2.5) {
-            this.foodPreference = FoodPreference.VEGGIE;
-        } else {
-            this.foodPreference = FoodPreference.VEGAN;
-        }
-    }
-    /**
-     * Helper method to parse the food preference of the group.
-     */
-    private int parseFoodPreference(String foodPreference) {
-        switch (foodPreference) {
-            case "MEAT":
-                return 1;
-            case "VEGETARIAN":
-                return 2;
-            case "VEGAN":
-                return 3;
-
-            default:
-                return 0;
-        }
-    }
-
-    public void addPair(Pair pair) {
-        this.pairs.add(pair);
+        p3.getSeen().add(p2);
+        p3.getSeen().add(p1);
     }
 }
