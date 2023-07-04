@@ -58,10 +58,9 @@ public class JacksonExport {
      * @param filePath path where the file should be written to
      */
     public void exportToPath(List<Group> groupList, List<Pair> registeredPairsList, List<Pair> successorPairsList, List<Participant> successorParticipantsList,String filePath) {
-        filePath = filePath;
+        this.filePath = filePath;
         root = new Root(groupList, registeredPairsList, successorPairsList, successorParticipantsList);
         jsonWriter();
-        System.out.println("Groups saved at given Path: " + filePath);
     }
 
 
@@ -83,7 +82,9 @@ public class JacksonExport {
      */
     private void jsonWriter() {
         try {
-            objectWriter.writeValue(new File(filePath), root);
+            File output = new File(filePath);
+            objectWriter.writeValue(output, root);
+            System.out.println("Json saved at: " + output.getAbsolutePath());
         } catch (IOException e) {
             e.printStackTrace();
         }
