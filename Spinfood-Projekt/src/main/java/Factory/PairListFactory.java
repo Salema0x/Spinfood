@@ -18,23 +18,34 @@ import java.util.stream.Stream;
 import static Entity.Enum.FoodPreference.*;
 
 public class PairListFactory {
+
+    //Lists
     public ArrayList<Pair> registeredPairs;
-    public ArrayList<Pair> pairList = new ArrayList<>();
-    private final ArrayList<Object> criteriaOrder;
     private final ArrayList<Participant> participantList;
+    public ArrayList<Pair> pairList = new ArrayList<>();
+
     private final ArrayList<ArrayList<Participant>> yesKitchenParticipants = new ArrayList<>();
     private final ArrayList<ArrayList<Participant>> maybeKitchenParticipants = new ArrayList<>();
     private final ArrayList<ArrayList<Participant>> noKitchenParticipants = new ArrayList<>();
-    private int sexFunctionIndex;
-    private Function<Participant, Integer> firstMethod;
-    private Function<Participant, Integer> secondMethod;
-    private Function<Participant, Integer> thirdMethod;
+
     private final ArrayList<Participant> removements = new ArrayList<>();
     private final ArrayList<Participant> upperRemovements = new ArrayList<>();
     private ArrayList<Participant> participantSuccessorList = new ArrayList<>();
     private final PairList pairListObject;
     private final LinkedList<Object> swapList = new LinkedList<>();
     private final LinkedList<Object> swapListFuture = new LinkedList<>();
+
+    private final ArrayList<Object> criteriaOrder;
+
+
+    //Index Numbers
+    private int sexFunctionIndex;
+
+    //Functions
+    private Function<Participant, Integer> firstMethod;
+    private Function<Participant, Integer> secondMethod;
+    private Function<Participant, Integer> thirdMethod;
+
 
     public PairListFactory(ArrayList<Participant> participantList, ArrayList<Pair> registeredPairs, ArrayList<Object> criteriaOrder) {
         this.participantList = participantList;
@@ -95,8 +106,8 @@ public class PairListFactory {
             Pair pair = last.getPair();
             pair.removeParticipant(last.getNewParticipant());
             pair.addParticipant(last.getSwappedParticipant());
-            successors.add(last.getNewParticipant());
-            successors.remove(last.getSwappedParticipant());
+            participantSuccessorList.add(last.getNewParticipant());
+            participantSuccessorList.remove(last.getSwappedParticipant());
 
             swapList.removeLast();
             System.out.println(last);
@@ -107,8 +118,8 @@ public class PairListFactory {
             PairDissolve last = (PairDissolve) swapList.getLast();
             Pair pair = new Pair(last.getDissolvedParticipant1(), last.getDissolvedParticipant2());;
             pairList.add(pair);
-            successors.remove(last.getDissolvedParticipant1());
-            successors.remove(last.getDissolvedParticipant2());
+            participantSuccessorList.remove(last.getDissolvedParticipant1());
+            participantSuccessorList.remove(last.getDissolvedParticipant2());
 
             swapList.removeLast();
             System.out.println(last);
@@ -134,8 +145,8 @@ public class PairListFactory {
             pair.removeParticipant(last.getSwappedParticipant());
             pair.addParticipant(last.getNewParticipant());
             pair.updateCalculations();
-            successors.add(last.getSwappedParticipant());
-            successors.remove(last.getNewParticipant());
+            participantSuccessorList.add(last.getSwappedParticipant());
+            participantSuccessorList.remove(last.getNewParticipant());
 
             swapListFuture.removeLast();
             System.out.println(last);
@@ -148,8 +159,8 @@ public class PairListFactory {
             Participant participant1 = pair.getParticipant1();
             Participant participant2 = pair.getParticipant2();
 
-            successors.add(participant1);
-            successors.add(participant2);
+            participantSuccessorList.add(participant1);
+            participantSuccessorList.add(participant2);
 
             pairList.remove(pair);
 
@@ -185,7 +196,7 @@ public class PairListFactory {
         }
 
         // Checking if participantInSuccessorList exists in participantSuccessorList
-        if (!successors.contains(participantInSuccessorList)) {
+        if (!participantSuccessorList.contains(participantInSuccessorList)) {
             System.out.println("The participant you are trying to swap in is not in the successor list.");
             return;
         }
@@ -198,10 +209,10 @@ public class PairListFactory {
         pair.addParticipant(participantInSuccessorList);
 
         // Remove the participantInSuccessorList from participantSuccessorList
-        successors.remove(participantInSuccessorList);
+        participantSuccessorList.remove(participantInSuccessorList);
 
         // Add participantInPair to participantSuccessorList
-        successors.add(participantInPair);
+        participantSuccessorList.add(participantInPair);
         pair.updateCalculations();
         swapList.add(new PairSwap(pair, participantInPair, participantInSuccessorList));
 
@@ -217,8 +228,8 @@ public class PairListFactory {
             Participant participant1 = pair.getParticipant1();
             Participant participant2 = pair.getParticipant2();
 
-            successors.add(participant1);
-            successors.add(participant2);
+            participantSuccessorList.add(participant1);
+            participantSuccessorList.add(participant2);
 
             pairList.remove(pair);
             swapList.add(new PairDissolve(pair, participant1, participant2));

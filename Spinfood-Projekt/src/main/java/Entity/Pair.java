@@ -12,17 +12,18 @@ import java.util.ArrayList;
 public class Pair implements Comparable<Pair> {
 
     //PairAttributes
-    private final Participant participant1;
-    private final Participant participant2;
+    private Participant participant1;
+    private Participant participant2;
     private final String id;
     private final boolean preMade;
     private Double age;
     private Gender gender;
     private FoodPreference foodPreference;
     private Kitchen kitchen;
-    private final Double[] coordinatesFirstRound = new Double[2];
-    private final Double[] coordinatesSecondRound = new Double[2];
-    private final Double[] coordinatesThirdRound = new Double[2];
+
+    private Double[] coordinatesFirstRound = new Double[2];
+    private Double[] coordinatesSecondRound = new Double[2];
+    private Double[] coordinatesThirdRound = new Double[2];
     private double distanceToPartyLocation;
     private ArrayList<Pair> seen = new ArrayList<>();
 
@@ -71,6 +72,7 @@ public class Pair implements Comparable<Pair> {
         initializeIndexNumbers();
     }
 
+    //Initializer
     /**
      * Method to initialize the Attributes of the Pair
      */
@@ -135,9 +137,32 @@ public class Pair implements Comparable<Pair> {
      */
     private void initializeIndexNumbers() {
         //sets the ageDifference IndexNumber
-        this.ageDifference = Math.abs(participant1.getAgeRange() - participant2.getAgeRange());
+        calculateAgeDifference();
 
         //sets the genderDiversityScore IndexNumber
+        calculateGenderDiversityScore();
+
+        //sets the preferenceDeviation IndexNumber
+        calculatePreferenceDeviation();
+
+    }
+
+
+    //IndexNumber Calculators
+
+    private void calculateAge() {
+        this.age = (double) (participant1.getAge() + participant2.getAge()) / 2;
+    }
+
+    private void calculateAgeDifference() {
+        this.ageDifference = Math.abs(participant1.getAgeRange() - participant2.getAgeRange());
+    }
+
+    private void calculatePreferenceDeviation() {
+        this.preferenceDeviation = Math.abs(participant1.getFoodPreferenceNumber() - participant2.getFoodPreferenceNumber());
+    }
+
+    private void calculateGenderDiversityScore() {
         switch(gender) {
             case mixed -> genderDiversityScore = 0.5;
             case female -> genderDiversityScore = 1;
@@ -145,10 +170,9 @@ public class Pair implements Comparable<Pair> {
             default -> genderDiversityScore = -1;
         }
 
-        //sets the preferenceDeviation IndexNumber
-        preferenceDeviation = Math.abs(participant1.getFoodPreferenceNumber() - participant2.getFoodPreferenceNumber());
-
     }
+
+
 
 
     //Utility-Methods

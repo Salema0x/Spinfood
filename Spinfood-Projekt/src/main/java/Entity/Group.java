@@ -20,14 +20,6 @@ public class Group {
     private FoodPreference foodPreference;
     private Course course;
 
-    public Group(Pair initialPair) {
-        pairs.add(initialPair);
-        this.cookingPair = initialPair; // Setzen des initialPair als Kochpaar
-        this.ageDifference = calculateAverageScores(Pair::getAgeDifference);
-        this.preferenceDeviation = calculateAverageScores(Pair::getPreferenceDeviation);
-        this.genderDiversityScore = calculateGenderDiversityScore();
-        createParticipants();
-    }
 
 
     public Group(ArrayList<Pair> pairs, Course course) {
@@ -44,10 +36,6 @@ public class Group {
 
 
 
-
-    public void addPairs(ArrayList<Pair> pairs) {
-        this.pairs.addAll(pairs);
-    }
 
 
 
@@ -120,6 +108,8 @@ public class Group {
         return pairs.contains(pair);
     }
 
+    //Pair and Participant manipulators
+
     public void removePair(Pair pair) {
         pairs.remove(pair);
         participants.remove(pair.getParticipant1());
@@ -131,6 +121,12 @@ public class Group {
         participants.add(pair.getParticipant1());
         participants.add(pair.getParticipant2());
     }
+
+    public void addPairs(ArrayList<Pair> pairs) {
+        this.pairs.addAll(pairs);
+    }
+
+
 
 
     /**
@@ -145,14 +141,6 @@ public class Group {
         return result.toString();
     }
 
-
-    /**
-     * Method to manually add a Participant to the group
-     * @param participant
-     */
-    public void addParticipant(Participant participant) {
-        this.participants.add(participant);
-    }
 
 
     /**
@@ -175,14 +163,6 @@ public class Group {
     }
 
 
-    /**
-     * Adds a pair to the group.
-     *
-     * @param pair
-     */
-    public void addPair(Pair pair) {
-        pairs.add(pair);
-    }
 
 
     // Getter
