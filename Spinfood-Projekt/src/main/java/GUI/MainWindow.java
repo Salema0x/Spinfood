@@ -1,6 +1,7 @@
 package GUI;
 
 import Data.GroupList;
+import Data.PairList;
 import Entity.Group;
 import Entity.Pair;
 import Entity.Participant;
@@ -28,7 +29,19 @@ import java.util.ResourceBundle;
  */
 public class MainWindow implements ActionListener {
 
+    private static MainWindow instance;
+
+    // Get the singleton instance
+    public static MainWindow getInstance() {
+        if (instance == null) {
+            instance = new MainWindow();
+        }
+        return instance;
+    }
+
+
     private static final int WIDTH = 600;
+
     private static final int HEIGHT = 500;
     private static final JFrame FRAME = new JFrame();
     private static final JMenuItem SHOW_PARTICIPANTS = new JMenuItem();
@@ -48,6 +61,9 @@ public class MainWindow implements ActionListener {
     private static boolean criteriaOrdered = false;
     private static boolean participantsAreRead = true;
     private static boolean groupsGenerated = false;
+
+    private PairList generatedPairList;
+
     private List<JFrame> openFrames = new ArrayList<>();
 
     private static ResourceBundle bundle;
@@ -60,6 +76,15 @@ public class MainWindow implements ActionListener {
     private static final JMenuItem SAVE_GROUPS = new JMenuItem();
     private static GroupFactory GROUP_FACTORY;
     private static JacksonExport JACKSON_EXPORT;
+    private static List<Participant> participantsWithoutPair = null;
+    private static PairList keyFigures = null;
+    private double preferenceDeviation;
+    private double ageDifference;
+    private double genderDiversityScore;
+    private int countPairs;
+    private int countSuccessors;
+
+
 
 
     /**
@@ -83,72 +108,81 @@ public class MainWindow implements ActionListener {
      */
     private void displayPairTable(boolean enableSwapButton) {
         JTable table = new JTable();
-        refreshPairTable(table);
-        JFrame frame = new JFrame("Pairs Table");
-        frame.setLayout(new BorderLayout());
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        JPanel southPanel = new JPanel();
+        southPanel.setLayout(new FlowLayout());
+        participantsWithoutPair = pairListFactory.getSuccessors();
+        keyFigures = new PairList(pairListFactory.pairList, participantsWithoutPair);
+        pairListFactory = new PairListFactory(
+                new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
+                new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
+                new ArrayList<>(CRITERIA_ORDER)
+        );
+
+        generatedPairList = pairListFactory.getPairListObject();
+
+        refreshPairTable(table, southPanel);
+
+        JFrame pairTableFrame = new JFrame("Pairs Table");
+        pairTableFrame.setLayout(new BorderLayout());
+        pairTableFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
         JScrollPane tableScrollPane = new JScrollPane(table);
-        frame.add(tableScrollPane, BorderLayout.CENTER);
-        JButton undoButton = new JButton("Undo swap");
+
+        pairTableFrame.add(tableScrollPane, BorderLayout.CENTER);
+
+        JButton undoButton = new JButton("Undo");
         Runnable runnable = () -> {
-            refreshPairTable(table);
+            refreshPairTable(table, southPanel);
         };
 
         undoButton.addActionListener(e -> {
-            pairListFactory.undoLatestSwapPairDialog(runnable);
+            pairListFactory.undoLatestPairDialog(runnable);
         });
 
         JButton swapButton = new JButton("Swap");
 
         swapButton.addActionListener(e -> {
-            displaySwapPairDialog(frame, runnable);
+            displaySwapPairDialog(pairTableFrame, runnable);
         });
 
-        JButton redoButton = new JButton("Redo swap");
+        JButton redoButton = new JButton("Redo");
 
         redoButton.addActionListener(e -> {
-            pairListFactory.redoLatestSwapPairDialog(runnable);
+            pairListFactory.redoLatestPairDialog(runnable);
         });
 
-        JPanel southPanel = new JPanel();
+        JButton dissolvePairButton = new JButton("Paar auflösen");
+
+        dissolvePairButton.addActionListener(e -> {
+            displayDissolvePairDialog(pairTableFrame, runnable);
+        });
+
         southPanel.setLayout(new FlowLayout());
 
-        JLabel labelPairs = new JLabel("Pairs Count: " + pairListFactory.getPairListObject().getCountPairs() + ",");
-        JLabel labelSuccessors = new JLabel("Successors count: " + pairListFactory.getPairListObject().getCountSuccessors() + ",");
-        JLabel labelAgeDifference = new JLabel("Age Difference: " + pairListFactory.getPairListObject().getAgeDifference());
-        JLabel labelDiversity = new JLabel("Gender Diversity Score: " + pairListFactory.getPairListObject().getGenderDiversityScore() + ",");
-
-        southPanel.add(labelPairs);
-        southPanel.add(labelSuccessors);
-        southPanel.add(labelAgeDifference);
-        southPanel.add(labelDiversity);
-
-
         if (enableSwapButton) {
-            JPanel buttonPanel = new JPanel();
-            buttonPanel.setLayout(new FlowLayout());
-            buttonPanel.add(undoButton);
-            buttonPanel.add(swapButton);
-            buttonPanel.add(redoButton);
-            frame.add(buttonPanel, BorderLayout.NORTH);
+            JPanel northButtonPanel = new JPanel();
+            northButtonPanel.setLayout(new FlowLayout());
+            northButtonPanel.add(undoButton);
+            northButtonPanel.add(swapButton);
+            northButtonPanel.add(redoButton);
+            northButtonPanel.add(dissolvePairButton);
+            pairTableFrame.add(northButtonPanel, BorderLayout.NORTH);
         }
-        frame.add(southPanel, BorderLayout.SOUTH);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-        frame.addWindowListener(new WindowAdapter() {
+
+        pairTableFrame.add(southPanel, BorderLayout.SOUTH);
+        pairTableFrame.pack();
+        pairTableFrame.setLocationRelativeTo(null);
+        pairTableFrame.setVisible(true);
+        pairTableFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent windowEvent) {
                 pairListFactory.clearRedoAndUndoList();
-                openFrames.remove(frame); // Remove the closed frame from the openFrames list
             }
         });
-
-        openFrames.add(frame);
     }
 
 
-    public void refreshPairTable(JTable table) {
+    public void refreshPairTable(JTable table, JPanel southPanel) {
         DefaultTableModel model = new DefaultTableModel();
         table.setModel(model);
         model.addColumn("Pair Nr.");
@@ -176,6 +210,17 @@ public class MainWindow implements ActionListener {
                     pairInt++
             });
         }
+        JLabel labelPairs = new JLabel("Pairs Count: " + keyFigures.getCountPairs() + ",");
+        JLabel labelSuccessors = new JLabel("Successors count: " + keyFigures.getCountSuccessors() + ",");
+        JLabel labelDiversity = new JLabel("Gender Diversity Score: " + keyFigures.getGenderDiversityScore() + ",");
+        JLabel labelAgeDifference = new JLabel("Age Difference: " + keyFigures.getAgeDifference());
+
+        southPanel.setLayout(new FlowLayout());
+        southPanel.removeAll();
+        southPanel.add(labelPairs);
+        southPanel.add(labelSuccessors);
+        southPanel.add(labelDiversity);
+        southPanel.add(labelAgeDifference);
     }
 
     private void displaySwapPairDialog(JFrame pairTableJFrame, Runnable refreshFunktion) {
@@ -246,6 +291,42 @@ public class MainWindow implements ActionListener {
         frame.add(button);
 
         // Set the frame size and make it visible
+        frame.setSize(300, 200);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+    private void displayDissolvePairDialog(JFrame pairTableJFrame, Runnable refreshFunction) {
+        JFrame frame = new JFrame("Dropdown Popup");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new FlowLayout());
+
+        JLabel label1 = new JLabel("Welches Paar");
+        String[] pairList = pairListFactory.pairList.stream().map(pair -> pair.getParticipant1().getName() + " + " + pair.getParticipant2().getName()).toList().toArray(new String[0]);
+        JComboBox<String> dropdown1 = new JComboBox<>(pairList);
+        JPanel panel = new JPanel();
+        panel.add(label1);
+        panel.add(dropdown1);
+
+        JButton button = new JButton("Submit");
+        button.addActionListener(e -> {
+            // Get the selected values from the dropdown lists
+            int selectedOldPair = dropdown1.getSelectedIndex();
+
+            Pair oldPair = pairListFactory.pairList.get(selectedOldPair);
+            System.out.println(oldPair.toString());
+
+            pairListFactory.dissolvePair(oldPair);
+            String message = "Aufgelöst\n" +
+                    "Paar: " + selectedOldPair;
+            JOptionPane.showMessageDialog(frame, message);
+            frame.dispose();
+            refreshFunction.run();
+            SwingUtilities.updateComponentTreeUI(pairTableJFrame);
+        });
+
+        frame.add(panel);
+        frame.add(button);
+
         frame.setSize(300, 200);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -599,4 +680,40 @@ public class MainWindow implements ActionListener {
     public static void setCriteriaOrdered(boolean isCriteriaOrdered) {
         criteriaOrdered = isCriteriaOrdered;
     }
+
+    public static boolean isCriteriaOrdered() {
+        return criteriaOrdered;
+    }
+    public void setPreferenceDeviation(double preferenceDeviation) {
+        this.preferenceDeviation = preferenceDeviation;
+    }
+
+    public void setAgeDifference(double ageDifference) {
+        this.ageDifference = ageDifference;
+    }
+
+    public void setGenderDiversityScore(double genderDiversityScore) {
+        this.genderDiversityScore = genderDiversityScore;
+    }
+
+    public void setCountPairs(int countPairs) {
+        this.countPairs = countPairs;
+    }
+
+    public void setCountSuccessors(int countSuccessors) {
+        this.countSuccessors = countSuccessors;
+    }
+
+    public static void setPairList(PairList pairList) {
+        double preferenceDeviation = pairList.getPreferenceDeviation();
+        double ageDifference = pairList.getAgeDifference();
+        double genderDiversity = pairList.getGenderDiversityScore();
+        int countPairs = pairList.getCountPairs();
+        int countSuccessors = pairList.getCountSuccessors();
+
+
+        SHOW_TEXT.setText("Pair List Generated: " + pairList.toString());
+    }
+
+
 }
