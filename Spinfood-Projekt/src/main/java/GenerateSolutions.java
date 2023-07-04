@@ -14,7 +14,7 @@ public class GenerateSolutions {
             "solutionForCriteriaOrder95876.json",
             "solutionForCriteriaOrder76589.json",
     };
-    private static String filePath = "SP23_Gruppe01_Klitschd_Krell_Salema_Scheil/Loesungen/";
+    private static String filePath = "Loesungen/";
 
     private enum CriteriaOrder {
         CRITERIA_FOOD_AGE_SEX,
@@ -78,7 +78,7 @@ public class GenerateSolutions {
         for (CriteriaOrder criteriaOrder : CriteriaOrder.values()) {
             ArrayList<Object> criteriaOrderAsList = criteriaOrder.toList();
             ParticipantFactory participantFactory = new ParticipantFactory(100);
-            participantFactory.readCSV(new File("src/main/resources/teilnehmerliste.csv"));
+            participantFactory.readCSV(new File("Spinfood-Projekt/src/main/resources/teilnehmerliste.csv"));
             PairListFactory pairListFactory = new PairListFactory(new ArrayList<>(participantFactory.getParticipantList()), new ArrayList<>(participantFactory.getRegisteredPairs()), criteriaOrderAsList);
             GroupFactory groupFactory = new GroupFactory(new ArrayList<>(pairListFactory.getPairList()), new Double[]{8.6746166676233, 50.5909317660173});
             groupFactory.startGroupAlgorithm();
