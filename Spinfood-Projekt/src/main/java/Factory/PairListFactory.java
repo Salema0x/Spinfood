@@ -211,6 +211,7 @@ public class PairListFactory {
             successors.add(participant1);
             successors.add(participant2);
 
+
             pairList.remove(pair);
             undoRedoList.add(new PairDissolve(pair, participant1, participant2));
         }

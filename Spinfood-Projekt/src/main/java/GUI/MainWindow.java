@@ -9,15 +9,12 @@ import Factory.Group.GroupFactory;
 import Factory.PairListFactory;
 import Factory.ParticipantFactory;
 import Json.JacksonExport;
-
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,18 +25,6 @@ import java.util.ResourceBundle;
  * The main window of the application.
  */
 public class MainWindow implements ActionListener {
-
-    private static MainWindow instance;
-
-    // Get the singleton instance
-    public static MainWindow getInstance() {
-        if (instance == null) {
-            instance = new MainWindow();
-        }
-        return instance;
-    }
-
-
     private static final int WIDTH = 600;
 
     private static final int HEIGHT = 500;
@@ -64,8 +49,6 @@ public class MainWindow implements ActionListener {
 
     private PairList generatedPairList;
 
-    private List<JFrame> openFrames = new ArrayList<>();
-
     private static ResourceBundle bundle;
 
     private static final JMenuItem readPartyLocationItem = new JMenuItem();
@@ -77,15 +60,6 @@ public class MainWindow implements ActionListener {
     private static GroupFactory GROUP_FACTORY;
     private static JacksonExport JACKSON_EXPORT;
     private static List<Participant> participantsWithoutPair = null;
-    private static PairList keyFigures = null;
-    private double preferenceDeviation;
-    private double ageDifference;
-    private double genderDiversityScore;
-    private int countPairs;
-    private int countSuccessors;
-
-
-
 
     /**
      * Displays the main window of the application.
@@ -102,16 +76,14 @@ public class MainWindow implements ActionListener {
         FRAME.setLocationRelativeTo(null);
     }
 
-
     /**
      * Displays the table of pairs with their relevant information.
      */
-    private void displayPairTable(boolean enableSwapButton) {
+    private void displayPairTable() {
         JTable table = new JTable();
         JPanel southPanel = new JPanel();
         southPanel.setLayout(new FlowLayout());
         participantsWithoutPair = pairListFactory.getSuccessors();
-        keyFigures = new PairList(pairListFactory.pairList, participantsWithoutPair);
         pairListFactory = new PairListFactory(
                 new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
                 new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
@@ -121,69 +93,19 @@ public class MainWindow implements ActionListener {
         generatedPairList = pairListFactory.getPairListObject();
 
         refreshPairTable(table, southPanel);
+        displayPairAndParticipantTables();
 
-        JFrame pairTableFrame = new JFrame("Pairs Table");
-        pairTableFrame.setLayout(new BorderLayout());
-        pairTableFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        JScrollPane tableScrollPane = new JScrollPane(table);
-
-        pairTableFrame.add(tableScrollPane, BorderLayout.CENTER);
-
-        JButton undoButton = new JButton("Undo");
-        Runnable runnable = () -> {
-            refreshPairTable(table, southPanel);
-        };
-
-        undoButton.addActionListener(e -> {
-            pairListFactory.undoLatestPairDialog(runnable);
-        });
-
-        JButton swapButton = new JButton("Swap");
-
-        swapButton.addActionListener(e -> {
-            displaySwapPairDialog(pairTableFrame, runnable);
-        });
-
-        JButton redoButton = new JButton("Redo");
-
-        redoButton.addActionListener(e -> {
-            pairListFactory.redoLatestPairDialog(runnable);
-        });
-
-        JButton dissolvePairButton = new JButton("Paar auflösen");
-
-        dissolvePairButton.addActionListener(e -> {
-            displayDissolvePairDialog(pairTableFrame, runnable);
-        });
-
-        southPanel.setLayout(new FlowLayout());
-
-        if (enableSwapButton) {
-            JPanel northButtonPanel = new JPanel();
-            northButtonPanel.setLayout(new FlowLayout());
-            northButtonPanel.add(undoButton);
-            northButtonPanel.add(swapButton);
-            northButtonPanel.add(redoButton);
-            northButtonPanel.add(dissolvePairButton);
-            pairTableFrame.add(northButtonPanel, BorderLayout.NORTH);
-        }
-
-        pairTableFrame.add(southPanel, BorderLayout.SOUTH);
-        pairTableFrame.pack();
-        pairTableFrame.setLocationRelativeTo(null);
-        pairTableFrame.setVisible(true);
-        pairTableFrame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent windowEvent) {
-                pairListFactory.clearRedoAndUndoList();
-            }
-        });
     }
 
-
+        /**
+         * Refreshes the pair table based on the current pair list.
+         *
+         * @param table      the JTable to display the pair information
+         * @param southPanel the JPanel to display additional information
+         */
     public void refreshPairTable(JTable table, JPanel southPanel) {
         DefaultTableModel model = new DefaultTableModel();
+
         table.setModel(model);
         model.addColumn("Pair Nr.");
         model.addColumn("Participant 1");
@@ -194,8 +116,7 @@ public class MainWindow implements ActionListener {
         model.addColumn("Gender Diversity Score");
         model.addColumn("Preference Deviation");
 
-        int pairInt = 0;
-
+        int pairInt = 1;
 
         for (Pair pair : pairListFactory.pairList) {
             model.addRow(new Object[]{
@@ -206,10 +127,13 @@ public class MainWindow implements ActionListener {
                     pair.getParticipant2().getId(),
                     pair.getFoodPreference(),
                     pair.getGenderDiversityScore(),
-                    pair.getPreferenceDeviation(),
-                    pairInt++
+                    pair.getPreferenceDeviation()
             });
+            pairInt++;
         }
+
+        PairList keyFigures = new PairList(pairListFactory.pairList,pairListFactory.getSuccessors());
+
         JLabel labelPairs = new JLabel("Pairs Count: " + keyFigures.getCountPairs() + ",");
         JLabel labelSuccessors = new JLabel("Successors count: " + keyFigures.getCountSuccessors() + ",");
         JLabel labelDiversity = new JLabel("Gender Diversity Score: " + keyFigures.getGenderDiversityScore() + ",");
@@ -223,7 +147,85 @@ public class MainWindow implements ActionListener {
         southPanel.add(labelAgeDifference);
     }
 
-    private void displaySwapPairDialog(JFrame pairTableJFrame, Runnable refreshFunktion) {
+    /**
+     * Displays the pair table and the table of participants without pairs in a separate JFrame.
+     */
+    public void displayPairAndParticipantTables() {
+        JTable pairTable = new JTable();
+        JPanel southPanel = new JPanel();
+
+        refreshPairTable(pairTable, southPanel);
+
+        DefaultTableModel pairsTableModel = new DefaultTableModel();
+        pairsTableModel.addColumn("Participant ID");
+        pairsTableModel.addColumn("Participant Name");
+
+        JTable pairsTable = new JTable(pairsTableModel);
+
+        ArrayList<Participant> participantsWithoutPairs = getPairsWithoutGroups();
+
+        for (Participant participant : participantsWithoutPairs) {
+            pairsTableModel.addRow(new Object[]{
+                    participant.getId(),
+                    participant.getName(),
+            });
+        }
+
+        JScrollPane pairScrollPane = new JScrollPane(pairTable);
+        JScrollPane pairsScrollPane = new JScrollPane(pairsTable);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, pairScrollPane, pairsScrollPane);
+        splitPane.setDividerLocation(0.5);
+
+        JFrame mainFrame = new JFrame("Pair and Participant Tables");
+        mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        mainFrame.setLayout(new BorderLayout());
+        mainFrame.add(splitPane, BorderLayout.CENTER);
+        mainFrame.add(southPanel, BorderLayout.SOUTH);
+
+        JButton undoButton = new JButton("Undo");
+        Runnable runnable = () -> {
+            refreshPairTable(pairTable, southPanel);
+        };
+        undoButton.addActionListener(e -> {
+            pairListFactory.undoLatestPairDialog(runnable);
+        });
+
+        JButton swapButton = new JButton("Swap");
+        swapButton.addActionListener(e -> {
+            displaySwapPairDialog(mainFrame, runnable);
+        });
+        JButton redoButton = new JButton("Redo");
+        redoButton.addActionListener(e -> {
+            pairListFactory.redoLatestPairDialog(runnable);
+        });
+        JButton dissolvePairButton = new JButton("Paar auflösen");
+
+        dissolvePairButton.addActionListener(e -> {
+            displayDissolvePairDialog(mainFrame, runnable);
+        });
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout());
+        buttonPanel.add(undoButton);
+        buttonPanel.add(swapButton);
+        buttonPanel.add(redoButton);
+        buttonPanel.add(dissolvePairButton);
+
+        mainFrame.add(buttonPanel, BorderLayout.NORTH);
+
+        mainFrame.pack();
+        mainFrame.setLocationRelativeTo(null);
+        mainFrame.setVisible(true);
+    }
+
+    /**
+     * Displays a dialog to swap participants within a pair.
+     *
+     * @param pairTableJFrame  the JFrame containing the pair table
+     * @param refreshFunction the function to refresh the pair table
+     */
+    private void displaySwapPairDialog(JFrame pairTableJFrame, Runnable refreshFunction) {
         JDialog dialog = new JDialog(pairTableJFrame, "Swap Pair", Dialog.ModalityType.APPLICATION_MODAL);
         dialog.setLayout(new FlowLayout());
 
@@ -233,8 +235,8 @@ public class MainWindow implements ActionListener {
         frame.setLayout(new FlowLayout());
 
         // Create the first dropdown list
-        JLabel label1 = new JLabel("Welches paar");
-        String[] pairList = pairListFactory.pairList.stream().map(pair -> pair.getParticipant1().getName() + " + " + pair.getParticipant2().getName()).toList().toArray(new String[0]);
+        JLabel label1 = new JLabel("Welches Paar");
+        String[] pairList = pairListFactory.pairList.stream().map(pair -> pair.getParticipant1().getName() + " + " + pair.getParticipant2().getName()).toArray(String[]::new);
         JComboBox<String> dropdown1 = new JComboBox<>(pairList);
         JPanel panel1 = new JPanel();
         panel1.add(label1);
@@ -248,9 +250,9 @@ public class MainWindow implements ActionListener {
         panel2.add(dropdown2);
 
         // Create the third dropdown list
-        String[] succPairList = pairListFactory.getSuccessors().stream().map(Participant::getName).toList().toArray(new String[0]);
+        String[] participantList = pairListFactory.getSuccessors().stream().map(Participant::getName).toArray(String[]::new);
         JLabel label3 = new JLabel("Ersetzen durch");
-        JComboBox<String> dropdown3 = new JComboBox<>(succPairList);
+        JComboBox<String> dropdown3 = new JComboBox<>(participantList);
         JPanel panel3 = new JPanel();
         panel3.add(label3);
         panel3.add(dropdown3);
@@ -260,28 +262,29 @@ public class MainWindow implements ActionListener {
         button.addActionListener(e -> {
             // Get the selected values from the dropdown lists
             int selectedOldPair = dropdown1.getSelectedIndex();
-            String participant = (String) dropdown2.getSelectedItem();
-            int indexNewParticipant = dropdown3.getSelectedIndex();
+            String selectedParticipant = (String) dropdown2.getSelectedItem();
+            int selectedNewParticipant = dropdown3.getSelectedIndex();
 
             Pair oldPair = pairListFactory.pairList.get(selectedOldPair);
-            Participant newParticipant = pairListFactory.getSuccessors().get(indexNewParticipant);
-            System.out.println(oldPair.toString());
-            assert participant != null;
-            Participant oldParticipant = participant.equals("User 1") ? oldPair.getParticipant1() : oldPair.getParticipant2();
-
+            Participant oldParticipant = selectedParticipant.equals("User 1") ? oldPair.getParticipant1() : oldPair.getParticipant2();
+            Participant newParticipant = pairListFactory.getSuccessors().get(selectedNewParticipant);
 
             pairListFactory.swapParticipants(oldPair, oldParticipant, newParticipant);
+
+            // Update the participant list in the dropdown
+            participantList[selectedNewParticipant] = newParticipant.getName();
+            dropdown3.setModel(new DefaultComboBoxModel<>(participantList));
+
             // Display the selected values in a message dialog
             String message = "Geändert\n" +
                     "Alte Paarkombination: " + selectedOldPair +
-                    "\nPaarmit glied " + oldParticipant.getName() +
+                    "\nPaar mit Glied " + oldParticipant.getName() +
                     "\nErsetzt durch: " + newParticipant.getName();
             JOptionPane.showMessageDialog(frame, message);
 
             frame.dispose();
-            refreshFunktion.run();
+            refreshFunction.run();
             SwingUtilities.updateComponentTreeUI(pairTableJFrame);
-
         });
 
         // Add the components to the frame
@@ -295,6 +298,13 @@ public class MainWindow implements ActionListener {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
+
+    /**
+     * Displays a dialog to dissolve a pair and create new pairs with the dissolved participants.
+     *
+     * @param pairTableJFrame  the JFrame containing the pair table
+     * @param refreshFunction the function to refresh the pair table
+     */
     private void displayDissolvePairDialog(JFrame pairTableJFrame, Runnable refreshFunction) {
         JFrame frame = new JFrame("Dropdown Popup");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -406,13 +416,12 @@ public class MainWindow implements ActionListener {
             groupNr++;
         }
 
+        // List for Start Group Algorithm
         DefaultTableModel pairsTableModel = new DefaultTableModel();
         JTable pairsTable = new JTable(pairsTableModel);
         pairsTableModel.addColumn("Pair ID");
         pairsTableModel.addColumn("Pair Names ");
-
-
-        ArrayList<Participant> pairsWithoutGroups = pairListFactory.getSuccessors();
+        ArrayList<Participant> pairsWithoutGroups = getPairsWithoutGroups();
 
         for (Participant participant : pairsWithoutGroups) {
             pairsTableModel.addRow(new Object[]{
@@ -435,12 +444,12 @@ public class MainWindow implements ActionListener {
         JPanel southPanel = new JPanel();
         southPanel.setLayout(new FlowLayout());
         // Combine all the groups into a single list
-        List<Group> allGroups = new ArrayList<>();
+        ArrayList<Group> allGroups = new ArrayList<>();
         allGroups.addAll(appetizerGroups);
         allGroups.addAll(mainDishGroups);
         allGroups.addAll(dessertGroups);
 
-        GroupList groupList = new GroupList((ArrayList<Group>) allGroups, pairListFactory.getSuccessors());
+        GroupList groupList = new GroupList(allGroups, pairListFactory.getSuccessors());
 
         int totalGroupCount = allGroups.size();
         int totalSuccessorCount = groupList.getSuccessorCount();
@@ -624,14 +633,14 @@ public class MainWindow implements ActionListener {
                     new ArrayList<>(CRITERIA_ORDER));
             pairsGenerated = true;
             updateJMenu();
-            displayPairTable(false);
+            displayPairTable();
         } else if (bundle.getString("startGroups").equals(command)) {
             displayGroupTable();
             groupsGenerated= true;
 
         }
         else if (bundle.getString("resortPairs").equals(command)) {
-            displayPairTable(true);
+            displayPairTable();
         }else if (bundle.getString("saveGroups").equals(command)) {
             JACKSON_EXPORT = new JacksonExport();
             JACKSON_EXPORT.export(GROUP_FACTORY.getAppetizerGroups(), GROUP_FACTORY.getPairList(), GROUP_FACTORY.getSuccessorPairs(), PARTICIPANT_FACTORY.getParticipantList());
@@ -679,40 +688,8 @@ public class MainWindow implements ActionListener {
 
     public static void setCriteriaOrdered(boolean isCriteriaOrdered) {
         criteriaOrdered = isCriteriaOrdered;
-    }
-
-    public static boolean isCriteriaOrdered() {
-        return criteriaOrdered;
-    }
-    public void setPreferenceDeviation(double preferenceDeviation) {
-        this.preferenceDeviation = preferenceDeviation;
-    }
-
-    public void setAgeDifference(double ageDifference) {
-        this.ageDifference = ageDifference;
-    }
-
-    public void setGenderDiversityScore(double genderDiversityScore) {
-        this.genderDiversityScore = genderDiversityScore;
-    }
-
-    public void setCountPairs(int countPairs) {
-        this.countPairs = countPairs;
-    }
-
-    public void setCountSuccessors(int countSuccessors) {
-        this.countSuccessors = countSuccessors;
-    }
-
-    public static void setPairList(PairList pairList) {
-        double preferenceDeviation = pairList.getPreferenceDeviation();
-        double ageDifference = pairList.getAgeDifference();
-        double genderDiversity = pairList.getGenderDiversityScore();
-        int countPairs = pairList.getCountPairs();
-        int countSuccessors = pairList.getCountSuccessors();
-
-
-        SHOW_TEXT.setText("Pair List Generated: " + pairList.toString());
+    }   private ArrayList<Participant> getPairsWithoutGroups() {
+    return pairListFactory.getSuccessors();
     }
 
 

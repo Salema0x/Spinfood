@@ -94,10 +94,14 @@ public class CriteriaArranger extends JPanel {
     private void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("confirm")) {
             list.setDragEnabled(false);
-            List<Object> CRITERIA_ORDER = Arrays.asList(LIST_MODEL.toArray());
-            MainWindow.setCriteriaOrder(CRITERIA_ORDER);
+            List<Object> criteriaOrder = Arrays.asList(LIST_MODEL.toArray());
+            MainWindow.setCriteriaOrder(criteriaOrder);
             MainWindow.setCriteriaOrdered(true);
             MainWindow.updateJMenu();
+
+            // Generate PairListFactory based on selected criteria
+            PairListFactory pairListFactory = generatePairListFactory(criteriaOrder);
+
 
         }
         else if (e.getActionCommand().equals("compare")) {
@@ -156,7 +160,52 @@ public class CriteriaArranger extends JPanel {
         JOptionPane.showMessageDialog(FRAME, message);
     }
 }
+
+    /**
+     * Generates a PairListFactory based on the selected criteria order.
+     *
+     * @param criteriaOrder the order of selected criteria
+     * @return the PairListFactory instance
+     */
+    private PairListFactory generatePairListFactory(List<Object> criteriaOrder) {
+        // Determine the selected criteria and create PairListFactory accordingly
+        if (criteriaOrder.contains("Essensvorlieben")) {
+            return new PairListFactory(
+                    new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
+                    new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
+                    new ArrayList<>(Arrays.asList("Essensvorlieben"))
+            );
+        } else if (criteriaOrder.contains("Altersdifferenz")) {
+            return new PairListFactory(
+                    new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
+                    new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
+                    new ArrayList<>(Arrays.asList("Altersdifferenz"))
+            );
+        } else if (criteriaOrder.contains("Geschlechterdiversität")) {
+            return new PairListFactory(
+                    new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
+                    new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
+                    new ArrayList<>(Arrays.asList("Geschlechterdiversität"))
+            );
+        } else if (criteriaOrder.contains("Weglänge")) {
+            return new PairListFactory(
+                    new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
+                    new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
+                    new ArrayList<>(Arrays.asList("Weglänge"))
+            );
+        } else if (criteriaOrder.contains("Minimale Nachrücker")) {
+            return new PairListFactory(
+                    new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
+                    new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
+                    new ArrayList<>(Arrays.asList("Minimale Nachrücker"))
+            );
+        } else {
+            return null;
+        }
     }
+
+
+}
 
 
 
