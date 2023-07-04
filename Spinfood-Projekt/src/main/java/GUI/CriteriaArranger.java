@@ -62,19 +62,29 @@ public class CriteriaArranger extends JPanel {
         confirmButton.setActionCommand("confirm");
         confirmButton.addActionListener(this::actionPerformed);
 
+        JButton compareButton = new JButton("Vergleich");
+        compareButton.setMnemonic(KeyEvent.VK_V);
+        compareButton.setActionCommand("compare");
+        compareButton.addActionListener(this::actionPerformed);
+
         JButton explanationButton = new JButton("Erklärung Kriterien");
-        explanationButton.setMnemonic(KeyEvent.VK_D);
+        explanationButton.setMnemonic(KeyEvent.VK_E);
         explanationButton.setActionCommand("explanation");
         explanationButton.addActionListener(this::actionPerformed);
 
-        panel.add(confirmButton, BorderLayout.SOUTH);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(confirmButton);
+        buttonPanel.add(compareButton);
+        buttonPanel.add(explanationButton);
+
+        panel.add(buttonPanel, BorderLayout.SOUTH);
         panel.add(list, BorderLayout.CENTER);
-        panel.add(explanationButton, BorderLayout.NORTH);
 
         panel.setBorder(BorderFactory.createLineBorder(Color.white));
 
         return panel;
     }
+
 
     /**
      * Specifies what should happen if ActionEvents occur.
@@ -89,69 +99,64 @@ public class CriteriaArranger extends JPanel {
             MainWindow.setCriteriaOrdered(true);
             MainWindow.updateJMenu();
 
-            // Generate pair lists for the two different criteria
-            PairListFactory pairListFactory1 = new PairListFactory(
-                    new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
-                    new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
-                    new ArrayList<>(CRITERIA_ORDER)
-            );
-
+        }
+        else if (e.getActionCommand().equals("compare")) {
+            List<Object> CRITERIA_ORDER = Arrays.asList(LIST_MODEL.toArray());
             List<Object> criteriaOrder2 = new ArrayList<>(CRITERIA_ORDER);
             criteriaOrder2.remove("Essensvorlieben");
             criteriaOrder2.add("Essensvorlieben");
-
-            PairListFactory pairListFactory2 = new PairListFactory(
+            PairListFactory pairListFactory1 = new PairListFactory(
                     new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
                     new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
-                    (ArrayList<Object>) criteriaOrder2
-            );
+                    new ArrayList<>(CRITERIA_ORDER));
 
-            PairList pairList1 = pairListFactory1.getPairListObject();
-            PairList pairList2 = pairListFactory2.getPairListObject();
+        PairListFactory pairListFactory2 = new PairListFactory(
+                new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
+                new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
+                (ArrayList<Object>) criteriaOrder2
+        );
 
-            double preferenceDeviation1 = pairList1.getPreferenceDeviation();
-            double preferenceDeviation2 = pairList2.getPreferenceDeviation();
-            double ageDifference1 = pairList1.getAgeDifference();
-            double ageDifference2 = pairList2.getAgeDifference();
-            double genderDiversity1 = pairList1.getGenderDiversityScore();
-            double genderDiversity2 = pairList2.getGenderDiversityScore();
-            int countPairs1 = pairList1.getCountPairs();
-            int countPairs2 = pairList2.getCountPairs();
-            int countSuccessors1 = pairList1.getCountSuccessors();
-            int countSuccessors2 = pairList2.getCountSuccessors();
+        PairList pairList1 = pairListFactory1.getPairListObject();
+        PairList pairList2 = pairListFactory2.getPairListObject();
 
-            // Calculate the maximum values
-            double maxPreferenceDeviation = Math.max(preferenceDeviation1, preferenceDeviation2);
-            double maxAgeDifference = Math.max(ageDifference1, ageDifference2);
-            double maxGenderDiversity = Math.max(genderDiversity1, genderDiversity2);
-            int maxCountPairs = Math.max(countPairs1, countPairs2);
-            int maxCountSuccessors = Math.max(countSuccessors1, countSuccessors2);
+        double preferenceDeviation1 = pairList1.getPreferenceDeviation();
+        double preferenceDeviation2 = pairList2.getPreferenceDeviation();
+        double ageDifference1 = pairList1.getAgeDifference();
+        double ageDifference2 = pairList2.getAgeDifference();
+        double genderDiversity1 = pairList1.getGenderDiversityScore();
+        double genderDiversity2 = pairList2.getGenderDiversityScore();
+        int countPairs1 = pairList1.getCountPairs();
+        int countPairs2 = pairList2.getCountPairs();
+        int countSuccessors1 = pairList1.getCountSuccessors();
+        int countSuccessors2 = pairList2.getCountSuccessors();
 
-            String message = "Pair List 1:\nPreference Deviation: " + preferenceDeviation1 +
-                    "\nAge Difference: " + ageDifference1 +
-                    "\nGender Diversity: " + genderDiversity1 +
-                    "\nCount Pairs: " + countPairs1 +
-                    "\nCount Successors: " + countSuccessors1 +
-                    "\n\nPair List 2:\nPreference Deviation: " + preferenceDeviation2 +
-                    "\nAge Difference: " + ageDifference2 +
-                    "\nGender Diversity: " + genderDiversity2 +
-                    "\nCount Pairs: " + countPairs2 +
-                    "\nCount Successors: " + countSuccessors2 +
-                    "\n\nMaximum Values:\nPreference Deviation: " + maxPreferenceDeviation +
-                    "\nAge Difference: " + maxAgeDifference +
-                    "\nGender Diversity: " + maxGenderDiversity +
-                    "\nMax Count Pairs: " + maxCountPairs +
-                    "\nMax Count Successors: " + maxCountSuccessors;
+        // Calculate the maximum values
+        double maxPreferenceDeviation = Math.max(preferenceDeviation1, preferenceDeviation2);
+        double maxAgeDifference = Math.max(ageDifference1, ageDifference2);
+        double maxGenderDiversity = Math.max(genderDiversity1, genderDiversity2);
+        int maxCountPairs = Math.max(countPairs1, countPairs2);
+        int maxCountSuccessors = Math.max(countSuccessors1, countSuccessors2);
 
-            JOptionPane.showMessageDialog(FRAME, message);
-        }
+        String message = "Pair List 1:\nPreference Deviation: " + preferenceDeviation1 +
+                "\nAge Difference: " + ageDifference1 +
+                "\nGender Diversity: " + genderDiversity1 +
+                "\nCount Pairs: " + countPairs1 +
+                "\nCount Successors: " + countSuccessors1 +
+                "\n\nPair List 2:\nPreference Deviation: " + preferenceDeviation2 +
+                "\nAge Difference: " + ageDifference2 +
+                "\nGender Diversity: " + genderDiversity2 +
+                "\nCount Pairs: " + countPairs2 +
+                "\nCount Successors: " + countSuccessors2 +
+                "\n\nMaximum Values:\nPreference Deviation: " + maxPreferenceDeviation +
+                "\nAge Difference: " + maxAgeDifference +
+                "\nGender Diversity: " + maxGenderDiversity +
+                "\nMax Count Pairs: " + maxCountPairs +
+                "\nMax Count Successors: " + maxCountSuccessors;
+
+        JOptionPane.showMessageDialog(FRAME, message);
+    }
+}
     }
 
 
-        /*
-        else if (e.getActionCommand().equals("explanation")) {
-            //TODO: Include a JOptionPane.showMessageDialog() explaining all the criteria
-        }
-        */
-    }
 

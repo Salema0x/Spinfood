@@ -600,9 +600,7 @@ public class PairListFactory {
     public ArrayList<Participant> getSuccessors() {
         return successors;
     }
-    public ArrayList<Participant> getParticipantSuccessorList() {
-        return successors;
-    }
+
     public ArrayList<Pair> getPairListAsArrayList() {
         return new ArrayList<>(pairList);
     }

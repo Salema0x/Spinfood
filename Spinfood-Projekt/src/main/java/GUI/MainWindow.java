@@ -1,7 +1,6 @@
 package GUI;
 
 import Data.GroupList;
-import Data.PairList;
 import Entity.Group;
 import Entity.Pair;
 import Entity.Participant;
@@ -62,6 +61,7 @@ public class MainWindow implements ActionListener {
     private static GroupFactory GROUP_FACTORY;
     private static JacksonExport JACKSON_EXPORT;
 
+
     /**
      * Displays the main window of the application.
      */
@@ -82,21 +82,13 @@ public class MainWindow implements ActionListener {
      * Displays the table of pairs with their relevant information.
      */
     private void displayPairTable(boolean enableSwapButton) {
-        List<Participant> participantsWithoutPair = pairListFactory.getSuccessors();
-
         JTable table = new JTable();
-
         refreshPairTable(table);
-        PairList keyFigures = new PairList(pairListFactory.pairList, participantsWithoutPair);
-
         JFrame frame = new JFrame("Pairs Table");
         frame.setLayout(new BorderLayout());
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
         JScrollPane tableScrollPane = new JScrollPane(table);
-
         frame.add(tableScrollPane, BorderLayout.CENTER);
-
         JButton undoButton = new JButton("Undo swap");
         Runnable runnable = () -> {
             refreshPairTable(table);
@@ -121,15 +113,16 @@ public class MainWindow implements ActionListener {
         JPanel southPanel = new JPanel();
         southPanel.setLayout(new FlowLayout());
 
-        JLabel labelPairs = new JLabel("Pairs Count: " + keyFigures.getCountPairs() + ",");
-        JLabel labelSuccessors = new JLabel("Successors count: " + keyFigures.getCountSuccessors() + ",");
-        JLabel labelDiversity = new JLabel("Gender Diversity Score: " + keyFigures.getGenderDiversityScore() + ",");
-        JLabel labelAgeDifference = new JLabel("Age Difference: " + keyFigures.getAgeDifference());
+        JLabel labelPairs = new JLabel("Pairs Count: " + pairListFactory.getPairListObject().getCountPairs() + ",");
+        JLabel labelSuccessors = new JLabel("Successors count: " + pairListFactory.getPairListObject().getCountSuccessors() + ",");
+        JLabel labelAgeDifference = new JLabel("Age Difference: " + pairListFactory.getPairListObject().getAgeDifference());
+        JLabel labelDiversity = new JLabel("Gender Diversity Score: " + pairListFactory.getPairListObject().getGenderDiversityScore() + ",");
 
         southPanel.add(labelPairs);
         southPanel.add(labelSuccessors);
-        southPanel.add(labelDiversity);
         southPanel.add(labelAgeDifference);
+        southPanel.add(labelDiversity);
+
 
         if (enableSwapButton) {
             JPanel buttonPanel = new JPanel();
@@ -151,7 +144,7 @@ public class MainWindow implements ActionListener {
             }
         });
 
-        openFrames.add(frame); // Add the ne
+        openFrames.add(frame);
     }
 
 
@@ -360,22 +353,29 @@ public class MainWindow implements ActionListener {
 
         JPanel southPanel = new JPanel();
         southPanel.setLayout(new FlowLayout());
+        // Combine all the groups into a single list
+        List<Group> allGroups = new ArrayList<>();
+        allGroups.addAll(appetizerGroups);
+        allGroups.addAll(mainDishGroups);
+        allGroups.addAll(dessertGroups);
 
-        GroupList groupList = new GroupList(GROUP_FACTORY.getSuccessorGroups(), pairListFactory.getSuccessors());
+        GroupList groupList = new GroupList((ArrayList<Group>) allGroups, pairListFactory.getSuccessors());
 
-        for (Group group : appetizerGroups) {
-            JLabel labelGroupCount = new JLabel("Groups Count: " + groupNr + ",");
-            JLabel labelSuccessor = new JLabel("Successor Count: " + groupList.getSuccessorCount() + ",");
-            JLabel labelGenderDiversity = new JLabel("Gender Diversity Score: " + group.getGenderDiversityScore() + ",");
-            JLabel labelAgeDifference = new JLabel("Age Difference: " + group.getAgeDifference());
+        int totalGroupCount = allGroups.size();
+        int totalSuccessorCount = groupList.getSuccessorCount();
+        double totalGenderDiversityScore = groupList.getGenderDiversity();
+        double totalAgeDifference = groupList.getAgeDifference();
 
-            southPanel.add(labelGroupCount);
-            southPanel.add(labelSuccessor);
-            southPanel.add(labelGenderDiversity);
-            southPanel.add(labelAgeDifference);
+        JLabel labelGroupCount = new JLabel("Total Groups Count: " + totalGroupCount);
+        JLabel labelSuccessorCount = new JLabel("Total Successor Count: " + totalSuccessorCount);
+        JLabel labelTotalGenderDiversity = new JLabel("Total Gender Diversity Score: " + totalGenderDiversityScore);
+        JLabel labelTotalAgeDifference = new JLabel("Total Age Difference: " + totalAgeDifference);
 
-            break;
-        }
+        southPanel.add(labelGroupCount);
+        southPanel.add(labelSuccessorCount);
+        southPanel.add(labelTotalGenderDiversity);
+        southPanel.add(labelTotalAgeDifference);
+
 
         mainFrame.add(southPanel, BorderLayout.CENTER);
     }
@@ -425,6 +425,7 @@ public class MainWindow implements ActionListener {
      */
     private JMenuBar createJMenuBar() {
         JMenuBar menuBar = new JMenuBar();
+
 
         // Update action command of the menu item
         readParticipantsItem.setActionCommand(bundle.getString("readParticipants"));
