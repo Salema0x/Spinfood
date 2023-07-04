@@ -20,6 +20,14 @@ public class Group {
     private FoodPreference foodPreference;
     private Course course;
 
+    public Group(Pair initialPair) {
+        pairs.add(initialPair);
+        this.cookingPair = initialPair; // Setzen des initialPair als Kochpaar
+        this.ageDifference = calculateAverageScores(Pair::getAgeDifference);
+        this.preferenceDeviation = calculateAverageScores(Pair::getPreferenceDeviation);
+        this.genderDiversityScore = calculateGenderDiversityScore();
+        createParticipants();
+    }
 
 
     public Group(ArrayList<Pair> pairs, Course course) {
@@ -106,6 +114,24 @@ public class Group {
 
         return contains;
     }
+
+    //7.2.6
+    public boolean containsPair(Pair pair) {
+        return pairs.contains(pair);
+    }
+
+    public void removePair(Pair pair) {
+        pairs.remove(pair);
+        participants.remove(pair.getParticipant1());
+        participants.remove(pair.getParticipant2());
+    }
+
+    public void addPair(Pair pair) {
+        pairs.add(pair);
+        participants.add(pair.getParticipant1());
+        participants.add(pair.getParticipant2());
+    }
+
 
     /**
      * Builds String of Pairs for printing

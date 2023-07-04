@@ -2,11 +2,14 @@ package Factory;
 
 import Data.PairList;
 import Entity.Pair;
+import Entity.PairDissolve;
 import Entity.Participant;
 import Entity.Enum.*;
+import Entity.PairSwap;
 import Misc.ParticipantComparator;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -30,6 +33,8 @@ public class PairListFactory {
     private final ArrayList<Participant> upperRemovements = new ArrayList<>();
     private ArrayList<Participant> participantSuccessorList = new ArrayList<>();
     private final PairList pairListObject;
+    private final LinkedList<Object> swapList = new LinkedList<>();
+    private final LinkedList<Object> swapListFuture = new LinkedList<>();
 
     public PairListFactory(ArrayList<Participant> participantList, ArrayList<Pair> registeredPairs, ArrayList<Object> criteriaOrder) {
         this.participantList = participantList;
@@ -76,6 +81,151 @@ public class PairListFactory {
     }
 
     /**
+     * Undoes the latest swap pair dialog operation. Reverts the participants in the pair and successor list to their previous state.
+     * This method removes the latest swap operation from the swapList and adds it to the swapListFuture for potential redo.
+     * After reverting the swap, the calculations are updated and the provided runnable is executed.
+     *
+     * @param runnable The runnable to be executed after undoing the swap.
+     */
+    public void undoLatestSwapPairDialog(Runnable runnable) {
+        if (swapList.isEmpty()) {
+            return;
+        } else if (swapList.getLast() instanceof PairSwap) {
+            PairSwap last = (PairSwap) swapList.getLast();
+            Pair pair = last.getPair();
+            pair.removeParticipant(last.getNewParticipant());
+            pair.addParticipant(last.getSwappedParticipant());
+            successors.add(last.getNewParticipant());
+            successors.remove(last.getSwappedParticipant());
+
+            swapList.removeLast();
+            System.out.println(last);
+            swapListFuture.add(last);
+            pair.updateCalculations();
+            runnable.run();
+        } else if (swapList.getLast() instanceof PairDissolve) {
+            PairDissolve last = (PairDissolve) swapList.getLast();
+            Pair pair = new Pair(last.getDissolvedParticipant1(), last.getDissolvedParticipant2());;
+            pairList.add(pair);
+            successors.remove(last.getDissolvedParticipant1());
+            successors.remove(last.getDissolvedParticipant2());
+
+            swapList.removeLast();
+            System.out.println(last);
+            swapListFuture.add(last);
+            runnable.run();
+        }
+    }
+
+    /**
+     * Redoes the latest swap pair dialog operation. Reapplies the swap of participants in the pair and successor list.
+     * This method removes the latest swap operation from the swapListFuture and adds it back to the swapList.
+     * After applying the swap, the calculations are updated and the provided runnable is executed.
+     *
+     * @param runnable The runnable to be executed after redoing the swap.
+     */
+    public void redoLatestSwapPairDialog(Runnable runnable) {
+        if (swapListFuture.isEmpty()) {
+            return;
+        } else if (swapListFuture.getLast() instanceof PairSwap) {
+            PairSwap last =  (PairSwap) swapListFuture.getLast();
+
+            Pair pair = last.getPair();
+            pair.removeParticipant(last.getSwappedParticipant());
+            pair.addParticipant(last.getNewParticipant());
+            pair.updateCalculations();
+            successors.add(last.getSwappedParticipant());
+            successors.remove(last.getNewParticipant());
+
+            swapListFuture.removeLast();
+            System.out.println(last);
+            swapList.add(last);
+            pair.updateCalculations();
+            runnable.run();
+        } else if (swapListFuture.getLast() instanceof PairDissolve) {
+            PairDissolve last = (PairDissolve) swapListFuture.getLast();
+            Pair pair = last.getPair();
+            Participant participant1 = pair.getParticipant1();
+            Participant participant2 = pair.getParticipant2();
+
+            successors.add(participant1);
+            successors.add(participant2);
+
+            pairList.remove(pair);
+
+            swapListFuture.removeLast();
+            System.out.println(last);
+            swapList.add(last);
+            runnable.run();
+        }
+    }
+
+    /**
+     * Clears the swapListFuture and swapList, removing all stored swap operations.
+     * This method is used to reset the undo/redo functionality.
+     */
+    public void clearRedoAndUndoList() {
+        swapListFuture.clear();
+        swapList.clear();
+    }
+
+    /**
+     * Swaps the participants in a pair. Moves the specified participant from the pair to the successor list,
+     * and replaces them with another participant from the successor list.
+     *
+     * @param pair                       The pair in which the participants should be swapped.
+     * @param participantInPair          The participant currently in the pair to be replaced.
+     * @param participantInSuccessorList The participant from the successor list to be placed in the pair.
+     */
+    public void swapParticipants(Pair pair, Participant participantInPair, Participant participantInSuccessorList) {
+        // Checking if pair exists in pairList and participantInPair is in the pair
+        if (!pairList.contains(pair) || !pair.containsParticipant(participantInPair)) {
+            System.out.println("The pair does not exist in the pair list or the participant is not in the given pair.");
+            return;
+        }
+
+        // Checking if participantInSuccessorList exists in participantSuccessorList
+        if (!successors.contains(participantInSuccessorList)) {
+            System.out.println("The participant you are trying to swap in is not in the successor list.");
+            return;
+        }
+
+        // Swap the participants
+        // Remove the participantInPair from the pair
+        pair.removeParticipant(participantInPair);
+
+        // Add participantInSuccessorList to the pair
+        pair.addParticipant(participantInSuccessorList);
+
+        // Remove the participantInSuccessorList from participantSuccessorList
+        successors.remove(participantInSuccessorList);
+
+        // Add participantInPair to participantSuccessorList
+        successors.add(participantInPair);
+        pair.updateCalculations();
+        swapList.add(new PairSwap(pair, participantInPair, participantInSuccessorList));
+
+    }
+
+    /**
+     * Dissolves a pair by removing it from the pairList and adding its participants to the successors list.
+     *
+     * @param pair The pair to be dissolved.
+     */
+    public void dissolvePair(Pair pair) {
+        if (pairList.contains(pair)) {
+            Participant participant1 = pair.getParticipant1();
+            Participant participant2 = pair.getParticipant2();
+
+            successors.add(participant1);
+            successors.add(participant2);
+
+            pairList.remove(pair);
+            swapList.add(new PairDissolve(pair, participant1, participant2));
+        }
+    }
+
+    /**
      * Concatenates the pair list after the pair algorithm with pairs from the registration.
      */
     private void concatWithRegisteredPairs() {
@@ -108,7 +258,7 @@ public class PairListFactory {
     /**
      * Creates a List of Participants with specific attributes.
      * @param kitchenIdentification Indicates the kitchen situation of the Participants which should be in the list.
-     * @param foodIdentification Indicates the food preference of the Participants which should be in the list.
+     * @param foodIdentification    Indicates the food preference of the Participants which should be in the list.
      * @return a List of participants with the specified attributes.
      */
     private ArrayList<Participant> createList(String kitchenIdentification, FoodPreference foodIdentification) {
@@ -155,11 +305,12 @@ public class PairListFactory {
 
     /**
      * Assigns the fields, and starts the sorters.
-     * @param indexCriteria6 the index of criteria6 in the criteriaOrder list
-     * @param indexCriteria7 the index of criteria7 in the criteriaOrder list
+     *
+     * @param indexCriteria6          the index of criteria6 in the criteriaOrder list
+     * @param indexCriteria7          the index of criteria7 in the criteriaOrder list
      * @param getFoodPreferenceNumber the first method with which the sorter gets started
-     * @param getAgeRange the second method with which the sorter gets started
-     * @param getSex the third method with which the sorter gets started
+     * @param getAgeRange             the second method with which the sorter gets started
+     * @param getSex                  the third method with which the sorter gets started
      */
     private void assignFields(int indexCriteria6, int indexCriteria7, Function<Participant, Integer> getFoodPreferenceNumber, Function<Participant, Integer> getAgeRange, Function<Participant, Integer> getSex) {
         if (indexCriteria6 < indexCriteria7) {
@@ -181,7 +332,7 @@ public class PairListFactory {
     /**
      * Starts the sorter Method. With the three main lists.
      * @param sexFunctionIndex the importance of the get Sex method.
-     * @param methods A Function Interface showing which functions should be used for comparing.
+     * @param methods          A Function Interface showing which functions should be used for comparing.
      */
     @SafeVarargs
     private void sorterStarter(int sexFunctionIndex, Function<Participant, Integer>... methods) {
@@ -193,8 +344,8 @@ public class PairListFactory {
     /**
      * Sorts the Lists contained in the given list with the given functions.
      * @param kitchenParticipants the list of lists which should get sorted.
-     * @param sexFunctionIndex the importance of the get Sex method.
-     * @param methods The functions which should be used for sorting.
+     * @param sexFunctionIndex    the importance of the get Sex method.
+     * @param methods             The functions which should be used for sorting.
      */
     @SafeVarargs
     private void sorter(ArrayList<ArrayList<Participant>> kitchenParticipants, int sexFunctionIndex, Function<Participant, Integer>... methods) {
@@ -212,7 +363,7 @@ public class PairListFactory {
     /**
      * Starts making pairs by calling methods for making meatPairs, making veggie/vegan Pairs, and for the nonePairs
      */
-    private void makePairs() {
+    void makePairs() {
         makePairsMeat();
         makePairsOther();
         makePairsStarter(yesKitchenParticipants.get(0), maybeKitchenParticipants.get(0), noKitchenParticipants.get(0));
@@ -444,7 +595,7 @@ public class PairListFactory {
         System.out.format("|Pair Nr.| ID1                                  | ID2                                  | Name1                | Name2                |%n");
         System.out.format("+--------|--------------------------------------+--------------------------------------+----------------------+----------------------+%n");
 
-        for (Pair pair: pairList ) {
+        for (Pair pair : pairList) {
             String id1 = pair.getParticipant1().getId();
             String id2 = pair.getParticipant2().getId();
             String name1 = pair.getParticipant1().getName();
