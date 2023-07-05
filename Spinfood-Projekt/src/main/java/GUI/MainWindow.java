@@ -26,7 +26,6 @@ import java.util.ResourceBundle;
  */
 public class MainWindow implements ActionListener {
     private static final int WIDTH = 600;
-
     private static final int HEIGHT = 500;
     private static final JFrame FRAME = new JFrame();
     private static final JMenuItem SHOW_PARTICIPANTS = new JMenuItem();
@@ -34,8 +33,6 @@ public class MainWindow implements ActionListener {
     private static final JMenuItem START_PAIRS = new JMenuItem();
     private static final JMenuItem START_GROUPS = new JMenuItem();
     public static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory(1000);
-    private static final JMenuItem RESORT_PAIRS = new JMenuItem();
-
     private static PairListFactory pairListFactory;
     private static final JLabel SHOW_TEXT = new JLabel();
     private static List<Object> CRITERIA_ORDER = new ArrayList<>();
@@ -46,11 +43,8 @@ public class MainWindow implements ActionListener {
     private static boolean criteriaOrdered = false;
     private static boolean participantsAreRead = true;
     private static boolean groupsGenerated = false;
-
     private PairList generatedPairList;
-
     private static ResourceBundle bundle;
-
     private static final JMenuItem readPartyLocationItem = new JMenuItem();
     private static final JMenuItem readParticipantsItem = new JMenuItem();
     private static final JMenu languageMenu = new JMenu();
@@ -270,7 +264,7 @@ public class MainWindow implements ActionListener {
             // Display the selected values in a message dialog
             String message = "Geändert\n" +
                     "Alte Paarkombination: " + selectedOldPair +
-                    "\nPaar mit Glied " + oldParticipant.getName() +
+                    "\nPaarmitglied " + oldParticipant.getName() +
                     "\nErsetzt durch: " + newParticipant.getName();
             JOptionPane.showMessageDialog(frame, message);
 
@@ -480,7 +474,6 @@ public class MainWindow implements ActionListener {
         readParticipantsItem.setActionCommand(bundle.getString("readParticipants"));
         readPartyLocationItem.setText(bundle.getString("readPartyLocation"));
         readPartyLocationItem.setActionCommand(bundle.getString("readPartyLocation"));
-        RESORT_PAIRS.setText(bundle.getString("resortPairs"));
         SAVE_GROUPS.setText(bundle.getString("saveGroups"));
 
         languageMenu.setText(bundle.getString("languageMenu"));
@@ -535,20 +528,14 @@ public class MainWindow implements ActionListener {
         SHOW_PARTICIPANTS.addActionListener(this);
         SHOW_PARTICIPANTS.setEnabled(participantsRead);
         startMenu.add(SHOW_PARTICIPANTS);
-        //Resort pairs
-        RESORT_PAIRS.addActionListener(this);
-        RESORT_PAIRS.setEnabled(true);
-        algorithmMenu.add(RESORT_PAIRS);
+
         algorithmMenu.add(SET_CRITERIA);
         algorithmMenu.add(START_PAIRS);
-        algorithmMenu.add(RESORT_PAIRS);
         algorithmMenu.add(START_GROUPS);
-        // for groups
+
         SAVE_GROUPS.addActionListener(this);
         SAVE_GROUPS.setEnabled(true);
         algorithmMenu.add(SAVE_GROUPS);
-
-
 
         menuBar.add(algorithmMenu);
         /**
@@ -627,13 +614,10 @@ public class MainWindow implements ActionListener {
             updateJMenu();
             displayPairTable();
         } else if (bundle.getString("startGroups").equals(command)) {
-            displayGroupTable();
             groupsGenerated= true;
-
+            displayGroupTable();
         }
-        else if (bundle.getString("resortPairs").equals(command)) {
-            displayPairTable();
-        }else if (bundle.getString("saveGroups").equals(command)) {
+        else if (bundle.getString("saveGroups").equals(command)) {
             JACKSON_EXPORT = new JacksonExport();
             JACKSON_EXPORT.export(GROUP_FACTORY.getAppetizerGroups(), GROUP_FACTORY.getPairList(), GROUP_FACTORY.getSuccessorPairs(), PARTICIPANT_FACTORY.getParticipantList());
         }
