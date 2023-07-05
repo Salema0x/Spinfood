@@ -99,14 +99,16 @@ public class CriteriaArranger extends JPanel {
             MainWindow.setCriteriaOrdered(true);
             MainWindow.updateJMenu();
 
-            // Generate PairListFactory based on selected criteria
-            PairListFactory pairListFactory = generatePairListFactory(criteriaOrder);
-
-
-        }
+            // Move the selected criterion to the first position
+            int selectedIndex = list.getSelectedIndex();
+            if (selectedIndex != -1 && selectedIndex != 0) {
+                Object selectedCriterion = LIST_MODEL.getElementAt(selectedIndex);
+                LIST_MODEL.removeElementAt(selectedIndex);
+                LIST_MODEL.insertElementAt((String) selectedCriterion, 0);
+            }
         else if (e.getActionCommand().equals("compare")) {
             List<Object> CRITERIA_ORDER = Arrays.asList(LIST_MODEL.toArray());
-            List<Object> criteriaOrder2 = new ArrayList<>(CRITERIA_ORDER);
+            ArrayList<Object> criteriaOrder2 = new ArrayList<>(CRITERIA_ORDER);
             criteriaOrder2.remove("Essensvorlieben");
             criteriaOrder2.add("Essensvorlieben");
             PairListFactory pairListFactory1 = new PairListFactory(
@@ -117,7 +119,7 @@ public class CriteriaArranger extends JPanel {
         PairListFactory pairListFactory2 = new PairListFactory(
                 new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
                 new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
-                (ArrayList<Object>) criteriaOrder2
+                criteriaOrder2
         );
 
         PairList pairList1 = pairListFactory1.getPairListObject();
@@ -167,44 +169,9 @@ public class CriteriaArranger extends JPanel {
      * @param criteriaOrder the order of selected criteria
      * @return the PairListFactory instance
      */
-    private PairListFactory generatePairListFactory(List<Object> criteriaOrder) {
-        // Determine the selected criteria and create PairListFactory accordingly
-        if (criteriaOrder.contains("Essensvorlieben")) {
-            return new PairListFactory(
-                    new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
-                    new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
-                    new ArrayList<>(Arrays.asList("Essensvorlieben"))
-            );
-        } else if (criteriaOrder.contains("Altersdifferenz")) {
-            return new PairListFactory(
-                    new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
-                    new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
-                    new ArrayList<>(Arrays.asList("Altersdifferenz"))
-            );
-        } else if (criteriaOrder.contains("Geschlechterdiversität")) {
-            return new PairListFactory(
-                    new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
-                    new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
-                    new ArrayList<>(Arrays.asList("Geschlechterdiversität"))
-            );
-        } else if (criteriaOrder.contains("Weglänge")) {
-            return new PairListFactory(
-                    new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
-                    new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
-                    new ArrayList<>(Arrays.asList("Weglänge"))
-            );
-        } else if (criteriaOrder.contains("Minimale Nachrücker")) {
-            return new PairListFactory(
-                    new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
-                    new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
-                    new ArrayList<>(Arrays.asList("Minimale Nachrücker"))
-            );
-        } else {
-            return null;
-        }
-    }
 
 
+}
 }
 
 
