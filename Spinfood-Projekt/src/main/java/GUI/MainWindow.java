@@ -34,6 +34,7 @@ public class MainWindow implements ActionListener {
     private static final JMenuItem START_GROUPS = new JMenuItem();
     public static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory(1000);
     private static PairListFactory pairListFactory;
+    private static GroupFactory GROUP_FACTORY;
     private static final JLabel SHOW_TEXT = new JLabel();
     private static List<Object> CRITERIA_ORDER = new ArrayList<>();
     private static final CriteriaArranger CRITERIA_WINDOW = new CriteriaArranger();
@@ -50,7 +51,6 @@ public class MainWindow implements ActionListener {
     private static final JMenu algorithmMenu = new JMenu();
     private static final JMenu startMenu = new JMenu();
     private static final JMenuItem SAVE_GROUPS = new JMenuItem();
-    private static GroupFactory GROUP_FACTORY;
     private static JacksonExport JACKSON_EXPORT;
 
     /**
@@ -341,7 +341,6 @@ public class MainWindow implements ActionListener {
         JTable pairsTable = new JTable(pairsTableModel);
         JTable table = new JTable(model);
 
-        GroupFactory GROUP_FACTORY = new GroupFactory(pairListFactory.pairList, PARTICIPANT_FACTORY.getPartyLocation());
         GROUP_FACTORY.startGroupAlgorithm();
         ArrayList<Group> appetizerGroups = GROUP_FACTORY.getAppetizerGroups();
         ArrayList<Group> mainDishGroups = GROUP_FACTORY.getMainDishGroups();
@@ -499,7 +498,7 @@ public class MainWindow implements ActionListener {
 
     public void refreshGroupTable(JTable table, JPanel southPanel){
         DefaultTableModel model = new DefaultTableModel();
-        GroupFactory GROUP_FACTORY = new GroupFactory(pairListFactory.pairList, PARTICIPANT_FACTORY.getPartyLocation());
+        //GroupFactory GROUP_FACTORY = new GroupFactory(pairListFactory.pairList, PARTICIPANT_FACTORY.getPartyLocation());
         GROUP_FACTORY.startGroupAlgorithm();
         ArrayList<Group> appetizerGroups = GROUP_FACTORY.getAppetizerGroups();
         ArrayList<Group> mainDishGroups = GROUP_FACTORY.getMainDishGroups();
@@ -904,7 +903,7 @@ public class MainWindow implements ActionListener {
         algorithmMenu.add(START_GROUPS);
 
         SAVE_GROUPS.addActionListener(this);
-        SAVE_GROUPS.setEnabled(true);
+        SAVE_GROUPS.setEnabled(groupsGenerated);
         algorithmMenu.add(SAVE_GROUPS);
 
         menuBar.add(algorithmMenu);
@@ -983,7 +982,9 @@ public class MainWindow implements ActionListener {
             updateJMenu();
             displayPairTable();
         } else if (bundle.getString("startGroups").equals(command)) {
+            GROUP_FACTORY = new GroupFactory(pairListFactory.pairList, PARTICIPANT_FACTORY.getPartyLocation());
             groupsGenerated= true;
+            updateJMenu();
             displayGroupTable();
         }
         else if (bundle.getString("saveGroups").equals(command)) {

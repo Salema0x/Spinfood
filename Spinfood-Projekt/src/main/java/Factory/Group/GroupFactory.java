@@ -121,7 +121,6 @@ public class GroupFactory {
      * @param pairInSuccessorList The pair from the successor list to be placed in the group.
      */
     public void swapGroups(Group group, Pair pairInGroup, Pair pairInSuccessorList) {
-        // Checking if the group exists in one of the three group lists
         ArrayList<Group> targetGroupList = null;
         if (appetizerGroups.contains(group)) {
             targetGroupList = appetizerGroups;
@@ -159,7 +158,6 @@ public class GroupFactory {
     }
 
     public void dissolveGroup(Group group){
-        // Checking if the group exists in one of the three group lists
         ArrayList<Group> targetGroupList = null;
         ArrayList<Pair> pairs = group.getPairs();
         Pair pair1;
