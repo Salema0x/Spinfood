@@ -22,9 +22,10 @@ public class Group {
 
 
 
-    public Group(ArrayList<Pair> pairs, Course course) {
+    public Group(ArrayList<Pair> pairs, Course course, Pair cookingPair) {
         this.pairs.addAll(pairs);
-        this.cookingPair = pairs.get(2);
+        this.pairs.add(cookingPair);
+        this.cookingPair = cookingPair;
         this.ageDifference = calculateAverageScores(Pair::getAgeDifference);
         this.preferenceDeviation = calculateAverageScores(Pair::getPreferenceDeviation);
         this.genderDiversityScore = calculateGenderDiversityScore();
@@ -191,10 +192,6 @@ public class Group {
         return pairs;
     }
 
-    @JsonIgnore
-    public Pair getCookingPair() {
-        return this.cookingPair;
-    }
 
     @JsonIgnore
     public List<Participant> getParticipants() {
@@ -218,14 +215,14 @@ public class Group {
     }
 
     @JsonGetter("cookingPair")
-    public Pair getCookingPairJson() {
+    public Pair getCookingPair() {
         return cookingPair;
     }
 
     @JsonGetter("secondPair")
     public Pair getSecondPair() {
         if (pairs.size() > 1) {
-            return pairs.get(1);
+            return pairs.get(0);
         }
         return null;
     }
@@ -233,7 +230,7 @@ public class Group {
     @JsonGetter("thirdPair")
     public Pair getThirdPair() {
         if (pairs.size() > 2) {
-            return pairs.get(2);
+            return pairs.get(1);
         }
         return null;
     }
@@ -250,6 +247,8 @@ public class Group {
             throw new IllegalArgumentException("The provided pair is not part of this group.");
         }
     }
+
+
 
     public void setSeen() {
         Pair p1 = pairs.get(0);

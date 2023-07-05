@@ -15,9 +15,9 @@ public class GroupFactory {
     private final ArrayList<Pair> pairList;
     private final ArrayList<Pair> successorPairs = new ArrayList<>();
     private final Double[] PARTY_LOCATION = new Double[2];
-    private final ArrayList<Group> appetizerGroups = new ArrayList<>();
-    private final ArrayList<Group> mainDishGroups = new ArrayList<>();
-    private final ArrayList<Group> dessertGroups = new ArrayList<>();
+    private final ArrayList<Group> firstCourseGroupList = new ArrayList<>();
+    private final ArrayList<Group> mainCourseGroupList = new ArrayList<>();
+    private final ArrayList<Group> dessertCourseGroupList = new ArrayList<>();
     private final ArrayList<Group> successorGroups = new ArrayList<>();
     private LinkedList<GroupSwap> swapList = new LinkedList<>();
     private LinkedList<GroupSwap> swapListFuture = new LinkedList<>();
@@ -39,13 +39,15 @@ public class GroupFactory {
         Ring middleRing = new Ring(ringFactory.getMiddleRing());
         Ring innerRing = new Ring(ringFactory.getInnerRing());
 
+        removeSuccessorPairsFromPairList(ringFactory);
+
         generateGroups(outerRing, Course.first);
         generateGroups(middleRing, Course.main);
         generateGroups(innerRing, Course.dessert);
 
-        printGroup(appetizerGroups);
-        printGroup(mainDishGroups);
-        printGroup(dessertGroups);
+        printGroup(firstCourseGroupList);
+        printGroup(mainCourseGroupList);
+        printGroup(dessertCourseGroupList);
     }
 
     /**
@@ -59,6 +61,12 @@ public class GroupFactory {
         LinkedList<Pair> possibleMatchingPairs = new LinkedList<>(pairList);
 
         possibleMatchingPairs.removeAll(outerRingPairs);
+        for (Pair pair : outerRingPairs) {
+            if(pair.getParticipant1().getName().equals("Person127")) {
+                System.out.println("Person127");
+            }
+        }
+        System.out.println();
 
         Map<PairAttributes, List<Pair>> pairsByAttributes = possibleMatchingPairs
                 .stream()
@@ -98,16 +106,29 @@ public class GroupFactory {
             }
 
             groupMembers.add(cookingPair);
-            Group group = new Group(groupMembers, course);
+
+            Group group = new Group(groupMembers, course, cookingPair);
             group.setSeen();
 
             switch (course) {
-                case first -> appetizerGroups.add(group);
-                case main -> mainDishGroups.add(group);
-                case dessert -> dessertGroups.add(group);
+                case first -> firstCourseGroupList.add(group);
+                case main -> mainCourseGroupList.add(group);
+                case dessert -> dessertCourseGroupList.add(group);
             }
             //TODO: Wenn weniger Nachrücker gebildet werden sollen, dann kann man die Gruppen regroupen mit einer entsprechend anderen Reihenfolge von FoodPreferences
         }
+    }
+
+    /**
+     * removes the successor pairs from the pairList and adds them to the successorPairs list.
+     * @param ringFactory
+     */
+    public void removeSuccessorPairsFromPairList(RingFactory ringFactory) {
+        ringFactory.getSuccessorPairs().forEach(pair -> {
+            pairList.remove(pair);
+            successorPairs.add(pair);
+        });
+
     }
 
 
@@ -393,30 +414,41 @@ public class GroupFactory {
     }
 
     private void printGroup(ArrayList<Group> list) {
-        String leftAlignFormat = "| %-11s | %-11s |%-14s | %-36s | %-36s | %-36s | %-14s | %-14s | %-14s | %-14s | %-14s | %-14s | %n";
+        String leftAlignFormat = "| %-11s | %-11s |%-14s | %-11s | %-11s | %-36s | %-11s | %-11s |  %-36s | %-11s | %-11s | %-36s | %-14s | %-14s | %-14s | %-14s | %-14s | %-14s | %n";
 
-        System.out.format("+-------------+-------------+----------------+------------------------------------- +--------------------------------------+--------------------------------------+----------------+-----------------+----------------+------------------+-----------------+------------------%n");
-        System.out.format("| Group Nr.   | GroupPref   | BadGroup       | Pair1 ID                             | Pair2 ID                             | Pair3 ID                             + Pair1Pref      + PrefComb        + Pair2Pref      + PrefComb         + Pair3Pref       + PrefComb         %n");
-        System.out.format("+-------------+-------------+----------------+--------------------------------------+--------------------------------------+--------------------------------------+----------------+-----------------+----------------+------------------+-----------------+------------------%n");
+        System.out.format("+-------------+-------------+----------------+----------------+---------------+--------------------------------------+---------------+---------------+--------------------------------------+---------------+---------------+--------------------------------------+----------------+-----------------+----------------+------------------+-----------------+------------------%n");
+        System.out.format("| Group Nr.   | GroupPref   | BadGroup       | CookingPairN1  + CookingPairN2 | Pair1 ID                             | Pair2 N1      | Pair2 N2      | Pair2 ID                             | Pair3 N1      | Pair3 N2      | Pair3 ID                             + Pair1Pref      + PrefComb        + Pair2Pref      + PrefComb         + Pair3Pref       + PrefComb         %n");
+        System.out.format("+-------------+-------------+----------------+----------------+---------------+--------------------------------------+---------------+---------------+--------------------------------------+---------------+---------------+--------------------------------------+----------------+-----------------+----------------+------------------+-----------------+------------------%n");
 
         int counter = 0;
 
         for (Group group : list) {
             FoodPreference groupPref = group.getFoodPreference();
+            Pair cookingPair = group.getCookingPair();
             Pair pair1 = group.getPairs().get(0);
             Pair pair2 = group.getPairs().get(1);
-            Pair pair3 = group.getPairs().get(2);
+
 
             counter++;
+            String cookingPairId = cookingPair.getId();
             String id1 = pair1.getId();
             String id2 = pair2.getId();
-            String id3 = pair3.getId();
+
+            FoodPreference cookingPairFoodPreference = cookingPair.getFoodPreference();
             FoodPreference pref1 = pair1.getFoodPreference();
             FoodPreference pref2 = pair2.getFoodPreference();
-            FoodPreference pref3 = pair3.getFoodPreference();
+
+            String cookingPairParFoodPref = cookingPair.getParticipant1().getFoodPreference().toString() + " " + cookingPair.getParticipant2().getFoodPreference().toString();
             String pair1ParFoodPref = pair1.getParticipant1().getFoodPreference().toString() + " " + pair1.getParticipant2().getFoodPreference().toString();
             String pair2ParFoodPref = pair2.getParticipant1().getFoodPreference().toString() + " " + pair2.getParticipant2().getFoodPreference().toString();
-            String pair3ParFoodPref = pair3.getParticipant1().getFoodPreference().toString() + " " + pair3.getParticipant2().getFoodPreference().toString();
+
+
+            String cookingPairN1 = group.getCookingPair().getParticipant1().getName();
+            String cookingPairN2 = group.getCookingPair().getParticipant2().getName();
+            String pair2N1 = pair2.getParticipant1().getName();
+            String pair2N2 = pair2.getParticipant2().getName();
+            String pair3N1 = cookingPair.getParticipant1().getName();
+            String pair3N2 = cookingPair.getParticipant2().getName();
 
             Boolean badGroup = false;
 
@@ -434,9 +466,9 @@ public class GroupFactory {
             }
 
 
-            System.out.format(leftAlignFormat, counter, groupPref,badGroup, id1, id2, id3, pref1,pair1ParFoodPref, pref2,pair2ParFoodPref, pref3, pair3ParFoodPref);
+            System.out.format(leftAlignFormat, counter, groupPref,badGroup, cookingPairN1, cookingPairN2, cookingPairId, pair2N1, pair2N2, id1, pair3N1, pair3N2, id2, cookingPairFoodPreference, cookingPairParFoodPref, pref1,pair1ParFoodPref, pref2,pair2ParFoodPref);
         }
-        System.out.format("+-------------+------------+-----------------+--------------------------------------+--------------------------------------+--------------------------------------+----------------+-----------------+----------------+-----------------+----------------+-----------------+%n");
+        System.out.format("+-------------+------------+-----------------+------------*--------------------------------------+--------------------------------------+--------------------------------------+----------------+-----------------+----------------+-----------------+----------------+-----------------+%n");
     }
 
     /**
@@ -458,12 +490,12 @@ public class GroupFactory {
     public void swapPairs(Group group, Pair pairInGroup, Pair pairInSuccessorList) {
         // Checking if the group exists in one of the three group lists
         ArrayList<Group> targetGroupList = null;
-        if (appetizerGroups.contains(group)) {
-            targetGroupList = appetizerGroups;
-        } else if (mainDishGroups.contains(group)) {
-            targetGroupList = mainDishGroups;
-        } else if (dessertGroups.contains(group)) {
-            targetGroupList = dessertGroups;
+        if (firstCourseGroupList.contains(group)) {
+            targetGroupList = firstCourseGroupList;
+        } else if (mainCourseGroupList.contains(group)) {
+            targetGroupList = mainCourseGroupList;
+        } else if (dessertCourseGroupList.contains(group)) {
+            targetGroupList = dessertCourseGroupList;
         } else {
             System.out.println("Group does not exist in any group list.");
             return;
@@ -561,16 +593,16 @@ public class GroupFactory {
         return successorPairs;
     }
 
-    public ArrayList<Group> getAppetizerGroups() {
-        return appetizerGroups;
+    public ArrayList<Group> getFirstCourseGroupList() {
+        return firstCourseGroupList;
     }
 
-    public ArrayList<Group> getMainDishGroups() {
-        return mainDishGroups;
+    public ArrayList<Group> getMainCourseGroupList() {
+        return mainCourseGroupList;
     }
 
-    public ArrayList<Group> getDessertGroups() {
-        return dessertGroups;
+    public ArrayList<Group> getDessertCourseGroupList() {
+        return dessertCourseGroupList;
     }
 
     public ArrayList<Group> getSuccessorGroups() {
@@ -578,9 +610,9 @@ public class GroupFactory {
     }
 
     public ArrayList<Group> getGroups() {
-        ArrayList<Group> result = new ArrayList<>(appetizerGroups);
-        result.addAll(mainDishGroups);
-        result.addAll(dessertGroups);
+        ArrayList<Group> result = new ArrayList<>(firstCourseGroupList);
+        result.addAll(mainCourseGroupList);
+        result.addAll(dessertCourseGroupList);
         return result;
     }
 

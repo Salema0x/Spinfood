@@ -1,0 +1,489 @@
+{
+  "groups" : [ {
+    "course" : "first",
+    "foodType" : "veggie",
+    "kitchen" : {
+      "emergencyKitchen" : true,
+      "story" : 3,
+      "longitude" : 8.698184706391327,
+      "latitude" : 50.5941282715558
+    },
+    "cookingPair" : {
+      "premade" : false,
+      "foodPreference" : "meat",
+      "firstParticipant" : {
+        "id" : "04b46884-c678-450a-a38e-9087bb67bf97",
+        "name" : "Person7",
+        "foodPreference" : "meat",
+        "age" : 19,
+        "gender" : "male",
+        "kitchen" : {
+          "emergencyKitchen" : true,
+          "story" : 1,
+          "longitude" : 8.677676558333479,
+          "latitude" : 50.589846758333486
+        }
+      },
+      "secondParticipant" : {
+        "id" : "05381170-b888-4457-a5f8-a528ac763236",
+        "name" : "Person8",
+        "foodPreference" : "none",
+        "age" : 20,
+        "gender" : "female",
+        "kitchen" : {
+          "emergencyKitchen" : true,
+          "story" : 3,
+          "longitude" : 8.698184706391327,
+          "latitude" : 50.5941282715558
+        }
+      }
+    },
+    "secondPair" : {
+      "premade" : false,
+      "foodPreference" : "vegan",
+      "firstParticipant" : {
+        "id" : "01be5c1f-4aa1-458d-a530-b1c109ffbb55",
+        "name" : "Person3",
+        "foodPreference" : "vegan",
+        "age" : 25,
+        "gender" : "female",
+        "kitchen" : {
+          "emergencyKitchen" : false,
+          "story" : 0,
+          "longitude" : 0.0,
+          "latitude" : 0.0
+        }
+      },
+      "secondParticipant" : {
+        "id" : "01c1372d-d120-4459-9b65-39d56d1ad430",
+        "name" : "Person4",
+        "foodPreference" : "vegan",
+        "age" : 18,
+        "gender" : "male",
+        "kitchen" : {
+          "emergencyKitchen" : true,
+          "story" : 1,
+          "longitude" : 8.690711820698867,
+          "latitude" : 8.668840259833873
+        }
+      }
+    },
+    "thirdPair" : {
+      "premade" : false,
+      "foodPreference" : "meat",
+      "firstParticipant" : {
+        "id" : "04b46884-c678-450a-a38e-9087bb67bf97",
+        "name" : "Person7",
+        "foodPreference" : "meat",
+        "age" : 19,
+        "gender" : "male",
+        "kitchen" : {
+          "emergencyKitchen" : true,
+          "story" : 1,
+          "longitude" : 8.677676558333479,
+          "latitude" : 50.589846758333486
+        }
+      },
+      "secondParticipant" : {
+        "id" : "05381170-b888-4457-a5f8-a528ac763236",
+        "name" : "Person8",
+        "foodPreference" : "none",
+        "age" : 20,
+        "gender" : "female",
+        "kitchen" : {
+          "emergencyKitchen" : true,
+          "story" : 3,
+          "longitude" : 8.698184706391327,
+          "latitude" : 50.5941282715558
+        }
+      }
+    }
+  }, {
+    "course" : "main",
+    "foodType" : "veggie",
+    "kitchen" : {
+      "emergencyKitchen" : true,
+      "story" : 2,
+      "longitude" : 8.676057363906686,
+      "latitude" : 8.67437965355096
+    },
+    "cookingPair" : {
+      "premade" : false,
+      "foodPreference" : "veggie",
+      "firstParticipant" : {
+        "id" : "004670cb-47f5-40a4-87d8-5276c18616ec",
+        "name" : "Person1",
+        "foodPreference" : "veggie",
+        "age" : 21,
+        "gender" : "male",
+        "kitchen" : {
+          "emergencyKitchen" : true,
+          "story" : 1,
+          "longitude" : 50.67336827155581,
+          "latitude" : 50.5941282715558
+        }
+      },
+      "secondParticipant" : {
+        "id" : "01a099db-22e1-4fc3-bbf5-db738bc2c10b",
+        "name" : "Person2",
+        "foodPreference" : "veggie",
+        "age" : 25,
+        "gender" : "male",
+        "kitchen" : {
+          "emergencyKitchen" : true,
+          "story" : 2,
+          "longitude" : 8.676057363906686,
+          "latitude" : 8.67437965355096
+        }
+      }
+    },
+    "secondPair" : {
+      "premade" : false,
+      "foodPreference" : "meat",
+      "firstParticipant" : {
+        "id" : "060800e6-8a64-4131-a292-22e5e1626b67",
+        "name" : "Person9",
+        "foodPreference" : "meat",
+        "age" : 27,
+        "gender" : "male",
+        "kitchen" : {
+          "emergencyKitchen" : true,
+          "story" : 1,
+          "longitude" : 50.67336827155581,
+          "latitude" : 50.604206006391344
+        }
+      },
+      "secondParticipant" : {
+        "id" : "06d17797-9452-49e2-8e46-e1067a5fb901",
+        "name" : "Person10",
+        "foodPreference" : "meat",
+        "age" : 25,
+        "gender" : "female",
+        "kitchen" : {
+          "emergencyKitchen" : true,
+          "story" : 2,
+          "longitude" : 8.67073904401206,
+          "latitude" : 50.57969724401207
+        }
+      }
+    },
+    "thirdPair" : {
+      "premade" : false,
+      "foodPreference" : "veggie",
+      "firstParticipant" : {
+        "id" : "004670cb-47f5-40a4-87d8-5276c18616ec",
+        "name" : "Person1",
+        "foodPreference" : "veggie",
+        "age" : 21,
+        "gender" : "male",
+        "kitchen" : {
+          "emergencyKitchen" : true,
+          "story" : 1,
+          "longitude" : 50.67336827155581,
+          "latitude" : 50.5941282715558
+        }
+      },
+      "secondParticipant" : {
+        "id" : "01a099db-22e1-4fc3-bbf5-db738bc2c10b",
+        "name" : "Person2",
+        "foodPreference" : "veggie",
+        "age" : 25,
+        "gender" : "male",
+        "kitchen" : {
+          "emergencyKitchen" : true,
+          "story" : 2,
+          "longitude" : 8.676057363906686,
+          "latitude" : 8.67437965355096
+        }
+      }
+    }
+  } ],
+  "pairs" : [ {
+    "premade" : false,
+    "foodPreference" : "veggie",
+    "firstParticipant" : {
+      "id" : "004670cb-47f5-40a4-87d8-5276c18616ec",
+      "name" : "Person1",
+      "foodPreference" : "veggie",
+      "age" : 21,
+      "gender" : "male",
+      "kitchen" : {
+        "emergencyKitchen" : true,
+        "story" : 1,
+        "longitude" : 50.67336827155581,
+        "latitude" : 50.5941282715558
+      }
+    },
+    "secondParticipant" : {
+      "id" : "01a099db-22e1-4fc3-bbf5-db738bc2c10b",
+      "name" : "Person2",
+      "foodPreference" : "veggie",
+      "age" : 25,
+      "gender" : "male",
+      "kitchen" : {
+        "emergencyKitchen" : true,
+        "story" : 2,
+        "longitude" : 8.676057363906686,
+        "latitude" : 8.67437965355096
+      }
+    }
+  }, {
+    "premade" : false,
+    "foodPreference" : "vegan",
+    "firstParticipant" : {
+      "id" : "01be5c1f-4aa1-458d-a530-b1c109ffbb55",
+      "name" : "Person3",
+      "foodPreference" : "vegan",
+      "age" : 25,
+      "gender" : "female",
+      "kitchen" : {
+        "emergencyKitchen" : false,
+        "story" : 0,
+        "longitude" : 0.0,
+        "latitude" : 0.0
+      }
+    },
+    "secondParticipant" : {
+      "id" : "01c1372d-d120-4459-9b65-39d56d1ad430",
+      "name" : "Person4",
+      "foodPreference" : "vegan",
+      "age" : 18,
+      "gender" : "male",
+      "kitchen" : {
+        "emergencyKitchen" : true,
+        "story" : 1,
+        "longitude" : 8.690711820698867,
+        "latitude" : 8.668840259833873
+      }
+    }
+  }, {
+    "premade" : false,
+    "foodPreference" : "vegan",
+    "firstParticipant" : {
+      "id" : "033d5f60-5853-4931-8b38-1d3da9910e6d",
+      "name" : "Person5",
+      "foodPreference" : "vegan",
+      "age" : 22,
+      "gender" : "female",
+      "kitchen" : {
+        "emergencyKitchen" : true,
+        "story" : 0,
+        "longitude" : 8.6884154438459,
+        "latitude" : 50.5941282715558
+      }
+    },
+    "secondParticipant" : {
+      "id" : "03ec42b3-de71-424d-a51d-f8a3977dac38",
+      "name" : "Person6",
+      "foodPreference" : "vegan",
+      "age" : 25,
+      "gender" : "female",
+      "kitchen" : {
+        "emergencyKitchen" : true,
+        "story" : 0,
+        "longitude" : 50.67336827155581,
+        "latitude" : 50.5780036438459
+      }
+    }
+  }, {
+    "premade" : false,
+    "foodPreference" : "meat",
+    "firstParticipant" : {
+      "id" : "04b46884-c678-450a-a38e-9087bb67bf97",
+      "name" : "Person7",
+      "foodPreference" : "meat",
+      "age" : 19,
+      "gender" : "male",
+      "kitchen" : {
+        "emergencyKitchen" : true,
+        "story" : 1,
+        "longitude" : 8.677676558333479,
+        "latitude" : 50.589846758333486
+      }
+    },
+    "secondParticipant" : {
+      "id" : "05381170-b888-4457-a5f8-a528ac763236",
+      "name" : "Person8",
+      "foodPreference" : "none",
+      "age" : 20,
+      "gender" : "female",
+      "kitchen" : {
+        "emergencyKitchen" : true,
+        "story" : 3,
+        "longitude" : 8.698184706391327,
+        "latitude" : 50.5941282715558
+      }
+    }
+  }, {
+    "premade" : false,
+    "foodPreference" : "meat",
+    "firstParticipant" : {
+      "id" : "060800e6-8a64-4131-a292-22e5e1626b67",
+      "name" : "Person9",
+      "foodPreference" : "meat",
+      "age" : 27,
+      "gender" : "male",
+      "kitchen" : {
+        "emergencyKitchen" : true,
+        "story" : 1,
+        "longitude" : 50.67336827155581,
+        "latitude" : 50.604206006391344
+      }
+    },
+    "secondParticipant" : {
+      "id" : "06d17797-9452-49e2-8e46-e1067a5fb901",
+      "name" : "Person10",
+      "foodPreference" : "meat",
+      "age" : 25,
+      "gender" : "female",
+      "kitchen" : {
+        "emergencyKitchen" : true,
+        "story" : 2,
+        "longitude" : 8.67073904401206,
+        "latitude" : 50.57969724401207
+      }
+    }
+  }, {
+    "premade" : false,
+    "foodPreference" : "meat",
+    "firstParticipant" : {
+      "id" : "07b46a18-a534-4c2c-b154-ec28c1aae8a7",
+      "name" : "Person11",
+      "foodPreference" : "meat",
+      "age" : 19,
+      "gender" : "male",
+      "kitchen" : {
+        "emergencyKitchen" : true,
+        "story" : 1,
+        "longitude" : 50.67336827155581,
+        "latitude" : 50.57969724401207
+      }
+    },
+    "secondParticipant" : {
+      "id" : "07b7446a-9d8b-478b-b3e9-e95b992fcf50",
+      "name" : "Person12",
+      "foodPreference" : "meat",
+      "age" : 19,
+      "gender" : "female",
+      "kitchen" : {
+        "emergencyKitchen" : false,
+        "story" : 0,
+        "longitude" : 0.0,
+        "latitude" : 0.0
+      }
+    }
+  } ],
+  "successorPairs" : [ {
+    "premade" : false,
+    "foodPreference" : "veggie",
+    "firstParticipant" : {
+      "id" : "ffaec9d9-b787-492a-a63d-01ef80a9cd11",
+      "name" : "Person19",
+      "foodPreference" : "veggie",
+      "age" : 21,
+      "gender" : "male",
+      "kitchen" : {
+        "emergencyKitchen" : false,
+        "story" : 0,
+        "longitude" : 0.0,
+        "latitude" : 0.0
+      }
+    },
+    "secondParticipant" : {
+      "id" : "fe47cfc7-d16a-49e6-ad3d-2284a2d85c71",
+      "name" : "Person20",
+      "foodPreference" : "veggie",
+      "age" : 19,
+      "gender" : "female",
+      "kitchen" : {
+        "emergencyKitchen" : true,
+        "story" : 2,
+        "longitude" : 8.68238010723739,
+        "latitude" : 50.58709280723739
+      }
+    }
+  }, {
+    "premade" : false,
+    "foodPreference" : "vegan",
+    "firstParticipant" : {
+      "id" : "fcc4c645-dc03-4687-a0bd-18e3d3c610d3",
+      "name" : "Person21",
+      "foodPreference" : "vegan",
+      "age" : 19,
+      "gender" : "female",
+      "kitchen" : {
+        "emergencyKitchen" : false,
+        "story" : 0,
+        "longitude" : 0.0,
+        "latitude" : 0.0
+      }
+    },
+    "secondParticipant" : {
+      "id" : "f6d28393-fb4a-4d9a-94af-78b35cd31b59",
+      "name" : "Person22",
+      "foodPreference" : "vegan",
+      "age" : 18,
+      "gender" : "male",
+      "kitchen" : {
+        "emergencyKitchen" : true,
+        "story" : 1,
+        "longitude" : 8.68151506608149,
+        "latitude" : 50.59463476608149
+      }
+    }
+  }, {
+    "premade" : false,
+    "foodPreference" : "vegan",
+    "firstParticipant" : {
+      "id" : "f6afb0b2-752f-4c4d-a419-14fd0cd27a8e",
+      "name" : "Person23",
+      "foodPreference" : "vegan",
+      "age" : 22,
+      "gender" : "female",
+      "kitchen" : {
+        "emergencyKitchen" : true,
+        "story" : 0,
+        "longitude" : 8.686014200624939,
+        "latitude" : 50.59846340062495
+      }
+    },
+    "secondParticipant" : {
+      "id" : "f6afb0b2-752f-4c4d-a419-14fd0cd27a8e",
+      "name" : "Person24",
+      "foodPreference" : "vegan",
+      "age" : 22,
+      "gender" : "female",
+      "kitchen" : {
+        "emergencyKitchen" : true,
+        "story" : -1,
+        "longitude" : 8.677227638993099,
+        "latitude" : 50.5782781389931
+      }
+    }
+  } ],
+  "successorParticipants" : [ {
+    "id" : "b1fb61c9-1a7a-4418-9eea-9d91a8c9e0dc",
+    "name" : "Person100",
+    "foodPreference" : "veggie",
+    "age" : 21,
+    "gender" : "male",
+    "kitchen" : {
+      "emergencyKitchen" : false,
+      "story" : 0,
+      "longitude" : 0.0,
+      "latitude" : 0.0
+    }
+  }, {
+    "id" : "b3092fb5-4038-4095-b721-8294d3803717",
+    "name" : "Person101",
+    "foodPreference" : "veggie",
+    "age" : 25,
+    "gender" : "male",
+    "kitchen" : {
+      "emergencyKitchen" : false,
+      "story" : 0,
+      "longitude" : 0.0,
+      "latitude" : 0.0
+    }
+  } ]
+}

@@ -26,15 +26,6 @@ public class JacksonExport {
 
     }
 
-    /**
-     * Constructor, with filePath
-     *
-     * @param filePath
-     */
-    public JacksonExport(String filePath) {
-        this();
-        this.filePath = filePath;
-    }
 
     /**
      * generates a new Root Obj and then writes its Json-Repr into a file at default path

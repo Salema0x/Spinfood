@@ -323,9 +323,9 @@ public class MainWindow implements ActionListener {
     private void displayGroupTable(boolean displaySwap) {
         GroupFactory GROUP_FACTORY = new GroupFactory(PAIR_LIST_FACTORY.pairList, PARTICIPANT_FACTORY.getPartyLocation());
         GROUP_FACTORY.startGroupAlgorithm();
-        ArrayList<Group> appetizerGroups = GROUP_FACTORY.getAppetizerGroups();
-        ArrayList<Group> mainDishGroups = GROUP_FACTORY.getMainDishGroups();
-        ArrayList<Group> dessertGroups = GROUP_FACTORY.getDessertGroups();
+        ArrayList<Group> appetizerGroups = GROUP_FACTORY.getFirstCourseGroupList();
+        ArrayList<Group> mainDishGroups = GROUP_FACTORY.getMainCourseGroupList();
+        ArrayList<Group> dessertGroups = GROUP_FACTORY.getDessertCourseGroupList();
 
         JTable table = new JTable();
         refreshGroupTable(table, appetizerGroups, mainDishGroups, dessertGroups);
@@ -429,14 +429,14 @@ public class MainWindow implements ActionListener {
         ArrayList<Group> groups = null;
         switch (selectedDish) {
             case "Vorspeise" -> {
-                groups = GROUP_FACTORY.getAppetizerGroups();
+                groups = GROUP_FACTORY.getFirstCourseGroupList();
             }
             case "Hauptspeise" -> {
-                groups = GROUP_FACTORY.getMainDishGroups();
+                groups = GROUP_FACTORY.getMainCourseGroupList();
             }
 
             case "Nachspeise" -> {
-                groups = GROUP_FACTORY.getDessertGroups();
+                groups = GROUP_FACTORY.getDessertCourseGroupList();
             }
         }
 
@@ -725,12 +725,28 @@ public class MainWindow implements ActionListener {
             pairsGenerated = true;
             updateJMenu();
             displayPairTable(false);
+            int counter = 0;
+            for (Pair pair : PAIR_LIST_FACTORY.pairList) {
+                if (pair.getParticipant1().getName().equals("Person127")) {
+                    counter++;
+                }
+            }
+            System.out.println(counter);
         } else if (e.getActionCommand().equals("Party Location einlesen")) {
             participantsAreRead = false;
             createFileChooser();
         } else if (e.getActionCommand().equals("Gruppen bilden")) {
             GROUP_FACTORY = new GroupFactory(PAIR_LIST_FACTORY.pairList, PARTICIPANT_FACTORY.getPartyLocation());
             GROUP_FACTORY.startGroupAlgorithm();
+
+            int counter = 0;
+            for (Pair pair : GROUP_FACTORY.getPairList()) {
+                if (pair.getParticipant1().getName().equals("Person127")) {
+                    counter++;
+                }
+
+            }
+            System.out.println(counter);
             displayGroupTable(false);
         } else if (e.getActionCommand().equals("Paare neu sortieren")) {
             displayPairTable(true);
