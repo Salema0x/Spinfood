@@ -140,14 +140,14 @@ public class MainWindow implements ActionListener {
         JTable pairTable = new JTable();
         JPanel southPanel = new JPanel();
 
-        refreshPairTable(pairTable, southPanel);
-
         DefaultTableModel pairsTableModel = new DefaultTableModel();
+
+
         pairsTableModel.addColumn("Participant ID");
         pairsTableModel.addColumn("Participant Name");
 
-        JTable pairsTable = new JTable(pairsTableModel);
 
+        JTable successorTable = new JTable(pairsTableModel);
         ArrayList<Participant> participantsWithoutPairs = getPairsWithoutGroups();
 
         for (Participant participant : participantsWithoutPairs) {
@@ -157,10 +157,13 @@ public class MainWindow implements ActionListener {
             });
         }
 
-        JScrollPane pairScrollPane = new JScrollPane(pairTable);
-        JScrollPane pairsScrollPane = new JScrollPane(pairsTable);
+        refreshPairTable(pairTable, southPanel);
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, pairScrollPane, pairsScrollPane);
+
+        JScrollPane pairScrollPane = new JScrollPane(pairTable);
+        JScrollPane successorScrollPane = new JScrollPane(successorTable);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, pairScrollPane, successorScrollPane);
         splitPane.setDividerLocation(0.5);
 
         JFrame mainFrame = new JFrame("Pair and Participant Tables");
@@ -328,11 +331,7 @@ public class MainWindow implements ActionListener {
         frame.setVisible(true);
     }
 
-
-    /**
-     * Displays the table of groups with their relevant information and the pairs not in groups.
-     */
-    private void displayGroupTable() {
+    public void refreshGroupTable(JTable table, JPanel southPanel){
         DefaultTableModel model = new DefaultTableModel();
         GroupFactory GROUP_FACTORY = new GroupFactory(pairListFactory.pairList, PARTICIPANT_FACTORY.getPartyLocation());
         GROUP_FACTORY.startGroupAlgorithm();
@@ -340,7 +339,6 @@ public class MainWindow implements ActionListener {
         ArrayList<Group> mainDishGroups = GROUP_FACTORY.getMainDishGroups();
         ArrayList<Group> dessertGroups = GROUP_FACTORY.getDessertGroups();
 
-        JTable table = new JTable(model);
         model.addColumn("Group Nr");
         model.addColumn("Pair 1 - Participant 1");
         model.addColumn("Pair 1 - Participant 2");
@@ -427,7 +425,135 @@ public class MainWindow implements ActionListener {
         mainFrame.setLocationRelativeTo(null);
         mainFrame.setVisible(true);
 
+        southPanel.setLayout(new FlowLayout());
+        // Combine all the groups into a single list
+        ArrayList<Group> allGroups = new ArrayList<>();
+        allGroups.addAll(appetizerGroups);
+        allGroups.addAll(mainDishGroups);
+        allGroups.addAll(dessertGroups);
+
+        GroupList groupList = new GroupList(allGroups, pairListFactory.getSuccessors());
+
+        int totalGroupCount = allGroups.size();
+        int totalSuccessorCount = groupList.getSuccessorCount();
+        double totalGenderDiversityScore = groupList.getGenderDiversity();
+        double totalAgeDifference = groupList.getAgeDifference();
+
+        JLabel labelGroupCount = new JLabel("Total Groups Count: " + totalGroupCount);
+        JLabel labelSuccessorCount = new JLabel("Total Successor Count: " + totalSuccessorCount);
+        JLabel labelTotalGenderDiversity = new JLabel("Total Gender Diversity Score: " + totalGenderDiversityScore);
+        JLabel labelTotalAgeDifference = new JLabel("Total Age Difference: " + totalAgeDifference);
+
+        southPanel.add(labelGroupCount);
+        southPanel.add(labelSuccessorCount);
+        southPanel.add(labelTotalGenderDiversity);
+        southPanel.add(labelTotalAgeDifference);
+    }
+
+    /**
+     * Displays the table of groups with their relevant information and the pairs not in groups.
+     */
+    private void displayGroupTable() {
+        DefaultTableModel model = new DefaultTableModel();
+
         JPanel southPanel = new JPanel();
+        DefaultTableModel pairsTableModel = new DefaultTableModel();
+        JTable pairsTable = new JTable(pairsTableModel);
+        JTable table = new JTable(model);
+
+        GroupFactory GROUP_FACTORY = new GroupFactory(pairListFactory.pairList, PARTICIPANT_FACTORY.getPartyLocation());
+        GROUP_FACTORY.startGroupAlgorithm();
+        ArrayList<Group> appetizerGroups = GROUP_FACTORY.getAppetizerGroups();
+        ArrayList<Group> mainDishGroups = GROUP_FACTORY.getMainDishGroups();
+        ArrayList<Group> dessertGroups = GROUP_FACTORY.getDessertGroups();
+
+
+        model.addColumn("Group Nr");
+        model.addColumn("Pair 1 - Participant 1");
+        model.addColumn("Pair 1 - Participant 2");
+        model.addColumn("Pair 2 - Participant 1");
+        model.addColumn("Pair 2 - Participant 2");
+        model.addColumn("Pair 3 - Participant 1");
+        model.addColumn("Pair 3 - Participant 2");
+        model.addColumn("Course");
+        model.addColumn("Food Preference");
+        model.addColumn("KochPaar");
+
+        int groupNr = 1;
+
+        for (Group group : appetizerGroups) {
+            model.addRow(new Object[]{
+                    groupNr,
+                    group.getPairs().get(0).getParticipant1().getName(),
+                    group.getPairs().get(0).getParticipant2().getName(),
+                    group.getPairs().get(1).getParticipant1().getName(),
+                    group.getPairs().get(1).getParticipant2().getName(),
+                    group.getPairs().get(2).getParticipant1().getName(),
+                    group.getPairs().get(2).getParticipant2().getName(),
+                    "Appetizer",
+                    group.getCookingPair().getFoodPreference(),
+                    group.getCookingPair().getParticipant1().getName() + ", " + group.getCookingPair().getParticipant2().getName()
+            });
+            groupNr++;
+        }
+
+        for (Group group : mainDishGroups) {
+            model.addRow(new Object[]{
+                    groupNr,
+                    group.getPairs().get(0).getParticipant1().getName(),
+                    group.getPairs().get(0).getParticipant2().getName(),
+                    group.getPairs().get(1).getParticipant1().getName(),
+                    group.getPairs().get(1).getParticipant2().getName(),
+                    group.getPairs().get(2).getParticipant1().getName(),
+                    group.getPairs().get(2).getParticipant2().getName(),
+                    "MAIN DISH",
+                    group.getCookingPair().getFoodPreference(),
+                    group.getCookingPair().getParticipant1().getName() + ", " + group.getCookingPair().getParticipant2().getName()
+            });
+            groupNr++;
+        }
+
+        for (Group group : dessertGroups) {
+            model.addRow(new Object[]{
+                    groupNr,
+                    group.getPairs().get(0).getParticipant1().getName(),
+                    group.getPairs().get(0).getParticipant2().getName(),
+                    group.getPairs().get(1).getParticipant1().getName(),
+                    group.getPairs().get(1).getParticipant2().getName(),
+                    group.getPairs().get(2).getParticipant1().getName(),
+                    group.getPairs().get(2).getParticipant2().getName(),
+                    "DESSERT",
+                    group.getCookingPair().getFoodPreference(),
+                    group.getCookingPair().getParticipant1().getName() + ", " + group.getCookingPair().getParticipant2().getName()
+            });
+            groupNr++;
+        }
+
+        // List for Start Group Algorithm
+
+        pairsTableModel.addColumn("Pair ID");
+        pairsTableModel.addColumn("Pair Names ");
+        ArrayList<Participant> pairsWithoutGroups = getPairsWithoutGroups();
+
+        for (Participant participant : pairsWithoutGroups) {
+            pairsTableModel.addRow(new Object[]{
+                    participant.getId(),
+                    participant.getName(),
+            });
+        }
+
+        JFrame mainFrame = new JFrame("Groups and Pairs Not in Groups");
+        mainFrame.setLayout(new BorderLayout());
+        mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        JScrollPane tableScrollPane = new JScrollPane(table);
+        mainFrame.add(tableScrollPane, BorderLayout.NORTH);
+        JScrollPane pairsTableScrollPane = new JScrollPane(pairsTable);
+        mainFrame.add(pairsTableScrollPane, BorderLayout.SOUTH);
+        mainFrame.pack();
+        mainFrame.setLocationRelativeTo(null);
+        mainFrame.setVisible(true);
+
+
         southPanel.setLayout(new FlowLayout());
         // Combine all the groups into a single list
         ArrayList<Group> allGroups = new ArrayList<>();
@@ -453,6 +579,41 @@ public class MainWindow implements ActionListener {
         southPanel.add(labelTotalAgeDifference);
 
 
+        JButton undoButton = new JButton("Undo");
+        Runnable runnable = () -> {
+            //refreshGroupTable(groupTable, southPanel);
+        };
+        undoButton.addActionListener(e -> {
+            pairListFactory.undoLatestPairDialog(runnable);
+        });
+
+        JButton swapButton = new JButton("Swap");
+        swapButton.addActionListener(e -> {
+            displaySwapPairDialog(mainFrame, runnable);
+        });
+        JButton redoButton = new JButton("Redo");
+        redoButton.addActionListener(e -> {
+            pairListFactory.redoLatestPairDialog(runnable);
+        });
+        JButton dissolveGroupButton = new JButton("Gruppe auflösen");
+
+        dissolveGroupButton.addActionListener(e -> {
+            //TODO displayDissolveGroupDialog(mainFrame, runnable);
+        });
+
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout());
+        buttonPanel.add(undoButton);
+        buttonPanel.add(swapButton);
+        buttonPanel.add(redoButton);
+        buttonPanel.add(dissolveGroupButton);
+
+        mainFrame.add(buttonPanel, BorderLayout.NORTH);
+
+        mainFrame.pack();
+        mainFrame.setLocationRelativeTo(null);
+        mainFrame.setVisible(true);
         mainFrame.add(southPanel, BorderLayout.CENTER);
     }
 
