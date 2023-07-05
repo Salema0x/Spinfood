@@ -4,12 +4,10 @@ import Factory.ParticipantFactory;
 import Json.JacksonExport;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 
 public class GenerateSolutions {
-    private static String[] fileName = new String[]{
+    private static String[] fileNames = new String[]{
             "solutionForCriteriaOrder58679.json",
             "solutionForCriteriaOrder95876.json",
             "solutionForCriteriaOrder76589.json",

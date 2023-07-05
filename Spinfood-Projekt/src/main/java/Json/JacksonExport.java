@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class JacksonExport {
-    private String filePath = "src/main/resources/Json/output.json";
+    private String filePath = "Spinfood-Projekt/src/main/resources/Json/output.json";
     private ObjectMapper objectMapper;
     private ObjectWriter objectWriter;
     private Root root;

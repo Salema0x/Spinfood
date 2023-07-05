@@ -153,9 +153,9 @@ public class Group {
         }
         double median = (double) sum / pairs.size();
 
-        if (median < 1.5) {
+        if (median < 0.5) {
             this.foodPreference = FoodPreference.meat;
-        } else if (median >= 1.5 && median < 2.5) {
+        } else if (median >= 0.5 && median < 1.5) {
             this.foodPreference = FoodPreference.veggie;
         } else {
             this.foodPreference = FoodPreference.vegan;
