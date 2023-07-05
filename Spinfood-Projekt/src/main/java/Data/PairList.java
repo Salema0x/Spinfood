@@ -14,6 +14,10 @@ public class PairList {
     private final double ageDifference;
     private final double preferenceDeviation;
 
+
+
+
+
     public PairList(List<Pair> pairList, List<Participant> successors) {
         this.pairList = pairList;
         this.countPairs = pairList.size();
@@ -21,6 +25,7 @@ public class PairList {
         this.genderDiversityScore = calculateGenderDiversity();
         this.ageDifference = calculateAverageScores(Pair::getAgeDifference);
         this.preferenceDeviation = calculateAverageScores(Pair::getPreferenceDeviation);
+
     }
 
     /**
@@ -60,6 +65,8 @@ public class PairList {
         return 0;
     }
 
+
+
     public double getAgeDifference() {
         return ageDifference;
     }
@@ -79,4 +86,8 @@ public class PairList {
     public int getCountSuccessors() {
         return countSuccessors;
     }
+
 }
+
+
+
