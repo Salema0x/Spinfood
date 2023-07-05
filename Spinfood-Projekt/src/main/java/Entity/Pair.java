@@ -148,9 +148,7 @@ public class Pair implements Comparable<Pair> {
     @Override
     public String toString() {
         return "Pair{" +
-                "Participant Namen: " + participant1.getName() + " | " + participant2.getName() +
-                ", Essensvorlieben: " + participant1.getFoodPreference() + " | " + participant2.getFoodPreference() +
-                '}';
+                "Participants: " + participant1.getName() + " | " + participant2.getName() + '}';
     }
 
 

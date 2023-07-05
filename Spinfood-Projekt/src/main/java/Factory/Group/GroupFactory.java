@@ -120,7 +120,7 @@ public class GroupFactory {
      * @param pairInGroup        The pair currently in the group to be replaced.
      * @param pairInSuccessorList The pair from the successor list to be placed in the group.
      */
-    public void swapGroups(Group group, Pair pairInGroup, Pair pairInSuccessorList) {
+    public void swapPairs(Group group, Pair pairInGroup, Pair pairInSuccessorList) {
         ArrayList<Group> targetGroupList = null;
         if (appetizerGroups.contains(group)) {
             targetGroupList = appetizerGroups;
