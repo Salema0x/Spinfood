@@ -78,6 +78,8 @@ public class PairListFactory {
         System.out.println(pairListObject.getCountPairs() + " " + pairListObject.getCountSuccessors() + " " + pairListObject.getPreferenceDeviation() + " " + pairListObject.getAgeDifference() + " " + pairListObject.getGenderDiversityScore());
     }
 
+    //7.2.5
+
     /**
      * Undoes the latest pair dialog operation. Reverts the participants in the pair and successor list to their previous state.
      * This method removes the latest operation from the undoRedoList and adds it to the undoRedoListFuture for potential redo.
@@ -211,11 +213,12 @@ public class PairListFactory {
             successors.add(participant1);
             successors.add(participant2);
 
-
-            pairList.remove(pair);
             undoRedoList.add(new PairDissolve(pair, participant1, participant2));
+            pairList.remove(pair);
         }
     }
+
+    //7.2.5 End
 
     /**
      * Concatenates the pair list after the pair algorithm with pairs from the registration.

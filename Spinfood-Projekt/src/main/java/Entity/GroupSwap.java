@@ -1,11 +1,9 @@
 package Entity;
 
 public class GroupSwap {
-
     private Group group;
     private Pair swappedPair;
     private Pair newPair;
-
 
     public GroupSwap(Group group, Pair swappedPair, Pair newPair) {
         this.group = group;

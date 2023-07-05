@@ -18,8 +18,8 @@ public class GroupFactory {
     private final ArrayList<Group> mainDishGroups = new ArrayList<>();
     private final ArrayList<Group> dessertGroups = new ArrayList<>();
     private final ArrayList<Group> successorGroups = new ArrayList<>();
-    private LinkedList<GroupSwap> swapList = new LinkedList<>();
-    private LinkedList<GroupSwap> swapListFuture = new LinkedList<>();
+    private final LinkedList<Object> undoRedoList = new LinkedList<>();
+    private final LinkedList<Object> undoRedoListFuture = new LinkedList<>();
 
 
     public GroupFactory(ArrayList<Pair> pairList, Double[] partyLocation) {
@@ -102,13 +102,15 @@ public class GroupFactory {
         }
     }
 
+    //7.2.6
+
     /**
      * Clears the swapListFuture and swapList, removing all stored group swap operations.
      * This method is used to reset the undo/redo functionality for group swaps.
      */
     public void clearRedoAndUndoList() {
-        swapListFuture.clear();
-        swapList.clear();
+        undoRedoListFuture.clear();
+        undoRedoList.clear();
     }
 
     /**
@@ -118,7 +120,7 @@ public class GroupFactory {
      * @param pairInGroup        The pair currently in the group to be replaced.
      * @param pairInSuccessorList The pair from the successor list to be placed in the group.
      */
-    public void swapPairs(Group group, Pair pairInGroup, Pair pairInSuccessorList) {
+    public void swapGroups(Group group, Pair pairInGroup, Pair pairInSuccessorList) {
         // Checking if the group exists in one of the three group lists
         ArrayList<Group> targetGroupList = null;
         if (appetizerGroups.contains(group)) {
@@ -144,23 +146,48 @@ public class GroupFactory {
             return;
         }
 
-        // Removing the pair from the group
         group.removePair(pairInGroup);
-
-        // Adding the removed pair to the successorList
         successorPairs.add(pairInGroup);
-
-        // Removing pairInSuccessor from the successorList
         successorPairs.remove(pairInSuccessorList);
-
-        // Adding pairInSuccessor to the group
         group.addPair(pairInSuccessorList);
 
         // Updating the target group list
         targetGroupList.remove(group);
         targetGroupList.add(group);
         //TODO update values
-        swapList.add(new GroupSwap(group, pairInGroup, pairInSuccessorList));
+        undoRedoList.add(new GroupSwap(group, pairInGroup, pairInSuccessorList));
+    }
+
+    public void dissolveGroup(Group group){
+        // Checking if the group exists in one of the three group lists
+        ArrayList<Group> targetGroupList = null;
+        ArrayList<Pair> pairs = group.getPairs();
+        Pair pair1;
+        Pair pair2;
+        Pair pair3;
+        String course;
+
+        if (appetizerGroups.contains(group)) {
+            targetGroupList = appetizerGroups;
+            course = "appetizerGroups";
+        } else if (mainDishGroups.contains(group)) {
+            targetGroupList = mainDishGroups;
+            course = "mainDishGroups";
+        } else if (dessertGroups.contains(group)) {
+            targetGroupList = dessertGroups;
+            course = "dessertGroups";
+        } else {
+            System.out.println("Group does not exist in any group list.");
+            return;
+        }
+
+        successorPairs.addAll(group.getPairs());
+        pair1 = pairs.get(0);
+        pair2 = pairs.get(1);
+        pair3 = pairs.get(2);
+
+        targetGroupList.remove(group);
+        undoRedoList.add(new GroupDissolve(group, pair1, pair2, pair3, course));
     }
 
     /**
@@ -170,48 +197,59 @@ public class GroupFactory {
      *
      * @param runnable The runnable to be executed after undoing the group swap.
      */
-    public void undoLatestSwapPairDialog(Runnable runnable) {
-        if (swapList.isEmpty()) {
+    public void undoLatestGroupDialog(Runnable runnable) {
+        if (undoRedoList.isEmpty()) {
             return;
+        } else if (undoRedoList.getLast() instanceof GroupSwap) {
+            GroupSwap last = (GroupSwap) undoRedoList.getLast();
+            Group group = last.getGroup();
+            group.removePair(last.getNewPair());
+            group.addPair(last.getSwappedPair());
+            successorPairs.add(last.getNewPair());
+            successorPairs.remove(last.getSwappedPair());
+
+            undoRedoList.removeLast();
+            undoRedoListFuture.add(last);
+            //TODO group.updateCalculations();
+            runnable.run();
+        } else if (undoRedoList.getLast() instanceof GroupDissolve) {
+            GroupDissolve last = (GroupDissolve) undoRedoList.getLast();
+
+
         }
 
-        GroupSwap last = swapList.getLast();
-        Group group = last.getGroup();
-        group.removePair(last.getNewPair());
-        group.addPair(last.getSwappedPair());
-        successorPairs.add(last.getNewPair());
-        successorPairs.remove(last.getSwappedPair());
-
-        swapList.removeLast();
-        swapListFuture.add(last);
-        //TODO group.updateCalculations();
-        runnable.run();
     }
 
     /**
-     * Redoes the latest swap pair dialog operation for groups. Reapplies the swap of pairs in the group and successor list.
+     * Redoes the latest pair dialog operation for groups. Reapplies the swap of pairs in the group and successor list.
      * This method removes the latest group swap operation from the swapListFuture and adds it back to the swapList.
      * After applying the swap, the provided runnable is executed.
      *
      * @param runnable The runnable to be executed after redoing the group swap.
      */
-    public void redoLatestSwapPairDialog(Runnable runnable) {
-        if (swapListFuture.isEmpty()) {
+    public void redoLatestGroupDialog(Runnable runnable) {
+        if (undoRedoListFuture.isEmpty()) {
             return;
-        }
+        } else if (undoRedoListFuture.getLast() instanceof GroupSwap){
+            GroupSwap last = (GroupSwap) undoRedoListFuture.getLast();
+            Group group = last.getGroup();
+            group.removePair(last.getSwappedPair());
+            group.addPair(last.getNewPair());
+            //TODO group.updateCalculations();
+            successorPairs.add(last.getSwappedPair());
+            successorPairs.remove(last.getNewPair());
+            undoRedoListFuture.removeLast();
+            System.out.println(last);
+            undoRedoList.add(last);
+            runnable.run();
+        }  else if (undoRedoListFuture.getLast() instanceof GroupDissolve) {
+            GroupDissolve last = (GroupDissolve) undoRedoList.getLast();
 
-        GroupSwap last = swapListFuture.getLast();
-        Group group = last.getGroup();
-        group.removePair(last.getSwappedPair());
-        group.addPair(last.getNewPair());
-        //TODO group.updateCalculations();
-        successorPairs.add(last.getSwappedPair());
-        successorPairs.remove(last.getNewPair());
-        swapListFuture.removeLast();
-        System.out.println(last);
-        swapList.add(last);
-        runnable.run();
+
+        }
     }
+
+    //7.2.6 End
 
     /**
      * Will start the according algorithm to find two matching pairs for a given Pair. It's decided after gender which algorithm is chosen.
