@@ -85,14 +85,8 @@ public class CriteriaArranger extends JPanel {
 
     private void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("confirm")) {
-            list.setDragEnabled(false);
-            List<Object> criteriaOrder = Arrays.asList(LIST_MODEL.toArray());
-            MainWindow.setCriteriaOrder(criteriaOrder);
-            MainWindow.setCriteriaOrdered(true);
-            MainWindow.updateJMenu();
-
             int selectedIndex = list.getSelectedIndex();
-            if (selectedIndex != -1 && selectedIndex != 0) {
+            if (selectedIndex != -1) {
                 String selectedCriterion = LIST_MODEL.getElementAt(selectedIndex);
                 LIST_MODEL.removeElementAt(selectedIndex);
                 LIST_MODEL.insertElementAt(selectedCriterion, 0);
@@ -100,6 +94,13 @@ public class CriteriaArranger extends JPanel {
             else {
                 JOptionPane.showMessageDialog(FRAME, "Please select a criteria.");
             }
+            List<Object> criteriaOrder = Arrays.asList(LIST_MODEL.toArray());
+            list.setDragEnabled(false);
+            MainWindow.setCriteriaOrder(criteriaOrder);
+            MainWindow.setCriteriaOrdered(true);
+            MainWindow.updateJMenu();
+
+
         } else if (e.getActionCommand().equals("compare")) {
             List<Object> CRITERIA_ORDER = Arrays.asList(LIST_MODEL.toArray());
             ArrayList<Object> criteriaOrder2 = new ArrayList<>(CRITERIA_ORDER);

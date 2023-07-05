@@ -27,6 +27,9 @@ public class PairListFactory {
     private Function<Participant, Integer> firstMethod;
     private Function<Participant, Integer> secondMethod;
     private Function<Participant, Integer> thirdMethod;
+    private Function<Participant, Integer> fourthMethod;
+    private Function<Participant, Integer> fifthMethod;
+
     private final ArrayList<Participant> removements = new ArrayList<>();
     private final ArrayList<Participant> upperRemovements = new ArrayList<>();
     private ArrayList<Participant> successors = new ArrayList<>();
@@ -270,57 +273,84 @@ public class PairListFactory {
         int indexCriteria5 = criteriaOrder.indexOf("Essensvorlieben");
         int indexCriteria6 = criteriaOrder.indexOf("Altersdifferenz");
         int indexCriteria7 = criteriaOrder.indexOf("Geschlechterdiversität");
+        int indexCriteria8 = criteriaOrder.indexOf("Weglänge");
+        int indexCriteria9 = criteriaOrder.indexOf("Minimale Nachrücker");
 
         Function<Participant, Integer> getFoodPreferenceNumber = Participant::getFoodPreferenceNumber;
-        Function<Participant, Integer> getAgeRange = Participant::getAgeRange;
-        Function<Participant, Integer> getSex = Participant::getSexNumber;
+        Function<Participant, Integer> getAgeDifference = Participant::getAgeRange;
+        Function<Participant, Integer> getGenderDiversity = Participant::getSexNumber;
+        Function<Participant, Integer> getDistanceFromCityCenter = participant -> (int) participant.getDistanceFromCityCenter();
+        Function<Participant, Integer> getNumUnassignedParticipants = Participant::getNumUnassignedParticipants;
 
-        if (indexCriteria5 < indexCriteria6 && indexCriteria5 < indexCriteria7) {
-            assignFields(indexCriteria6, indexCriteria7, getFoodPreferenceNumber, getAgeRange, getSex);
-        } else if (indexCriteria6 < indexCriteria5 && indexCriteria6 < indexCriteria7) {
-            assignFields(indexCriteria5, indexCriteria7, getAgeRange, getFoodPreferenceNumber, getSex);
+        if (indexCriteria5 < indexCriteria6 && indexCriteria5 < indexCriteria7 && indexCriteria5 < indexCriteria8 && indexCriteria5 < indexCriteria9) {
+            assignFields(indexCriteria6, indexCriteria7, indexCriteria8, indexCriteria9, getFoodPreferenceNumber, getAgeDifference, getGenderDiversity, getDistanceFromCityCenter, getNumUnassignedParticipants);
+        } else if (indexCriteria6 < indexCriteria5 && indexCriteria6 < indexCriteria7 && indexCriteria6 < indexCriteria8 && indexCriteria6 < indexCriteria9) {
+            assignFields(indexCriteria5, indexCriteria7, indexCriteria8, indexCriteria9, getAgeDifference, getFoodPreferenceNumber, getGenderDiversity, getDistanceFromCityCenter, getNumUnassignedParticipants);
+        } else if (indexCriteria7 < indexCriteria5 && indexCriteria7 < indexCriteria6 && indexCriteria7 < indexCriteria8 && indexCriteria7 < indexCriteria9) {
+            assignFields(indexCriteria5, indexCriteria6, indexCriteria8, indexCriteria9, getGenderDiversity, getFoodPreferenceNumber, getAgeDifference, getDistanceFromCityCenter, getNumUnassignedParticipants);
+        } else if (indexCriteria8 < indexCriteria5 && indexCriteria8 < indexCriteria6 && indexCriteria8 < indexCriteria7 && indexCriteria8 < indexCriteria9) {
+            assignFields(indexCriteria5, indexCriteria6, indexCriteria7, indexCriteria9, getDistanceFromCityCenter, getFoodPreferenceNumber, getAgeDifference, getGenderDiversity, getNumUnassignedParticipants);
         } else {
-            if (indexCriteria5 < indexCriteria6) {
-                this.sexFunctionIndex = 0;
-                firstMethod = getSex;
-                secondMethod = getFoodPreferenceNumber;
-                thirdMethod = getAgeRange;
-                sorterStarter(0, getSex, getFoodPreferenceNumber, getAgeRange);
-            } else {
-                firstMethod = getSex;
-                secondMethod = getFoodPreferenceNumber;
-                thirdMethod = getAgeRange;
-                this.sexFunctionIndex = 0;
-                sorterStarter(0, getSex, getAgeRange, getFoodPreferenceNumber);
-            }
+            assignFields(indexCriteria5, indexCriteria6, indexCriteria7, indexCriteria8, getFoodPreferenceNumber, getAgeDifference, getGenderDiversity, getDistanceFromCityCenter, getNumUnassignedParticipants);
         }
     }
 
+
     /**
-     * Assigns the fields, and starts the sorters.
+     * Assigns the fields and starts the sorters.
      *
      * @param indexCriteria6          the index of criteria6 in the criteriaOrder list
      * @param indexCriteria7          the index of criteria7 in the criteriaOrder list
+     * @param indexCriteria8          the index of criteria8 in the criteriaOrder list
+     * @param indexCriteria9          the index of criteria9 in the criteriaOrder list
      * @param getFoodPreferenceNumber the first method with which the sorter gets started
-     * @param getAgeRange             the second method with which the sorter gets started
-     * @param getSex                  the third method with which the sorter gets started
+     * @param getAgeDifference        the second method with which the sorter gets started
+     * @param getGenderDiversity      the third method with which the sorter gets started
+     * @param getDistanceFromCityCenter the fourth method with which the sorter gets started
+     * @param getNumUnassignedParticipants the fifth method with which the sorter gets started
      */
-    private void assignFields(int indexCriteria6, int indexCriteria7, Function<Participant, Integer> getFoodPreferenceNumber, Function<Participant, Integer> getAgeRange, Function<Participant, Integer> getSex) {
-        if (indexCriteria6 < indexCriteria7) {
+    private void assignFields(int indexCriteria6, int indexCriteria7, int indexCriteria8, int indexCriteria9,
+                              Function<Participant, Integer> getFoodPreferenceNumber,
+                              Function<Participant, Integer> getAgeDifference,
+                              Function<Participant, Integer> getGenderDiversity,
+                              Function<Participant, Integer> getDistanceFromCityCenter,
+                              Function<Participant, Integer> getNumUnassignedParticipants) {
+        if (indexCriteria6 < indexCriteria7 && indexCriteria6 < indexCriteria8 && indexCriteria6 < indexCriteria9) {
             sexFunctionIndex = 2;
             firstMethod = getFoodPreferenceNumber;
-            secondMethod = getAgeRange;
-            thirdMethod = getSex;
-            sorterStarter(2, getFoodPreferenceNumber, getAgeRange, getSex);
+            secondMethod = getAgeDifference;
+            thirdMethod = getGenderDiversity;
+            fourthMethod = getDistanceFromCityCenter;
+            fifthMethod = getNumUnassignedParticipants;
+            sorterStarter(2, getFoodPreferenceNumber, getAgeDifference, getGenderDiversity, getDistanceFromCityCenter, getNumUnassignedParticipants);
+        } else if (indexCriteria7 < indexCriteria6 && indexCriteria7 < indexCriteria8 && indexCriteria7 < indexCriteria9) {
+            sexFunctionIndex = 3;
+            firstMethod = getFoodPreferenceNumber;
+            secondMethod = getAgeDifference;
+            thirdMethod = getGenderDiversity;
+            fourthMethod = getDistanceFromCityCenter;
+            fifthMethod = getNumUnassignedParticipants;
+            sorterStarter(3, getFoodPreferenceNumber, getAgeDifference, getGenderDiversity, getDistanceFromCityCenter, getNumUnassignedParticipants);
+        } else if (indexCriteria8 < indexCriteria6 && indexCriteria8 < indexCriteria7 && indexCriteria8 < indexCriteria9) {
+            sexFunctionIndex = 4;
+            firstMethod = getFoodPreferenceNumber;
+            secondMethod = getAgeDifference;
+            thirdMethod = getGenderDiversity;
+            fourthMethod = getDistanceFromCityCenter;
+            fifthMethod = getNumUnassignedParticipants;
+            sorterStarter(4, getFoodPreferenceNumber, getAgeDifference, getGenderDiversity, getDistanceFromCityCenter, getNumUnassignedParticipants);
         } else {
             sexFunctionIndex = 1;
             firstMethod = getFoodPreferenceNumber;
-            secondMethod = getSex;
-            thirdMethod = getAgeRange;
-            sorterStarter(1, getFoodPreferenceNumber, getSex, getAgeRange);
-
+            secondMethod = getAgeDifference;
+            thirdMethod = getGenderDiversity;
+            fourthMethod = getDistanceFromCityCenter;
+            fifthMethod = getNumUnassignedParticipants;
+            sorterStarter(1, getFoodPreferenceNumber, getAgeDifference, getGenderDiversity, getDistanceFromCityCenter, getNumUnassignedParticipants);
         }
     }
+
+
 
     /**
      * Starts the sorter Method. With the three main lists.

@@ -47,8 +47,6 @@ public class MainWindow implements ActionListener {
     private static boolean participantsAreRead = true;
     private static boolean groupsGenerated = false;
 
-    private PairList generatedPairList;
-
     private static ResourceBundle bundle;
 
     private static final JMenuItem readPartyLocationItem = new JMenuItem();
@@ -60,6 +58,8 @@ public class MainWindow implements ActionListener {
     private static GroupFactory GROUP_FACTORY;
     private static JacksonExport JACKSON_EXPORT;
     private static List<Participant> participantsWithoutPair = null;
+    private DefaultTableModel pairsTableModel ;
+
 
     /**
      * Displays the main window of the application.
@@ -83,7 +83,6 @@ public class MainWindow implements ActionListener {
         JTable table = new JTable();
         JPanel southPanel = new JPanel();
         southPanel.setLayout(new FlowLayout());
-
         refreshPairTable(table, southPanel);
         displayPairAndParticipantTables();
 
@@ -128,15 +127,20 @@ public class MainWindow implements ActionListener {
 
         JLabel labelPairs = new JLabel("Pairs Count: " + keyFigures.getCountPairs() + ",");
         JLabel labelSuccessors = new JLabel("Successors count: " + keyFigures.getCountSuccessors() + ",");
-        JLabel labelDiversity = new JLabel("Gender Diversity Score: " + keyFigures.getGenderDiversityScore() + ",");
+        JLabel labelPreferenceDeviation = new JLabel("Preference Deviation : " + keyFigures.getPreferenceDeviation());
+        JLabel labelGenderDiversity = new JLabel("Gender Diversity Score: " + keyFigures.getGenderDiversityScore() + ",");
         JLabel labelAgeDifference = new JLabel("Age Difference: " + keyFigures.getAgeDifference());
+
 
         southPanel.setLayout(new FlowLayout());
         southPanel.removeAll();
         southPanel.add(labelPairs);
         southPanel.add(labelSuccessors);
-        southPanel.add(labelDiversity);
+        southPanel.add(labelPreferenceDeviation);
         southPanel.add(labelAgeDifference);
+        southPanel.add(labelGenderDiversity);
+
+
     }
 
     /**
@@ -148,7 +152,7 @@ public class MainWindow implements ActionListener {
 
         refreshPairTable(pairTable, southPanel);
 
-        DefaultTableModel pairsTableModel = new DefaultTableModel();
+        pairsTableModel = new DefaultTableModel();
         pairsTableModel.addColumn("Participant ID");
         pairsTableModel.addColumn("Participant Name");
 
@@ -178,6 +182,8 @@ public class MainWindow implements ActionListener {
         JButton undoButton = new JButton("Undo");
         Runnable runnable = () -> {
             refreshPairTable(pairTable, southPanel);
+            updatePairsTable();
+
         };
         undoButton.addActionListener(e -> {
             pairListFactory.undoLatestPairDialog(runnable);
@@ -190,11 +196,13 @@ public class MainWindow implements ActionListener {
         JButton redoButton = new JButton("Redo");
         redoButton.addActionListener(e -> {
             pairListFactory.redoLatestPairDialog(runnable);
+            updatePairsTable();
         });
         JButton dissolvePairButton = new JButton("Paar auflösen");
 
         dissolvePairButton.addActionListener(e -> {
             displayDissolvePairDialog(mainFrame, runnable);
+            updatePairsTable();
         });
 
         JPanel buttonPanel = new JPanel();
@@ -220,6 +228,7 @@ public class MainWindow implements ActionListener {
     private void displaySwapPairDialog(JFrame pairTableJFrame, Runnable refreshFunction) {
         JDialog dialog = new JDialog(pairTableJFrame, "Swap Pair", Dialog.ModalityType.APPLICATION_MODAL);
         dialog.setLayout(new FlowLayout());
+
 
         // Create the JFrame
         JFrame frame = new JFrame("Dropdown Popup");
@@ -262,7 +271,7 @@ public class MainWindow implements ActionListener {
             Participant newParticipant = pairListFactory.getSuccessors().get(selectedNewParticipant);
 
             pairListFactory.swapParticipants(oldPair, oldParticipant, newParticipant);
-
+            updatePairsTable();
             // Update the participant list in the dropdown
             participantList[selectedNewParticipant] = newParticipant.getName();
             dropdown3.setModel(new DefaultComboBoxModel<>(participantList));
@@ -291,6 +300,7 @@ public class MainWindow implements ActionListener {
         frame.setVisible(true);
     }
 
+
     /**
      * Displays a dialog to dissolve a pair and create new pairs with the dissolved participants.
      *
@@ -318,6 +328,7 @@ public class MainWindow implements ActionListener {
             System.out.println(oldPair.toString());
 
             pairListFactory.dissolvePair(oldPair);
+            updatePairsTable();
             String message = "Aufgelöst\n" +
                     "Paar: " + selectedOldPair;
             JOptionPane.showMessageDialog(frame, message);
@@ -332,6 +343,17 @@ public class MainWindow implements ActionListener {
         frame.setSize(300, 200);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+    }
+    private void updatePairsTable() {
+        pairsTableModel.setRowCount(0);
+        ArrayList<Participant> participantsWithoutPairs = getPairsWithoutGroups();
+
+        for (Participant participant : participantsWithoutPairs) {
+            pairsTableModel.addRow(new Object[]{
+                    participant.getId(),
+                    participant.getName(),
+            });
+        }
     }
 
 
@@ -435,6 +457,7 @@ public class MainWindow implements ActionListener {
 
         JPanel southPanel = new JPanel();
         southPanel.setLayout(new FlowLayout());
+
         // Combine all the groups into a single list
         ArrayList<Group> allGroups = new ArrayList<>();
         allGroups.addAll(appetizerGroups);
