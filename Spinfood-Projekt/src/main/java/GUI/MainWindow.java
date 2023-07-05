@@ -83,14 +83,6 @@ public class MainWindow implements ActionListener {
         JTable table = new JTable();
         JPanel southPanel = new JPanel();
         southPanel.setLayout(new FlowLayout());
-        participantsWithoutPair = pairListFactory.getSuccessors();
-        pairListFactory = new PairListFactory(
-                new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
-                new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
-                new ArrayList<>(CRITERIA_ORDER)
-        );
-
-        generatedPairList = pairListFactory.getPairListObject();
 
         refreshPairTable(table, southPanel);
         displayPairAndParticipantTables();
