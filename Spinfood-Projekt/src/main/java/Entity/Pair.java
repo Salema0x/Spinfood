@@ -231,10 +231,6 @@ public class Pair implements Comparable<Pair> {
         return gender;
     }
 
-    public Double[] getCoordinatesThirdRound() {
-        return coordinatesThirdRound;
-    }
-
     @Override
     public int compareTo(Pair o) {
         return age.compareTo(o.age);

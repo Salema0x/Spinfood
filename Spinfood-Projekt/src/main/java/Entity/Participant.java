@@ -122,21 +122,6 @@ public class Participant {
         }
     }
 
-    public double getDistanceFromCityCenter() {
-        double distance = Math.sqrt(Math.pow(kitchenLongitude - 0, 2) + Math.pow(kitchenLatitude - 0, 2));
-        return distance;
-    }
-
-    public int getNumUnassignedParticipants() {
-        int numUnassigned = 0;
-        if (!hasPartner) {
-            numUnassigned++;
-        }
-
-        return numUnassigned;
-    }
-
-
     private void calculateSexNumber(String sex) {
         switch (sex) {
             case "female" -> this.sexNumber = 0;
