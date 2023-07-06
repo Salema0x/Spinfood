@@ -148,10 +148,6 @@ public class RingFactory {
         return RADIUS_EARTH * c;
     }
 
-    public ArrayList<Pair> getSuccessorPairs() {
-        return successorPairs;
-    }
-
     public ArrayList<Pair> getOuterRing() {
         return outerRing;
     }

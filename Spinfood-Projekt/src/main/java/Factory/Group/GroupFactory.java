@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 /**
  * This class is holding methods to generate a list of groups out of the list of pairs.
- *
  * @author David Krell
  */
 public class GroupFactory {
@@ -20,8 +19,8 @@ public class GroupFactory {
     private final ArrayList<Group> mainCourseGroupList = new ArrayList<>();
     private final ArrayList<Group> dessertCourseGroupList = new ArrayList<>();
     private final ArrayList<Group> successorGroups = new ArrayList<>();
-    private LinkedList<GroupSwap> swapList = new LinkedList<>();
-    private LinkedList<GroupSwap> swapListFuture = new LinkedList<>();
+    private final LinkedList<Object> undoRedoList = new LinkedList<>();
+    private final LinkedList<Object> undoRedoListFuture = new LinkedList<>();
 
 
     public GroupFactory(ArrayList<Pair> pairList, Double[] partyLocation) {
@@ -80,6 +79,9 @@ public class GroupFactory {
                 .stream()
                 .collect(Collectors.groupingBy(PairAttributes::new));
 
+        for (Map.Entry<?, ?> entry : pairsByAttributes.entrySet()) {
+            System.out.println(entry.getKey() + " : " + entry.getValue());
+        }
 
         for (Pair cookingPair : pairsOnTheRing) {
             FoodPreference foodPreferenceFromCookingPair = cookingPair.getFoodPreference();
@@ -102,7 +104,6 @@ public class GroupFactory {
                 System.out.println(groupMembers.size());
                 continue;
             }
-
 
             for (Pair pair : groupMembers) {
                 PairAttributes attributes = new PairAttributes(pair);
@@ -137,12 +138,158 @@ public class GroupFactory {
 
     }
 
+    //7.2.6
+
+    /**
+     * Clears the swapListFuture and swapList, removing all stored group swap operations.
+     * This method is used to reset the undo/redo functionality for group swaps.
+     */
+    public void clearRedoAndUndoList() {
+        undoRedoListFuture.clear();
+        undoRedoList.clear();
+    }
+
+    /**
+     * Swaps pairs between a group and the successor list. Replaces a pair in the group with another pair from the successor list.
+     *
+     * @param group              The group in which the pairs should be swapped.
+     * @param pairInGroup        The pair currently in the group to be replaced.
+     * @param pairInSuccessorList The pair from the successor list to be placed in the group.
+     */
+    public void swapPairs(Group group, Pair pairInGroup, Pair pairInSuccessorList) {
+        ArrayList<Group> targetGroupList = null;
+        if (appetizerGroups.contains(group)) {
+            targetGroupList = appetizerGroups;
+        } else if (mainDishGroups.contains(group)) {
+            targetGroupList = mainDishGroups;
+        } else if (dessertGroups.contains(group)) {
+            targetGroupList = dessertGroups;
+        } else {
+            System.out.println("Group does not exist in any group list.");
+            return;
+        }
+
+        // Checking if the pairInGroup is in the selected group
+        if (!group.containsPair(pairInGroup)) {
+            System.out.println("Pair does not exist in the selected group.");
+            return;
+        }
+
+        // Checking if the pairInSuccessorList is actually in the successorList
+        if (!successorPairs.contains(pairInSuccessorList)) {
+            System.out.println("Pair does not exist in the successor list.");
+            return;
+        }
+
+        group.removePair(pairInGroup);
+        successorPairs.add(pairInGroup);
+        successorPairs.remove(pairInSuccessorList);
+        group.addPair(pairInSuccessorList);
+
+        // Updating the target group list
+        targetGroupList.remove(group);
+        targetGroupList.add(group);
+        //TODO update values
+        undoRedoList.add(new GroupSwap(group, pairInGroup, pairInSuccessorList));
+    }
+
+    public void dissolveGroup(Group group){
+        ArrayList<Group> targetGroupList = null;
+        ArrayList<Pair> pairs = group.getPairs();
+        Pair pair1;
+        Pair pair2;
+        Pair pair3;
+        String course;
+
+        if (appetizerGroups.contains(group)) {
+            targetGroupList = appetizerGroups;
+            course = "appetizerGroups";
+        } else if (mainDishGroups.contains(group)) {
+            targetGroupList = mainDishGroups;
+            course = "mainDishGroups";
+        } else if (dessertGroups.contains(group)) {
+            targetGroupList = dessertGroups;
+            course = "dessertGroups";
+        } else {
+            System.out.println("Group does not exist in any group list.");
+            return;
+        }
+
+        successorPairs.addAll(group.getPairs());
+        pair1 = pairs.get(0);
+        pair2 = pairs.get(1);
+        pair3 = pairs.get(2);
+
+        targetGroupList.remove(group);
+        undoRedoList.add(new GroupDissolve(group, pair1, pair2, pair3, course));
+    }
+
+    /**
+     * Undoes the latest swap pair dialog operation for groups. Reverts the pairs in the group and successor list to their previous state.
+     * This method removes the latest group swap operation from the swapList and adds it to the swapListFuture for potential redo.
+     * After reverting the swap, the provided runnable is executed.
+     *
+     * @param runnable The runnable to be executed after undoing the group swap.
+     */
+    public void undoLatestGroupDialog(Runnable runnable) {
+        if (undoRedoList.isEmpty()) {
+            return;
+        } else if (undoRedoList.getLast() instanceof GroupSwap) {
+            GroupSwap last = (GroupSwap) undoRedoList.getLast();
+            Group group = last.getGroup();
+            group.removePair(last.getNewPair());
+            group.addPair(last.getSwappedPair());
+            successorPairs.add(last.getNewPair());
+            successorPairs.remove(last.getSwappedPair());
+
+            undoRedoList.removeLast();
+            undoRedoListFuture.add(last);
+            //TODO group.updateCalculations();
+            runnable.run();
+        } else if (undoRedoList.getLast() instanceof GroupDissolve) {
+            GroupDissolve last = (GroupDissolve) undoRedoList.getLast();
+
+
+        }
+
+    }
+
+    /**
+     * Redoes the latest pair dialog operation for groups. Reapplies the swap of pairs in the group and successor list.
+     * This method removes the latest group swap operation from the swapListFuture and adds it back to the swapList.
+     * After applying the swap, the provided runnable is executed.
+     *
+     * @param runnable The runnable to be executed after redoing the group swap.
+     */
+    public void redoLatestGroupDialog(Runnable runnable) {
+        if (undoRedoListFuture.isEmpty()) {
+            return;
+        } else if (undoRedoListFuture.getLast() instanceof GroupSwap){
+            GroupSwap last = (GroupSwap) undoRedoListFuture.getLast();
+            Group group = last.getGroup();
+            group.removePair(last.getSwappedPair());
+            group.addPair(last.getNewPair());
+            //TODO group.updateCalculations();
+            successorPairs.add(last.getSwappedPair());
+            successorPairs.remove(last.getNewPair());
+            undoRedoListFuture.removeLast();
+            System.out.println(last);
+            undoRedoList.add(last);
+            runnable.run();
+        }  else if (undoRedoListFuture.getLast() instanceof GroupDissolve) {
+            GroupDissolve last = (GroupDissolve) undoRedoList.getLast();
+
+
+        }
+    }
+
+    //7.2.6 End
 
     /**
      * Will start the according algorithm to find two matching pairs for a given Pair. It's decided after gender which algorithm is chosen.
-     *
-     * @param cookingPair           the pair for which the two matching pairs should get found.
+     * @param cookingPair the pair for which the two matching pairs should get found.
      * @param possibleMatchingPairs all the pairs which are possible matching pairs organized in a map.
+     *
      * @return a List containing the best matching pairs.
      */
     private ArrayList<Pair> findPairsForCookingPair(Pair cookingPair,
@@ -301,7 +448,6 @@ public class GroupFactory {
                 }
             }
         }
-
 
         if (selectedListOne != null && selectedListTwo != null) {
             int[] indices = calculateIndices(selectedListOne, selectedListTwo, course);

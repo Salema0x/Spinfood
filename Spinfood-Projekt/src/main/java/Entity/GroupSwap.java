@@ -1,7 +1,6 @@
 package Entity;
 
 public class GroupSwap {
-
     private Group group;
     private Pair swappedPair;
     private Pair newPair;

@@ -11,6 +11,10 @@ public class GroupList {
     private final int groupCount;
     private final int successorCount;
 
+    public ArrayList<Group> getGroupList() {
+        return groupList;
+    }
+
     public int getGroupCount() {
         return groupCount;
     }
@@ -19,9 +23,12 @@ public class GroupList {
         return successorCount;
     }
 
-    private double genderDiversity;
-    private double ageDifference;
-    private double preferenceDeviation;
+    public double getPathLength() {
+        return pathLength;
+    }
+    private final double genderDiversity;
+    private final double ageDifference;
+    private final double preferenceDeviation;
     private double pathLength;
 
     public GroupList(ArrayList<Group> groupList, ArrayList<Participant> successors) {

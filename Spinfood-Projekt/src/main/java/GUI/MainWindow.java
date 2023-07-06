@@ -9,7 +9,6 @@ import Factory.Group.GroupFactory;
 import Factory.PairListFactory;
 import Factory.ParticipantFactory;
 import Json.JacksonExport;
-
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
@@ -21,7 +20,12 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
+/**
+ * The main window of the application.
+ */
 public class MainWindow implements ActionListener {
 
     //FrameSetup
@@ -37,7 +41,11 @@ public class MainWindow implements ActionListener {
     private static final JMenuItem SAVE_GROUPS = new JMenuItem("Gruppen speichern");
     private static final JMenuItem RESORT_PAIRS = new JMenuItem("Paare neu sortieren");
     private static final JMenuItem RESORT_GROUPS = new JMenuItem("Gruppen neu sortieren");
-
+    private static final JMenuItem readPartyLocationItem = new JMenuItem();
+    private static final JMenuItem readParticipantsItem = new JMenuItem();
+    private static final JMenu languageMenu = new JMenu();
+    private static final JMenu algorithmMenu = new JMenu();
+    private static final JMenu startMenu = new JMenu();
     private static final JLabel SHOW_TEXT = new JLabel(
             "Starten Sie indem Sie unter 'Start' den Punkt 'Teilnehmer einlesen' auswählen.");
 
@@ -58,6 +66,8 @@ public class MainWindow implements ActionListener {
     //Attributes
     private static List<Participant> participantsWithoutPair = null;
     private static PairList keyFigures = null;
+    private static ResourceBundle bundle;
+    private DefaultTableModel pairsTableModel;
 
 
     //FactorySetup
@@ -67,9 +77,10 @@ public class MainWindow implements ActionListener {
     private static JacksonExport JACKSON_EXPORT;
 
     /**
-     * Will create a Main Window for the application using JFrame.
+     * Displays the main window of the application.
      */
     public void displayWindow() {
+        loadLanguageResources("de");
         FRAME.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         FRAME.pack();
         FRAME.setMinimumSize(new Dimension(WIDTH, HEIGHT));
@@ -83,83 +94,23 @@ public class MainWindow implements ActionListener {
     /**
      * Displays the table of pairs with their relevant information.
      */
-    private void displayPairTable(boolean enableSwapButton) {
+    private void displayPairTable() {
         JTable table = new JTable();
         JPanel southPanel = new JPanel();
         southPanel.setLayout(new FlowLayout());
-        participantsWithoutPair = PAIR_LIST_FACTORY.getParticipantSuccessorList();
-        keyFigures = new PairList(PAIR_LIST_FACTORY.pairList, participantsWithoutPair);
-
         refreshPairTable(table, southPanel);
-
-        JFrame pairTableFrame = new JFrame("Pairs Table");
-        pairTableFrame.setLayout(new BorderLayout());
-        pairTableFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        JScrollPane tableScrollPane = new JScrollPane(table);
-
-        pairTableFrame.add(tableScrollPane, BorderLayout.CENTER);
-
-        JButton undoButton = new JButton("Undo");
-        Runnable runnable = () -> {
-            refreshPairTable(table, southPanel);
-        };
-
-        undoButton.addActionListener(e -> {
-            PAIR_LIST_FACTORY.undoLatestSwapPairDialog(runnable);
-        });
-
-        JButton swapButton = new JButton("Swap");
-
-        swapButton.addActionListener(e -> {
-            displaySwapPairDialog(pairTableFrame, runnable);
-        });
-
-        JButton redoButton = new JButton("Redo");
-
-        redoButton.addActionListener(e -> {
-            PAIR_LIST_FACTORY.redoLatestSwapPairDialog(runnable);
-        });
-
-        JButton dissolvePairButton = new JButton("Paar auflösen");
-
-        dissolvePairButton.addActionListener(e -> {
-            displayDissolvePairDialog(pairTableFrame, runnable);
-        });
-
-        southPanel.setLayout(new FlowLayout());
-
-        if (enableSwapButton) {
-            JPanel northButtonPanel = new JPanel();
-            northButtonPanel.setLayout(new FlowLayout());
-            northButtonPanel.add(undoButton);
-            northButtonPanel.add(swapButton);
-            northButtonPanel.add(redoButton);
-            northButtonPanel.add(dissolvePairButton);
-            pairTableFrame.add(northButtonPanel, BorderLayout.NORTH);
-        }
-
-        pairTableFrame.add(southPanel, BorderLayout.SOUTH);
-        pairTableFrame.pack();
-        pairTableFrame.setLocationRelativeTo(null);
-        pairTableFrame.setVisible(true);
-        pairTableFrame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent windowEvent) {
-                PAIR_LIST_FACTORY.clearRedoAndUndoList();
-            }
-        });
+        displayPairAndParticipantTables();
     }
 
-    /**
-     * Refreshes the content of the pair table with updated data from the pair list.
-     * Updates the table model with columns and rows representing the pairs and their information.
-     *
-     * @param table       The JTable to be refreshed with the updated pair data.
-     * @param southPanel  The JPanel containing the labels to be refreshed with updated values.
-     */
+        /**
+         * Refreshes the pair table based on the current pair list.
+         *
+         * @param table      the JTable to display the pair information
+         * @param southPanel the JPanel to display additional information
+         */
     public void refreshPairTable(JTable table, JPanel southPanel) {
         DefaultTableModel model = new DefaultTableModel();
+
         table.setModel(model);
         model.addColumn("Pair Nr.");
         model.addColumn("Participant 1");
@@ -170,9 +121,9 @@ public class MainWindow implements ActionListener {
         model.addColumn("Gender Diversity Score");
         model.addColumn("Preference Deviation");
 
-        int pairInt = 0;
+        int pairInt = 1;
 
-        for (Pair pair : PAIR_LIST_FACTORY.pairList) {
+        for (Pair pair : pairListFactory.pairList) {
             model.addRow(new Object[]{
                     pairInt,
                     pair.getParticipant1().getName(),
@@ -186,29 +137,125 @@ public class MainWindow implements ActionListener {
             pairInt++;
         }
 
+        PairList keyFigures = new PairList(pairListFactory.pairList,pairListFactory.getSuccessors());
+
         JLabel labelPairs = new JLabel("Pairs Count: " + keyFigures.getCountPairs() + ",");
         JLabel labelSuccessors = new JLabel("Successors count: " + keyFigures.getCountSuccessors() + ",");
-        JLabel labelDiversity = new JLabel("Gender Diversity Score: " + keyFigures.getGenderDiversityScore() + ",");
+        JLabel labelPreferenceDeviation = new JLabel("Preference Deviation : " + keyFigures.getPreferenceDeviation());
+        JLabel labelGenderDiversity = new JLabel("Gender Diversity Score: " + keyFigures.getGenderDiversityScore() + ",");
         JLabel labelAgeDifference = new JLabel("Age Difference: " + keyFigures.getAgeDifference());
+
 
         southPanel.setLayout(new FlowLayout());
         southPanel.removeAll();
         southPanel.add(labelPairs);
         southPanel.add(labelSuccessors);
-        southPanel.add(labelDiversity);
+        southPanel.add(labelPreferenceDeviation);
         southPanel.add(labelAgeDifference);
+        southPanel.add(labelGenderDiversity);
+
+
     }
 
     /**
-     * Displays a dialog window for swapping pairs in the pair list.
-     * Allows the user to select a pair, a participant from the pair, and a replacement participant from the successor list.
-     * After selecting the values, the selected pair is swapped with the replacement participant.
-     * The provided refresh function is executed to update the display.
+     * Displays the pair table and the table of participants without pairs in a separate JFrame.
+     */
+    public void displayPairAndParticipantTables() {
+        JTable pairTable = new JTable();
+        JPanel southPanel = new JPanel();
+
+        refreshPairTable(pairTable, southPanel);
+
+        pairsTableModel = new DefaultTableModel();
+        pairsTableModel.addColumn("Participant ID");
+        pairsTableModel.addColumn("Participant Name");
+
+
+        JTable successorTable = new JTable(pairsTableModel);
+        ArrayList<Participant> participantsWithoutPairs = getPairsWithoutGroups();
+
+        for (Participant participant : participantsWithoutPairs) {
+            pairsTableModel.addRow(new Object[]{
+                    participant.getId(),
+                    participant.getName(),
+            });
+        }
+
+        JScrollPane pairScrollPane = new JScrollPane(pairTable);
+        JScrollPane successorScrollPane = new JScrollPane(successorTable);
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, pairScrollPane, successorScrollPane);
+        splitPane.setDividerLocation(0.5);
+
+        JFrame mainFrame = new JFrame("Pair and Participant Tables");
+        mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        mainFrame.setLayout(new BorderLayout());
+        mainFrame.add(splitPane, BorderLayout.CENTER);
+        mainFrame.add(southPanel, BorderLayout.SOUTH);
+
+        JButton undoButton = new JButton("Undo");
+        Runnable runnable = () -> {
+            refreshPairTable(pairTable, southPanel);
+            updatePairsTable();
+
+        };
+        undoButton.addActionListener(e -> {
+            pairListFactory.undoLatestPairDialog(runnable);
+        });
+
+        JButton swapButton = new JButton("Swap");
+        swapButton.addActionListener(e -> {
+            displaySwapPairDialog(mainFrame, runnable);
+        });
+        JButton redoButton = new JButton("Redo");
+        redoButton.addActionListener(e -> {
+            pairListFactory.redoLatestPairDialog(runnable);
+            updatePairsTable();
+        });
+        JButton dissolvePairButton = new JButton("Paar auflösen");
+
+        dissolvePairButton.addActionListener(e -> {
+            displayDissolvePairDialog(mainFrame, runnable);
+            updatePairsTable();
+        });
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout());
+        buttonPanel.add(undoButton);
+        buttonPanel.add(swapButton);
+        buttonPanel.add(redoButton);
+        buttonPanel.add(dissolvePairButton);
+
+        mainFrame.add(buttonPanel, BorderLayout.NORTH);
+
+        mainFrame.pack();
+        mainFrame.setLocationRelativeTo(null);
+        mainFrame.setVisible(true);
+    }
+
+    private void updatePairsTable() {
+        pairsTableModel.setRowCount(0);
+        ArrayList<Participant> participantsWithoutPairs = getPairsWithoutGroups();
+
+        for (Participant participant : participantsWithoutPairs) {
+            pairsTableModel.addRow(new Object[]{
+                    participant.getId(),
+                    participant.getName(),
+            });
+        }
+    }
+
+    /**
+     * Displays a dialog to swap participants within a pair.
      *
-     * @param pairTableJFrame  The JFrame of the pair table.
-     * @param refreshFunction  The runnable function to refresh the display after swapping pairs.
+     * @param pairTableJFrame  the JFrame containing the pair table
+     * @param refreshFunction the function to refresh the pair table
      */
     private void displaySwapPairDialog(JFrame pairTableJFrame, Runnable refreshFunction) {
+        JDialog dialog = new JDialog(pairTableJFrame, "Swap Pair", Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.setLayout(new FlowLayout());
+
+
         // Create the JFrame
         JFrame frame = new JFrame("Dropdown Popup");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -216,7 +263,7 @@ public class MainWindow implements ActionListener {
 
         // Create the first dropdown list
         JLabel label1 = new JLabel("Welches Paar");
-        String[] pairList = PAIR_LIST_FACTORY.pairList.stream().map(pair -> pair.getParticipant1().getName() + " + " + pair.getParticipant2().getName()).toList().toArray(new String[0]);
+        String[] pairList = pairListFactory.pairList.stream().map(pair -> pair.getParticipant1().getName() + " + " + pair.getParticipant2().getName()).toArray(String[]::new);
         JComboBox<String> dropdown1 = new JComboBox<>(pairList);
         JPanel panel1 = new JPanel();
         panel1.add(label1);
@@ -230,9 +277,9 @@ public class MainWindow implements ActionListener {
         panel2.add(dropdown2);
 
         // Create the third dropdown list
-        String[] succPairList = PAIR_LIST_FACTORY.getParticipantSuccessorList().stream().map(Participant::getName).toList().toArray(new String[0]);
+        String[] participantList = pairListFactory.getSuccessors().stream().map(Participant::getName).toArray(String[]::new);
         JLabel label3 = new JLabel("Ersetzen durch");
-        JComboBox<String> dropdown3 = new JComboBox<>(succPairList);
+        JComboBox<String> dropdown3 = new JComboBox<>(participantList);
         JPanel panel3 = new JPanel();
         panel3.add(label3);
         panel3.add(dropdown3);
@@ -242,22 +289,26 @@ public class MainWindow implements ActionListener {
         button.addActionListener(e -> {
             // Get the selected values from the dropdown lists
             int selectedOldPair = dropdown1.getSelectedIndex();
-            String participant = (String) dropdown2.getSelectedItem();
-            int indexNewParticipant = dropdown3.getSelectedIndex();
+            String selectedParticipant = (String) dropdown2.getSelectedItem();
+            int selectedNewParticipant = dropdown3.getSelectedIndex();
 
-            Pair oldPair = PAIR_LIST_FACTORY.pairList.get(selectedOldPair);
-            Participant newParticipant = PAIR_LIST_FACTORY.getParticipantSuccessorList().get(indexNewParticipant);
-            System.out.println(oldPair.toString());
-            assert participant != null;
-            Participant oldParticipant = participant.equals("User 1") ? oldPair.getParticipant1() : oldPair.getParticipant2();
+            Pair oldPair = pairListFactory.pairList.get(selectedOldPair);
+            Participant oldParticipant = selectedParticipant.equals("User 1") ? oldPair.getParticipant1() : oldPair.getParticipant2();
+            Participant newParticipant = pairListFactory.getSuccessors().get(selectedNewParticipant);
 
-            PAIR_LIST_FACTORY.swapParticipants(oldPair, oldParticipant, newParticipant);
+            pairListFactory.swapParticipants(oldPair, oldParticipant, newParticipant);
+            updatePairsTable();
+            // Update the participant list in the dropdown
+            participantList[selectedNewParticipant] = newParticipant.getName();
+            dropdown3.setModel(new DefaultComboBoxModel<>(participantList));
+
             // Display the selected values in a message dialog
             String message = "Geändert\n" +
                     "Alte Paarkombination: " + selectedOldPair +
-                    "\nPaarmitglieder " + oldParticipant.getName() +
+                    "\nPaar mit Glied " + oldParticipant.getName() +
                     "\nErsetzt durch: " + newParticipant.getName();
             JOptionPane.showMessageDialog(frame, message);
+
             frame.dispose();
             refreshFunction.run();
             SwingUtilities.updateComponentTreeUI(pairTableJFrame);
@@ -275,30 +326,35 @@ public class MainWindow implements ActionListener {
         frame.setVisible(true);
     }
 
+
+    /**
+     * Displays a dialog to dissolve a pair and create new pairs with the dissolved participants.
+     *
+     * @param pairTableJFrame  the JFrame containing the pair table
+     * @param refreshFunction the function to refresh the pair table
+     */
     private void displayDissolvePairDialog(JFrame pairTableJFrame, Runnable refreshFunction) {
-        // Create the JFrame
         JFrame frame = new JFrame("Dropdown Popup");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new FlowLayout());
 
-        // Create the first dropdown list
         JLabel label1 = new JLabel("Welches Paar");
-        String[] pairList = PAIR_LIST_FACTORY.getPairList().stream().map(pair -> pair.getParticipant1().getName() + " + " + pair.getParticipant2().getName()).toList().toArray(new String[0]);
+        String[] pairList = pairListFactory.pairList.stream().map(pair -> pair.getParticipant1().getName() + " + " + pair.getParticipant2().getName()).toList().toArray(new String[0]);
         JComboBox<String> dropdown1 = new JComboBox<>(pairList);
         JPanel panel = new JPanel();
         panel.add(label1);
         panel.add(dropdown1);
 
-        // Create the button
         JButton button = new JButton("Submit");
         button.addActionListener(e -> {
             // Get the selected values from the dropdown lists
             int selectedOldPair = dropdown1.getSelectedIndex();
 
-            Pair oldPair = PAIR_LIST_FACTORY.pairList.get(selectedOldPair);
+            Pair oldPair = pairListFactory.pairList.get(selectedOldPair);
             System.out.println(oldPair.toString());
 
-            PAIR_LIST_FACTORY.dissolvePair(oldPair);
+            pairListFactory.dissolvePair(oldPair);
+            updatePairsTable();
             String message = "Aufgelöst\n" +
                     "Paar: " + selectedOldPair;
             JOptionPane.showMessageDialog(frame, message);
@@ -307,94 +363,373 @@ public class MainWindow implements ActionListener {
             SwingUtilities.updateComponentTreeUI(pairTableJFrame);
         });
 
-        // Add the components to the frame
         frame.add(panel);
         frame.add(button);
 
-        // Set the frame size and make it visible
         frame.setSize(300, 200);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
+
+    //TODO GROUPS
     /**
-     * Displays the table of groups with their relevant information and the pairs not in groups.
+     * Displays the table of groups with their relevant information.
      */
-    private void displayGroupTable(boolean displaySwap) {
-        GroupFactory GROUP_FACTORY = new GroupFactory(PAIR_LIST_FACTORY.pairList, PARTICIPANT_FACTORY.getPartyLocation());
-        GROUP_FACTORY.startGroupAlgorithm();
-        ArrayList<Group> appetizerGroups = GROUP_FACTORY.getFirstCourseGroupList();
-        ArrayList<Group> mainDishGroups = GROUP_FACTORY.getMainCourseGroupList();
-        ArrayList<Group> dessertGroups = GROUP_FACTORY.getDessertCourseGroupList();
+    private void displayGroupTable() {
+        DefaultTableModel model = new DefaultTableModel();
+        DefaultTableModel successorTableModel = new DefaultTableModel();
+        JTable successorTable = new JTable(successorTableModel);
+        JTable groupTable = new JTable(model);
+        JPanel southPanel = new JPanel();
 
-        JTable table = new JTable();
-        refreshGroupTable(table, appetizerGroups, mainDishGroups, dessertGroups);
+        refreshGroupTable(groupTable, successorTable,southPanel);
+        displayGroupsAndPairsTable();
+    }
 
-        DefaultTableModel pairsTableModel = new DefaultTableModel();
-        JTable pairsTable = new JTable(pairsTableModel);
-        pairsTableModel.addColumn("Pair ID");
+    public void refreshGroupTable(JTable groupTable, JTable successorTable,JPanel southPanel){
+        DefaultTableModel model = new DefaultTableModel();
+        DefaultTableModel successorTableModel = new DefaultTableModel();
+        GroupFactory GROUP_FACTORY = new GroupFactory(pairListFactory.pairList, PARTICIPANT_FACTORY.getPartyLocation());
 
-        List<Participant> participantsWithoutPair = PAIR_LIST_FACTORY.getParticipantSuccessorList();
+        ArrayList<Group> appetizerGroups = GROUP_FACTORY.getAppetizerGroups();
+        ArrayList<Group> mainDishGroups = GROUP_FACTORY.getMainDishGroups();
+        ArrayList<Group> dessertGroups = GROUP_FACTORY.getDessertGroups();
 
-        for (Participant pair : participantsWithoutPair) {
-            pairsTableModel.addRow(new Object[]{
-                    pair.getId()
+
+        model.addColumn("Group Nr");
+        model.addColumn("Pair 1 - Participant 1");
+        model.addColumn("Pair 1 - Participant 2");
+        model.addColumn("Pair 2 - Participant 1");
+        model.addColumn("Pair 2 - Participant 2");
+        model.addColumn("Pair 3 - Participant 1");
+        model.addColumn("Pair 3 - Participant 2");
+        model.addColumn("Course");
+        model.addColumn("Food Preference");
+        model.addColumn("KochPaar");
+
+        int groupNr = 1;
+
+        for (Group group : appetizerGroups) {
+            model.addRow(new Object[]{
+                    groupNr,
+                    group.getPairs().get(0).getParticipant1().getName(),
+                    group.getPairs().get(0).getParticipant2().getName(),
+                    group.getPairs().get(1).getParticipant1().getName(),
+                    group.getPairs().get(1).getParticipant2().getName(),
+                    group.getPairs().get(2).getParticipant1().getName(),
+                    group.getPairs().get(2).getParticipant2().getName(),
+                    "Appetizer",
+                    group.getCookingPair().getFoodPreference(),
+                    group.getCookingPair().getParticipant1().getName() + ", " + group.getCookingPair().getParticipant2().getName()
+            });
+            groupNr++;
+        }
+
+        for (Group group : mainDishGroups) {
+            model.addRow(new Object[]{
+                    groupNr,
+                    group.getPairs().get(0).getParticipant1().getName(),
+                    group.getPairs().get(0).getParticipant2().getName(),
+                    group.getPairs().get(1).getParticipant1().getName(),
+                    group.getPairs().get(1).getParticipant2().getName(),
+                    group.getPairs().get(2).getParticipant1().getName(),
+                    group.getPairs().get(2).getParticipant2().getName(),
+                    "MAIN DISH",
+                    group.getCookingPair().getFoodPreference(),
+                    group.getCookingPair().getParticipant1().getName() + ", " + group.getCookingPair().getParticipant2().getName()
+            });
+            groupNr++;
+        }
+
+        for (Group group : dessertGroups) {
+            model.addRow(new Object[]{
+                    groupNr,
+                    group.getPairs().get(0).getParticipant1().getName(),
+                    group.getPairs().get(0).getParticipant2().getName(),
+                    group.getPairs().get(1).getParticipant1().getName(),
+                    group.getPairs().get(1).getParticipant2().getName(),
+                    group.getPairs().get(2).getParticipant1().getName(),
+                    group.getPairs().get(2).getParticipant2().getName(),
+                    "DESSERT",
+                    group.getCookingPair().getFoodPreference(),
+                    group.getCookingPair().getParticipant1().getName() + ", " + group.getCookingPair().getParticipant2().getName()
+            });
+            groupNr++;
+        }
+
+        // List for Start Group Algorithm
+        successorTableModel.addColumn("Pair ID");
+        successorTableModel.addColumn("Pair Names ");
+        ArrayList<Participant> pairsWithoutGroups = getPairsWithoutGroups();
+
+        for (Participant participant : pairsWithoutGroups) {
+            successorTableModel.addRow(new Object[]{
+                    participant.getId(),
+                    participant.getName(),
             });
         }
+
         JFrame mainFrame = new JFrame("Groups and Pairs Not in Groups");
-
-        JButton swap = new JButton("Swap");
-        Runnable runnable = () -> {
-            refreshGroupTable(table, appetizerGroups, mainDishGroups, dessertGroups);
-        };
-
-        swap.addActionListener(e -> {
-            displaySwapGroupDialog(mainFrame, runnable);
-        });
-
-        if (displaySwap) {
-            JPanel buttonPanel = new JPanel();
-            buttonPanel.setLayout(new FlowLayout());
-            buttonPanel.add(swap);
-            mainFrame.add(buttonPanel, BorderLayout.NORTH);
-        }
-
         mainFrame.setLayout(new BorderLayout());
         mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        JScrollPane tableScrollPane = new JScrollPane(table);
-        mainFrame.add(tableScrollPane, BorderLayout.CENTER);
-
-        JScrollPane pairsTableScrollPane = new JScrollPane(pairsTable);
-        mainFrame.add(pairsTableScrollPane, BorderLayout.SOUTH);
-
+        JScrollPane tableScrollPane = new JScrollPane(groupTable);
+        mainFrame.add(tableScrollPane, BorderLayout.NORTH);
+        JScrollPane successorTableScrollPane = new JScrollPane(successorTable);
+        mainFrame.add(successorTableScrollPane, BorderLayout.SOUTH);
         mainFrame.pack();
         mainFrame.setLocationRelativeTo(null);
         mainFrame.setVisible(true);
 
-        JPanel southPanel = new JPanel();
+
         southPanel.setLayout(new FlowLayout());
+        // Combine all the groups into a single list
+        ArrayList<Group> allGroups = new ArrayList<>();
+        allGroups.addAll(appetizerGroups);
+        allGroups.addAll(mainDishGroups);
+        allGroups.addAll(dessertGroups);
 
-        GroupList groupList = new GroupList(GROUP_FACTORY.getSuccessorGroups(), PAIR_LIST_FACTORY.getParticipantSuccessorList());
+        GroupList groupList = new GroupList(allGroups, pairListFactory.getSuccessors());
 
-        for (Group group : appetizerGroups) {
-            JLabel labelGroupCount = new JLabel("Groups Count: " + ",");
-            JLabel labelSuccessor = new JLabel("Successor Count: " + groupList.getSuccessorCount() + ",");
-            JLabel labelGenderDiversity = new JLabel("Gender Diversity Score: " + group.getGenderDiversityScore() + ",");
-            JLabel labelAgeDifference = new JLabel("Age Difference: " + group.getAgeDifference());
+        int totalGroupCount = allGroups.size();
+        int totalSuccessorCount = groupList.getSuccessorCount();
+        double totalGenderDiversityScore = groupList.getGenderDiversity();
+        double totalAgeDifference = groupList.getAgeDifference();
 
-            southPanel.add(labelGroupCount);
-            southPanel.add(labelSuccessor);
-            southPanel.add(labelGenderDiversity);
-            southPanel.add(labelAgeDifference);
+        JLabel labelGroupCount = new JLabel("Total Groups Count: " + totalGroupCount);
+        JLabel labelSuccessorCount = new JLabel("Total Successor Count: " + totalSuccessorCount);
+        JLabel labelTotalGenderDiversity = new JLabel("Total Gender Diversity Score: " + totalGenderDiversityScore);
+        JLabel labelTotalAgeDifference = new JLabel("Total Age Difference: " + totalAgeDifference);
 
-            break;
-        }
-
-        mainFrame.add(southPanel, BorderLayout.CENTER);
+        southPanel.add(labelGroupCount);
+        southPanel.add(labelSuccessorCount);
+        southPanel.add(labelTotalGenderDiversity);
+        southPanel.add(labelTotalAgeDifference);
     }
 
-    //TODO
+    private void displayGroupsAndPairsTable() {
+        DefaultTableModel model = new DefaultTableModel();
+        DefaultTableModel successorTableModel = new DefaultTableModel();
+        JTable successorTable = new JTable(successorTableModel);
+        JTable groupTable = new JTable(model);
+        JPanel southPanel = new JPanel();
+
+        GroupFactory GROUP_FACTORY = new GroupFactory(pairListFactory.pairList, PARTICIPANT_FACTORY.getPartyLocation());
+
+        GROUP_FACTORY.startGroupAlgorithm();
+        ArrayList<Group> appetizerGroups = GROUP_FACTORY.getAppetizerGroups();
+        ArrayList<Group> mainDishGroups = GROUP_FACTORY.getMainDishGroups();
+        ArrayList<Group> dessertGroups = GROUP_FACTORY.getDessertGroups();
+
+        JTable table = new JTable(model);
+        model.addColumn("Group Nr");
+        model.addColumn("Pair 1 - Participant 1");
+        model.addColumn("Pair 1 - Participant 2");
+        model.addColumn("Pair 2 - Participant 1");
+        model.addColumn("Pair 2 - Participant 2");
+        model.addColumn("Pair 3 - Participant 1");
+        model.addColumn("Pair 3 - Participant 2");
+        model.addColumn("Course");
+        model.addColumn("Food Preference");
+        model.addColumn("KochPaar");
+
+        int groupNr = 1;
+
+        for (Group group : appetizerGroups) {
+            model.addRow(new Object[]{
+                    groupNr,
+                    group.getPairs().get(0).getParticipant1().getName(),
+                    group.getPairs().get(0).getParticipant2().getName(),
+                    group.getPairs().get(1).getParticipant1().getName(),
+                    group.getPairs().get(1).getParticipant2().getName(),
+                    group.getPairs().get(2).getParticipant1().getName(),
+                    group.getPairs().get(2).getParticipant2().getName(),
+                    "Appetizer",
+                    group.getCookingPair().getFoodPreference(),
+                    group.getCookingPair().getParticipant1().getName() + ", " + group.getCookingPair().getParticipant2().getName()
+            });
+            groupNr++;
+        }
+
+        for (Group group : mainDishGroups) {
+            model.addRow(new Object[]{
+                    groupNr,
+                    group.getPairs().get(0).getParticipant1().getName(),
+                    group.getPairs().get(0).getParticipant2().getName(),
+                    group.getPairs().get(1).getParticipant1().getName(),
+                    group.getPairs().get(1).getParticipant2().getName(),
+                    group.getPairs().get(2).getParticipant1().getName(),
+                    group.getPairs().get(2).getParticipant2().getName(),
+                    "MAIN DISH",
+                    group.getCookingPair().getFoodPreference(),
+                    group.getCookingPair().getParticipant1().getName() + ", " + group.getCookingPair().getParticipant2().getName()
+            });
+            groupNr++;
+        }
+
+        for (Group group : dessertGroups) {
+            model.addRow(new Object[]{
+                    groupNr,
+                    group.getPairs().get(0).getParticipant1().getName(),
+                    group.getPairs().get(0).getParticipant2().getName(),
+                    group.getPairs().get(1).getParticipant1().getName(),
+                    group.getPairs().get(1).getParticipant2().getName(),
+                    group.getPairs().get(2).getParticipant1().getName(),
+                    group.getPairs().get(2).getParticipant2().getName(),
+                    "DESSERT",
+                    group.getCookingPair().getFoodPreference(),
+                    group.getCookingPair().getParticipant1().getName() + ", " + group.getCookingPair().getParticipant2().getName()
+            });
+            groupNr++;
+        }
+
+        // List for successor Pairs
+        successorTableModel.addColumn("Pair ID");
+        successorTableModel.addColumn("Pair Names ");
+        ArrayList<Participant> pairsWithoutGroups = getPairsWithoutGroups();
+
+        for (Participant participant : pairsWithoutGroups) {
+            successorTableModel.addRow(new Object[]{
+                    participant.getId(),
+                    participant.getName(),
+            });
+        }
+
+
+        JFrame mainFrame = new JFrame("Groups and Pairs Not in Groups");
+        mainFrame.setLayout(new BorderLayout());
+        mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        JScrollPane tableScrollPane = new JScrollPane(groupTable);
+        mainFrame.add(tableScrollPane, BorderLayout.NORTH);
+        JScrollPane successorTableScrollPane = new JScrollPane(successorTable);
+        //mainFrame.add(successorTableScrollPane, BorderLayout.SOUTH);
+        mainFrame.pack();
+        mainFrame.setLocationRelativeTo(null);
+        mainFrame.setVisible(true);
+
+        //TEST
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, tableScrollPane, successorTableScrollPane);
+        splitPane.setDividerLocation(0.5);
+        mainFrame.add(splitPane, BorderLayout.CENTER);
+
+        southPanel.setLayout(new FlowLayout());
+        // Combine all the groups into a single list
+        ArrayList<Group> allGroups = new ArrayList<>();
+        allGroups.addAll(appetizerGroups);
+        allGroups.addAll(mainDishGroups);
+        allGroups.addAll(dessertGroups);
+
+        GroupList groupList = new GroupList(allGroups, pairListFactory.getSuccessors());
+
+        int totalGroupCount = allGroups.size();
+        int totalSuccessorCount = groupList.getSuccessorCount();
+        double totalGenderDiversityScore = groupList.getGenderDiversity();
+        double totalAgeDifference = groupList.getAgeDifference();
+
+        JLabel labelGroupCount = new JLabel("Total Groups Count: " + totalGroupCount);
+        JLabel labelSuccessorCount = new JLabel("Total Successor Count: " + totalSuccessorCount);
+        JLabel labelTotalGenderDiversity = new JLabel("Total Gender Diversity Score: " + totalGenderDiversityScore);
+        JLabel labelTotalAgeDifference = new JLabel("Total Age Difference: " + totalAgeDifference);
+
+        southPanel.add(labelGroupCount);
+        southPanel.add(labelSuccessorCount);
+        southPanel.add(labelTotalGenderDiversity);
+        southPanel.add(labelTotalAgeDifference);
+
+
+
+        JButton undoButton = new JButton("Undo");
+        Runnable runnable = () -> {
+            refreshGroupTable(groupTable, successorTable, southPanel);
+        };
+        undoButton.addActionListener(e -> {
+            GROUP_FACTORY.undoLatestGroupDialog(runnable);
+        });
+
+        JButton swapButton = new JButton("Swap");
+        swapButton.addActionListener(e -> {
+            displaySwapGroupDialog(mainFrame, runnable);
+        });
+        JButton redoButton = new JButton("Redo");
+        redoButton.addActionListener(e -> {
+            GROUP_FACTORY.redoLatestGroupDialog(runnable);
+        });
+        JButton dissolveGroupButton = new JButton("Gruppe auflösen");
+
+        dissolveGroupButton.addActionListener(e -> {
+            displayDissolveGroupDialog(mainFrame, runnable);
+        });
+
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout());
+        buttonPanel.add(undoButton);
+        buttonPanel.add(swapButton);
+        buttonPanel.add(redoButton);
+        buttonPanel.add(dissolveGroupButton);
+
+        mainFrame.add(buttonPanel, BorderLayout.NORTH);
+
+        mainFrame.pack();
+        mainFrame.setLocationRelativeTo(null);
+        mainFrame.setVisible(true);
+        mainFrame.add(southPanel, BorderLayout.SOUTH);
+    }
+
+    private void displayDissolveGroupDialog(JFrame groupTableJFrame, Runnable refreshFunction) {
+        JFrame frame = new JFrame("Dropdown Popup");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new FlowLayout());
+        GroupFactory GROUP_FACTORY = new GroupFactory(pairListFactory.pairList, PARTICIPANT_FACTORY.getPartyLocation());
+
+        JLabel label1 = new JLabel("Welche Gruppe");
+        String[] groupList = GROUP_FACTORY.getAppetizerGroups().stream().map(group -> group.getPairs().toString()).toList().toArray(new String[0]);
+        JComboBox<String> dropdown1 = new JComboBox<>(groupList);
+        JPanel panel = new JPanel();
+        panel.add(label1);
+        panel.add(dropdown1);
+
+        JButton button = new JButton("Submit");
+        button.addActionListener(e -> {
+            // Get the selected values from the dropdown lists
+            int selectedOldGroup = dropdown1.getSelectedIndex();
+
+            ArrayList<Group> targetGroupList = null;
+/*
+            if (GROUP_FACTORY.getAppetizerGroups().contains()) {
+                targetGroupList = GROUP_FACTORY.getAppetizerGroups();
+            } else if (GROUP_FACTORY.getMainDishGroups().contains()) {
+                targetGroupList = GROUP_FACTORY.getMainDishGroups();
+            } else if (GROUP_FACTORY.getDessertGroups().contains()) {
+                targetGroupList = GROUP_FACTORY.getDessertGroups();
+            } else {
+                System.out.println("Group does not exist in any group list.");
+                return;
+            }
+
+ */
+
+            Pair oldPair = pairListFactory.pairList.get(selectedOldGroup);
+            System.out.println(oldPair.toString());
+
+            pairListFactory.dissolvePair(oldPair);
+            String message = "Aufgelöst\n" +
+                    "Gruppe: " + selectedOldGroup;
+            JOptionPane.showMessageDialog(frame, message);
+            frame.dispose();
+            refreshFunction.run();
+            SwingUtilities.updateComponentTreeUI(groupTableJFrame);
+        });
+
+        frame.add(panel);
+        frame.add(button);
+
+        frame.setSize(950, 200);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
+
     private void displaySwapGroupDialog(JFrame groupTableJFrame, Runnable refreshFunction) {
         // Create the JFrame
         JFrame frame = new JFrame("Welcher Gang");
@@ -425,18 +760,19 @@ public class MainWindow implements ActionListener {
         frame.setVisible(true);
     }
 
+
     private void selectSwapGroup(String selectedDish) {
         ArrayList<Group> groups = null;
         switch (selectedDish) {
             case "Vorspeise" -> {
-                groups = GROUP_FACTORY.getFirstCourseGroupList();
+                groups = GROUP_FACTORY.getAppetizerGroups();
             }
             case "Hauptspeise" -> {
-                groups = GROUP_FACTORY.getMainCourseGroupList();
+                groups = GROUP_FACTORY.getMainDishGroups();
             }
 
             case "Nachspeise" -> {
-                groups = GROUP_FACTORY.getDessertCourseGroupList();
+                groups = GROUP_FACTORY.getDessertGroups();
             }
         }
 
@@ -471,11 +807,12 @@ public class MainWindow implements ActionListener {
         });
         frame.add(button);
 
-        // Set the frame size and make it visible
         frame.setSize(300, 200);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
+
+
 
     private void selectSwapGroupPair(Group selectedGroup) {
         JFrame frame = new JFrame("Welches Paar soll gewechselt werden");
@@ -503,7 +840,6 @@ public class MainWindow implements ActionListener {
         });
         frame.add(button);
 
-        // Set the frame size and make it visible
         frame.setSize(300, 200);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -533,7 +869,6 @@ public class MainWindow implements ActionListener {
         panel1.add(label1);
         panel1.add(dropdown1);
 
-        // Create the button
         JButton button = new JButton("Submit");
         button.addActionListener(e -> {
             Pair newPair = GROUP_FACTORY.getSuccessorPairs().get(dropdown1.getSelectedIndex());
@@ -542,138 +877,116 @@ public class MainWindow implements ActionListener {
         });
         frame.add(button);
 
-        // Set the frame size and make it visible
         frame.setSize(300, 200);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
-    private static void refreshGroupTable(JTable table, ArrayList<Group> appetizerGroups, ArrayList<Group> mainDishGroups, ArrayList<Group> dessertGroups) {
-        DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("Group Nr");
-        model.addColumn("Pair 1");
-        model.addColumn("Pair 2");
-        model.addColumn("Pair 3");
-        model.addColumn("Course");
-        model.addColumn("Food Preference");
-        model.addColumn("KochPaar");
+    //TODO GROUPS ENDE
 
-        int groupNr = 1;
+    /**
+     * Loads the language resources based on the specified language code.
+     *
+     * @param languageCode the language code for the desired language
+     */
+    private void loadLanguageResources(String languageCode) {
+        bundle = ResourceBundle.getBundle("messages", new Locale(languageCode));
+        FRAME.setTitle(bundle.getString("windowTitle"));
+        SHOW_TEXT.setText(bundle.getString("startMessage"));
+        SHOW_PARTICIPANTS.setText(bundle.getString("showParticipants"));
+        SET_CRITERIA.setText(bundle.getString("setCriteria"));
+        START_PAIRS.setText(bundle.getString("startPairs"));
+        START_GROUPS.setText(bundle.getString("startGroups"));
+        readParticipantsItem.setText(bundle.getString("readParticipants"));
+        readParticipantsItem.setActionCommand(bundle.getString("readParticipants"));
+        readPartyLocationItem.setText(bundle.getString("readPartyLocation"));
+        readPartyLocationItem.setActionCommand(bundle.getString("readPartyLocation"));
+        SAVE_GROUPS.setText(bundle.getString("saveGroups"));
 
-        for (Group group : appetizerGroups) {
-            model.addRow(new Object[]{
-                    groupNr,
-                    group.getPairs().get(0),
-                    group.getPairs().get(1),
-                    group.getPairs().get(2),
-                    "Appetizer",
-                    group.getCookingPair().getFoodPreference(),
-                    group.getCookingPair()
-            });
-            groupNr++;
+        languageMenu.setText(bundle.getString("languageMenu"));
+        for (int i = 0; i < languageMenu.getItemCount(); i++) {
+            JMenuItem menuItem = languageMenu.getItem(i);
+            if (menuItem != null) {
+                if (i == 0) {
+                    menuItem.setText(bundle.getString("english"));
+                } else if (i == 1) {
+                    menuItem.setText(bundle.getString("arabic"));
+                } else if (i == 2) {
+                    menuItem.setText(bundle.getString("german"));
+                }
+            }
         }
-
-        for (Group group : mainDishGroups) {
-            model.addRow(new Object[]{
-                    groupNr,
-                    group.getPairs().get(0),
-                    group.getPairs().get(1),
-                    group.getPairs().get(2),
-                    "Main Dish",
-                    group.getCookingPair().getFoodPreference(),
-                    group.getCookingPair()
-            });
-            groupNr++;
-        }
-
-        for (Group group : dessertGroups) {
-            model.addRow(new Object[]{
-                    groupNr,
-                    group.getPairs().get(0),
-                    group.getPairs().get(1),
-                    group.getPairs().get(2),
-                    "Dessert",
-                    group.getCookingPair().getFoodPreference(),
-                    group.getCookingPair()
-            });
-            groupNr++;
-        }
-
-        table.setModel(model);
+        algorithmMenu.setText(bundle.getString("algorithmMenu"));
+        startMenu.setText(bundle.getString("startMenu"));
     }
 
     /**
-     * Will create a MenuBar using JMenuBar.
-     * @return a JMenuBar which could be used in the Main Window.
+     * Creates the menu bar for the main window.
+     *
+     * @return the created JMenuBar
      */
     private JMenuBar createJMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-        JMenu startMenu = new JMenu("Start");
-        JMenu pairMenu = new JMenu("Algorithmus");
+
+        // Update action command of the menu item
+        readParticipantsItem.setActionCommand(bundle.getString("readParticipants"));
+        readParticipantsItem.addActionListener(this);
+        startMenu.add(readParticipantsItem);
+
+        readPartyLocationItem.setActionCommand(bundle.getString("readPartyLocation"));
+        readPartyLocationItem.addActionListener(this);
+        startMenu.add(readPartyLocationItem);
 
         menuBar.add(startMenu);
         menuBar.add(pairMenu);
 
-        JMenuItem readParticipants = new JMenuItem("Teilnehmer einlesen");
-        readParticipants.addActionListener(this);
-        startMenu.add(readParticipants);
-
-        JMenuItem readPartyLocation = new JMenuItem("Party Location einlesen");
-        readPartyLocation.addActionListener(this);
-        startMenu.add(readPartyLocation);
 
         START_PAIRS.addActionListener(this);
         START_PAIRS.setEnabled(criteriaOrdered);
+        algorithmMenu.add(START_PAIRS);
 
         START_GROUPS.addActionListener(this);
         START_GROUPS.setEnabled(pairsGenerated);
-        START_GROUPS.setEnabled(groupsGenerated);
+        algorithmMenu.add(START_GROUPS);
 
         SET_CRITERIA.addActionListener(this);
         SET_CRITERIA.setEnabled(participantsRead);
-        pairMenu.add(SET_CRITERIA);
-        pairMenu.add(START_PAIRS);
-
+        algorithmMenu.add(SET_CRITERIA);
 
         SHOW_PARTICIPANTS.addActionListener(this);
         SHOW_PARTICIPANTS.setEnabled(participantsRead);
         startMenu.add(SHOW_PARTICIPANTS);
-        pairMenu.add(START_GROUPS);
 
-        //Resort pairs
-        RESORT_PAIRS.addActionListener(this);
-        RESORT_PAIRS.setEnabled(false);
-        pairMenu.add(RESORT_PAIRS);
-        pairMenu.add(SET_CRITERIA);
-        pairMenu.add(START_PAIRS);
-        pairMenu.add(RESORT_PAIRS);
-        pairMenu.add(START_GROUPS);
-
-        /*
-        //Resort groups
-        RESORT_GROUPS.addActionListener(this);
-        RESORT_GROUPS.setEnabled(true);
-        pairMenu.add(RESORT_PAIRS);
-        pairMenu.add(SET_CRITERIA);
-        pairMenu.add(START_PAIRS);
-        pairMenu.add(RESORT_PAIRS);
-        pairMenu.add(START_GROUPS);
-        pairMenu.add(RESORT_GROUPS);
-
-
-         */
+        algorithmMenu.add(SET_CRITERIA);
+        algorithmMenu.add(START_PAIRS);
+        algorithmMenu.add(START_GROUPS);
 
         SAVE_GROUPS.addActionListener(this);
-        SAVE_GROUPS.setEnabled(true);
-        pairMenu.add(SAVE_GROUPS);
+        SAVE_GROUPS.setEnabled(groupsGenerated);
+        algorithmMenu.add(SAVE_GROUPS);
 
+        menuBar.add(algorithmMenu);
+        /**
+         * Added the ActionListener here for calling each language
+         * */
+        JMenuItem englishItem = new JMenuItem("English");
+        englishItem.addActionListener(e -> loadLanguageResources("en"));
+        JMenuItem arabicItem = new JMenuItem("Arabic");
+        arabicItem.addActionListener(e -> loadLanguageResources("ar"));
+        JMenuItem germanItem = new JMenuItem("German");
+        germanItem.addActionListener(e -> loadLanguageResources("de"));
+        languageMenu.add(englishItem);
+        languageMenu.add(arabicItem);
+        languageMenu.add(germanItem);
+
+        menuBar.add(languageMenu);
 
         return menuBar;
     }
 
     /**
-     * Will create a FileChooser using JFileChooser.
+     * Creates a file chooser dialog to select a CSV file.
      */
     private void createFileChooser() {
         JFileChooser fileChooser = new JFileChooser();
@@ -711,52 +1024,39 @@ public class MainWindow implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals("Teilnehmer einlesen")) {
+        String command = e.getActionCommand();
+        if (bundle.getString("readParticipants").equals(command)) {
             createFileChooser();
-        } else if (e.getActionCommand().equals("Teilnehmerliste anzeigen")) {
+        } else if (bundle.getString("readPartyLocation").equals(command)) {
+            participantsAreRead = false;
+            createFileChooser();
+        } else if (bundle.getString("showParticipants").equals(command)) {
             PARTICIPANT_FACTORY.showCSV();
-        } else if (e.getActionCommand().equals("Wichtigkeit der Kriterien")) {
+        } else if (bundle.getString("setCriteria").equals(command)) {
             CRITERIA_WINDOW.display();
-        } else if (e.getActionCommand().equals("Paare bilden")) {
-            PAIR_LIST_FACTORY = new PairListFactory(
+        } else if (bundle.getString("startPairs").equals(command)) {
+            pairListFactory = new PairListFactory(
                     new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
                     new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
                     new ArrayList<>(CRITERIA_ORDER));
             pairsGenerated = true;
             updateJMenu();
-            displayPairTable(false);
+            displayPairTable();
+        } else if (bundle.getString("startGroups").equals(command)) {
+            displayGroupTable();
+            groupsGenerated= true;
 
-        } else if (e.getActionCommand().equals("Party Location einlesen")) {
-            participantsAreRead = false;
-            createFileChooser();
-        } else if (e.getActionCommand().equals("Gruppen bilden")) {
-            GROUP_FACTORY = new GroupFactory(PAIR_LIST_FACTORY.pairList, PARTICIPANT_FACTORY.getPartyLocation());
-            GROUP_FACTORY.startGroupAlgorithm();
-            for (Group group : GROUP_FACTORY.getFirstCourseGroupList()) {
-                for (Pair pair : group.getPairs()) {
-                    if(pair.getParticipant1().equals("Person127")){
-                        System.out.println("Person127");
-                    }
-
-                }
-
-            }
-
-            displayGroupTable(false);
-        } else if (e.getActionCommand().equals("Paare neu sortieren")) {
-            displayPairTable(true);
-        } else if (e.getActionCommand().equals("Gruppen neu sortieren")) {
-            displayGroupTable(true);
         }
-        else if (e.getActionCommand().equals("Gruppen speichern")) {
+        else if (bundle.getString("saveGroups").equals(command)) {
             JACKSON_EXPORT = new JacksonExport();
-            JACKSON_EXPORT.export(GROUP_FACTORY.getGroups(), GROUP_FACTORY.getPairList(), GROUP_FACTORY.getSuccessorPairs(), PARTICIPANT_FACTORY.getParticipantList());
+            JACKSON_EXPORT.export(GROUP_FACTORY.getAppetizerGroups(), GROUP_FACTORY.getPairList(), GROUP_FACTORY.getSuccessorPairs(), PARTICIPANT_FACTORY.getParticipantList());
         }
-
+        readParticipantsItem.setText(bundle.getString("readParticipants"));
+        readPartyLocationItem.setText(bundle.getString("readPartyLocation"));
     }
 
     /**
-     * Will enable, disable submenus in the MenuBar.
+     * Updates the enabled status of submenus in the menu bar based on the current state.
      */
     public static void updateJMenu() {
         if (participantsRead) {
@@ -777,12 +1077,10 @@ public class MainWindow implements ActionListener {
         }
 
         if (groupsGenerated) {
+            SAVE_GROUPS.setEnabled(true);
             RESORT_GROUPS.setEnabled(true);
         }
 
-        if (groupsGenerated) {
-            SAVE_GROUPS.setEnabled(true);
-        }
     }
 
     public static JFrame getFRAME() {
@@ -799,6 +1097,10 @@ public class MainWindow implements ActionListener {
 
     public static void setCriteriaOrdered(boolean isCriteriaOrdered) {
         criteriaOrdered = isCriteriaOrdered;
+
+    }   private ArrayList<Participant> getPairsWithoutGroups() {
+    return pairListFactory.getSuccessors();
     }
+
 
 }

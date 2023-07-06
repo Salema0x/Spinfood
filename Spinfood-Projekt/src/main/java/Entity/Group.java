@@ -20,6 +20,14 @@ public class Group {
     private FoodPreference foodPreference;
     private Course course;
 
+    public Group(Pair initialPair) {
+        pairs.add(initialPair);
+        this.cookingPair = initialPair; // Setzen des initialPair als Kochpaar
+        this.ageDifference = calculateAverageScores(Pair::getAgeDifference);
+        this.preferenceDeviation = calculateAverageScores(Pair::getPreferenceDeviation);
+        this.genderDiversityScore = calculateGenderDiversityScore();
+        createParticipants();
+    }
 
 
     public Group(ArrayList<Pair> pairs, Course course, Pair cookingPair) {

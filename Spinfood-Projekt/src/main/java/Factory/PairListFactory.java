@@ -6,6 +6,7 @@ import Entity.PairDissolve;
 import Entity.Participant;
 import Entity.Enum.*;
 import Entity.PairSwap;
+import Entity.PairSwap;
 import Misc.ParticipantComparator;
 
 import java.util.ArrayList;
@@ -36,6 +37,13 @@ public class PairListFactory {
     private final LinkedList<Object> swapListFuture = new LinkedList<>();
 
     private final ArrayList<Object> criteriaOrder;
+
+    private final ArrayList<Participant> removements = new ArrayList<>();
+    private final ArrayList<Participant> upperRemovements = new ArrayList<>();
+    private final PairList pairListObject;
+    private final LinkedList<Object> undoRedoList = new LinkedList<>();
+    private final LinkedList<Object> undoRedoListFuture = new LinkedList<>();
+
 
 
     //Index Numbers
@@ -235,6 +243,148 @@ public class PairListFactory {
             swapList.add(new PairDissolve(pair, participant1, participant2));
         }
     }
+
+    //7.2.5
+
+    /**
+     * Undoes the latest pair dialog operation. Reverts the participants in the pair and successor list to their previous state.
+     * This method removes the latest operation from the undoRedoList and adds it to the undoRedoListFuture for potential redo.
+     * After reverting the operation, the calculations are updated, and the provided runnable is executed.
+     *
+     * @param runnable The runnable to be executed after undoing the pair dialog operation.
+     */
+    public void undoLatestPairDialog(Runnable runnable) {
+        if (undoRedoList.isEmpty()) {
+            return;
+        } else if (undoRedoList.getLast() instanceof PairSwap) {
+            PairSwap last = (PairSwap) undoRedoList.getLast();
+            Pair pair = last.getPair();
+            pair.removeParticipant(last.getNewParticipant());
+            pair.addParticipant(last.getSwappedParticipant());
+            successors.add(last.getNewParticipant());
+            successors.remove(last.getSwappedParticipant());
+
+            undoRedoList.removeLast();
+            System.out.println(last);
+            undoRedoListFuture.add(last);
+            pair.updateCalculations();
+            runnable.run();
+        } else if (undoRedoList.getLast() instanceof PairDissolve) {
+            PairDissolve last = (PairDissolve) undoRedoList.getLast();
+            Pair pair = new Pair(last.getDissolvedParticipant1(), last.getDissolvedParticipant2());;
+            pairList.add(pair);
+            successors.remove(last.getDissolvedParticipant1());
+            successors.remove(last.getDissolvedParticipant2());
+
+            undoRedoList.removeLast();
+            System.out.println(last);
+            undoRedoListFuture.add(last);
+            runnable.run();
+        }
+    }
+
+    /**
+     * Redoes the latest pair dialog operation. Reapplies the swap of participants in the pair and successor list
+     * or recreates a dissolved pair.
+     * This method removes the latest operation from the undoRedoListFuture and adds it back to the undoRedoList.
+     * After applying the redo operation, the calculations are updated and the provided runnable is executed.
+     *
+     * @param runnable The runnable to be executed after redoing the pair dialog operation.
+     */
+    public void redoLatestPairDialog(Runnable runnable) {
+        if (undoRedoListFuture.isEmpty()) {
+            return;
+        } else if (undoRedoListFuture.getLast() instanceof PairSwap) {
+            PairSwap last =  (PairSwap) undoRedoListFuture.getLast();
+
+            Pair pair = last.getPair();
+            pair.removeParticipant(last.getSwappedParticipant());
+            pair.addParticipant(last.getNewParticipant());
+            pair.updateCalculations();
+            successors.add(last.getSwappedParticipant());
+            successors.remove(last.getNewParticipant());
+
+            undoRedoListFuture.removeLast();
+            System.out.println(last);
+            undoRedoList.add(last);
+            pair.updateCalculations();
+            runnable.run();
+        } else if (undoRedoListFuture.getLast() instanceof PairDissolve) {
+            PairDissolve last = (PairDissolve) undoRedoListFuture.getLast();
+            Pair pair = last.getPair();
+            Participant participant1 = pair.getParticipant1();
+            Participant participant2 = pair.getParticipant2();
+
+            successors.add(participant1);
+            successors.add(participant2);
+
+            pairList.remove(pair);
+
+            undoRedoListFuture.removeLast();
+            System.out.println(last);
+            undoRedoList.add(last);
+            runnable.run();
+        }
+    }
+
+    /**
+     * Clears the swapListFuture and swapList, removing all stored swap operations.
+     * This method is used to reset the undo/redo functionality.
+     */
+    public void clearRedoAndUndoList() {
+        undoRedoListFuture.clear();
+        undoRedoList.clear();
+    }
+
+    /**
+     * Swaps the participants in a pair. Moves the specified participant from the pair to the successor list,
+     * and replaces them with another participant from the successor list.
+     *
+     * @param pair                       The pair in which the participants should be swapped.
+     * @param participantInPair          The participant currently in the pair to be replaced.
+     * @param participantInSuccessorList The participant from the successor list to be placed in the pair.
+     */
+    public void swapParticipants(Pair pair, Participant participantInPair, Participant participantInSuccessorList) {
+        // Checking if pair exists in pairList and participantInPair is in the pair
+        if (!pairList.contains(pair) || !pair.containsParticipant(participantInPair)) {
+            System.out.println("The pair does not exist in the pair list or the participant is not in the given pair.");
+            return;
+        }
+
+        // Checking if participantInSuccessorList exists in participantSuccessorList
+        if (!successors.contains(participantInSuccessorList)) {
+            System.out.println("The participant you are trying to swap in is not in the successor list.");
+            return;
+        }
+
+        // Swap the participants
+        pair.removeParticipant(participantInPair);
+        pair.addParticipant(participantInSuccessorList);
+        successors.remove(participantInSuccessorList);
+        successors.add(participantInPair);
+        pair.updateCalculations();
+        undoRedoList.add(new PairSwap(pair, participantInPair, participantInSuccessorList));
+    }
+
+    /**
+     * Dissolves a pair by removing it from the pairList and adding its participants to the successors list.
+     *
+     * @param pair The pair to be dissolved.
+     */
+    public void dissolvePair(Pair pair) {
+        if (pairList.contains(pair)) {
+            Participant participant1 = pair.getParticipant1();
+            Participant participant2 = pair.getParticipant2();
+
+            successors.add(participant1);
+            successors.add(participant2);
+
+            undoRedoList.add(new PairDissolve(pair, participant1, participant2));
+            pairList.remove(pair);
+        }
+    }
+
+    //7.2.5 End
 
     /**
      * Concatenates the pair list after the pair algorithm with pairs from the registration.
