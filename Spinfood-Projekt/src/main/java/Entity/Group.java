@@ -282,7 +282,7 @@ public class Group {
     }
 
     //?
-
+    @JsonIgnore
     public boolean isPair() {
         return participants.size() == 2;
     }
