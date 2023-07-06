@@ -725,28 +725,23 @@ public class MainWindow implements ActionListener {
             pairsGenerated = true;
             updateJMenu();
             displayPairTable(false);
-            int counter = 0;
-            for (Pair pair : PAIR_LIST_FACTORY.pairList) {
-                if (pair.getParticipant1().getName().equals("Person127")) {
-                    counter++;
-                }
-            }
-            System.out.println(counter);
+
         } else if (e.getActionCommand().equals("Party Location einlesen")) {
             participantsAreRead = false;
             createFileChooser();
         } else if (e.getActionCommand().equals("Gruppen bilden")) {
             GROUP_FACTORY = new GroupFactory(PAIR_LIST_FACTORY.pairList, PARTICIPANT_FACTORY.getPartyLocation());
             GROUP_FACTORY.startGroupAlgorithm();
+            for (Group group : GROUP_FACTORY.getFirstCourseGroupList()) {
+                for (Pair pair : group.getPairs()) {
+                    if(pair.getParticipant1().equals("Person127")){
+                        System.out.println("Person127");
+                    }
 
-            int counter = 0;
-            for (Pair pair : GROUP_FACTORY.getPairList()) {
-                if (pair.getParticipant1().getName().equals("Person127")) {
-                    counter++;
                 }
 
             }
-            System.out.println(counter);
+
             displayGroupTable(false);
         } else if (e.getActionCommand().equals("Paare neu sortieren")) {
             displayPairTable(true);

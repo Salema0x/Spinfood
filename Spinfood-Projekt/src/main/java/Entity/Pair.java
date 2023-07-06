@@ -1,6 +1,7 @@
 package Entity;
 
 import Entity.Enum.FoodPreference;
+import Entity.Enum.Course;
 import Entity.Enum.Gender;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 public class Pair implements Comparable<Pair> {
 
     //PairAttributes
+    private double pathLength;
     private Participant participant1;
     private Participant participant2;
     private final String id;
@@ -261,6 +263,11 @@ public class Pair implements Comparable<Pair> {
     }
 
     @JsonIgnore
+    public String getParticipant1Name() {
+        return participant1.getName();
+    }
+
+    @JsonIgnore
     public double getAgeDifference() {
         return ageDifference;
     }
@@ -314,19 +321,21 @@ public class Pair implements Comparable<Pair> {
     }
 
 
-    public void setCoordinatesFirstRound(Double[] coordinatesFirstRound) {
-        this.coordinatesFirstRound[0] = coordinatesFirstRound[0];
-        this.coordinatesFirstRound[1] = coordinatesFirstRound[1];
-    }
+   public void setRoundKitchenCoordinates(Double[] coordinates, Course course) {
+        switch (course) {
+            case first -> coordinatesFirstRound = coordinates;
+            case main -> coordinatesSecondRound = coordinates;
+            case dessert -> coordinatesThirdRound = coordinates;
+        }
+   }
 
-    public void setCoordinatesSecondRound(Double[] coordinatesSecondRound) {
-        this.coordinatesSecondRound[0] = coordinatesSecondRound[0];
-        this.coordinatesSecondRound[1] = coordinatesSecondRound[1];
-    }
+    public void setPathLength(Double[] partyLocation) {
+        double firstRoundToMain = Math.sqrt(Math.pow(coordinatesFirstRound[0] - coordinatesSecondRound[0], 2) + Math.pow(coordinatesFirstRound[1] - coordinatesSecondRound[1], 2));
+        double mainRoundToDessert = Math.sqrt(Math.pow(coordinatesSecondRound[0] - coordinatesThirdRound[0], 2) + Math.pow(coordinatesSecondRound[1] - coordinatesThirdRound[1], 2));
+        double dessertRoundAfterDParty = Math.sqrt(Math.pow(coordinatesThirdRound[0] - partyLocation[0], 2) + Math.pow(coordinatesThirdRound[1] - partyLocation[1], 2));
+        this.pathLength = firstRoundToMain + mainRoundToDessert + dessertRoundAfterDParty;
 
-    public void setCoordinatesThirdRound(Double[] coordinatesThirdRound) {
-        this.coordinatesThirdRound[0] = coordinatesThirdRound[0];
-        this.coordinatesThirdRound[1] = coordinatesThirdRound[1];
+
     }
 }
 

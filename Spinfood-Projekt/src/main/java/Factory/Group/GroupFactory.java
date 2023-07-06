@@ -3,6 +3,7 @@ package Factory.Group;
 import Entity.*;
 import Entity.Enum.*;
 
+import java.sql.SQLOutput;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,9 @@ public class GroupFactory {
         Ring outerRing = new Ring(ringFactory.getOuterRing());
         Ring middleRing = new Ring(ringFactory.getMiddleRing());
         Ring innerRing = new Ring(ringFactory.getInnerRing());
+        System.out.println("Outer Ring: " + outerRing.pairsOnTheRing().size());
+        System.out.println("middle Ring: " + middleRing.pairsOnTheRing().size());
+        System.out.println("inner Ring: " + innerRing.pairsOnTheRing().size());
 
         removeSuccessorPairsFromPairList(ringFactory);
 
@@ -45,10 +49,16 @@ public class GroupFactory {
         generateGroups(middleRing, Course.main);
         generateGroups(innerRing, Course.dessert);
 
-        printGroup(firstCourseGroupList);
-        printGroup(mainCourseGroupList);
-        printGroup(dessertCourseGroupList);
+        printGroup(firstCourseGroupList, Course.first);
+        printGroup(mainCourseGroupList, Course.main);
+        printGroup(dessertCourseGroupList, Course.dessert);
+
+        //TODO: implement pathlength for pairs, when Group algorithm is finished
+        //setPathLengthForPairs();
+
     }
+
+
 
     /**
      * generates Groups for a given Course, The pairs on the ring are the pair who are cooking the appetizer.
@@ -57,27 +67,21 @@ public class GroupFactory {
      * @param course    the course for which the groups should be generated.
      */
     private void generateGroups(Ring ring, Course course) {
-        ArrayList<Pair> outerRingPairs = ring.pairsOnTheRing();
+        ArrayList<Pair> pairsOnTheRing = ring.pairsOnTheRing();
         LinkedList<Pair> possibleMatchingPairs = new LinkedList<>(pairList);
+        possibleMatchingPairs.removeAll(pairsOnTheRing);
 
-        possibleMatchingPairs.removeAll(outerRingPairs);
-        for (Pair pair : outerRingPairs) {
-            if(pair.getParticipant1().getName().equals("Person127")) {
-                System.out.println("Person127");
-            }
-        }
-        System.out.println();
+        System.out.println("PossibleMatching Pairs: " + possibleMatchingPairs.size());
+
+        System.out.println("PairList: " + pairList.size());
+        System.out.println("successorPairs: " + successorPairs.size());
 
         Map<PairAttributes, List<Pair>> pairsByAttributes = possibleMatchingPairs
                 .stream()
                 .collect(Collectors.groupingBy(PairAttributes::new));
 
-        for (Map.Entry<?, ?> entry : pairsByAttributes.entrySet()) {
-            System.out.println(entry.getKey() + " : " + entry.getValue());
-        }
-        System.out.println("------------------------------------------------");
 
-        for (Pair cookingPair : outerRingPairs) {
+        for (Pair cookingPair : pairsOnTheRing) {
             FoodPreference foodPreferenceFromCookingPair = cookingPair.getFoodPreference();
 
             ArrayList<Pair> groupMembers = switch (foodPreferenceFromCookingPair) {
@@ -124,9 +128,11 @@ public class GroupFactory {
      * @param ringFactory
      */
     public void removeSuccessorPairsFromPairList(RingFactory ringFactory) {
+        System.out.println("ringFactorySuccessors: " + ringFactory.getSuccessorPairs().size());
         ringFactory.getSuccessorPairs().forEach(pair -> {
             pairList.remove(pair);
             successorPairs.add(pair);
+            System.out.println("PairName" + pair.getParticipant1().getName());
         });
 
     }
@@ -296,6 +302,7 @@ public class GroupFactory {
             }
         }
 
+
         if (selectedListOne != null && selectedListTwo != null) {
             int[] indices = calculateIndices(selectedListOne, selectedListTwo, course);
             if (indices.length == 0) {
@@ -307,7 +314,15 @@ public class GroupFactory {
                 groupMembers.add(pairs.get(0));
                 groupMembers.add(pairs.get(1));
             }
+            if(pairs.isEmpty()) {
+                System.out.println(cookingPair.toString() + "no legal pair found");
+            }
         }
+
+        else {
+            System.out.println(cookingPair.toString() + "selectedList Empty: " + (selectedListOne == null) + " " + (selectedListTwo == null) + "Course" + course.toString());
+        }
+
 
         return groupMembers;
     }
@@ -324,15 +339,21 @@ public class GroupFactory {
         for (Pair firstPair : firstPairList) {
             for (Pair secondPair : secondPairList) {
                 if (!checkIllegalGroup(List.of(cookingPair, firstPair, secondPair))) {
-                    legalPairs.add(firstPair);
-                    legalPairs.add(secondPair);
-                    return legalPairs;
+                    if(!checkDoublePair(cookingPair, firstPair, secondPair)) {
+                        legalPairs.add(firstPair);
+                        legalPairs.add(secondPair);
+                        return legalPairs;
+                    }
                 }
             }
 
         }
         return legalPairs;
 
+    }
+
+    private boolean checkDoublePair(Pair cookingPair, Pair firstPair, Pair secondPair) {
+        return cookingPair.getId().equals(firstPair.getId()) || cookingPair.getId().equals(secondPair.getId()) || firstPair.getId().equals(secondPair.getId());
     }
 
     /**
@@ -342,6 +363,7 @@ public class GroupFactory {
      * @return
      */
     private boolean checkIllegalGroup(List<Pair> pairs) {
+
         double foodPreferenceNumber = 0;
         for (Pair pair : pairs) {
             foodPreferenceNumber += pair.getFoodPreference().asNumber();
@@ -413,7 +435,8 @@ public class GroupFactory {
         }
     }
 
-    private void printGroup(ArrayList<Group> list) {
+    private void printGroup(ArrayList<Group> list, Course course) {
+        System.out.println("Course:  " + course);
         String leftAlignFormat = "| %-11s | %-11s |%-14s | %-11s | %-11s | %-36s | %-11s | %-11s |  %-36s | %-11s | %-11s | %-36s | %-14s | %-14s | %-14s | %-14s | %-14s | %-14s | %n";
 
         System.out.format("+-------------+-------------+----------------+----------------+---------------+--------------------------------------+---------------+---------------+--------------------------------------+---------------+---------------+--------------------------------------+----------------+-----------------+----------------+------------------+-----------------+------------------%n");
@@ -582,6 +605,16 @@ public class GroupFactory {
         runnable.run();
     }
 
+    /**
+     * Sets the path length for all pairs
+     */
+    private void setPathLengthForPairs() {
+        for(Group group : firstCourseGroupList) {
+            for(Pair pair : group.getPairs()) {
+                pair.setPathLength(getPARTY_LOCATION());
+            }
+        }
+    }
 
     //Getter
 

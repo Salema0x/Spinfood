@@ -45,16 +45,14 @@ class JacksonExportTest {
 
         ArrayList<Pair> groupPairs1 = new ArrayList<>();
         groupPairs1.add(pairList.get(5));
-        groupPairs1.add(pairList.get(1));
         groupPairs1.add(pairList.get(3));
 
         ArrayList<Pair> groupPairs2 = new ArrayList<>();
         groupPairs2.add(pairList.get(2));
         groupPairs2.add(pairList.get(4));
-        groupPairs2.add(pairList.get(0));
 
-        Group group1 = new Group(groupPairs1, Course.first);
-        Group group2 = new Group(groupPairs2, Course.main);
+        Group group1 = new Group(groupPairs1, Course.first, pairList.get(0));
+        Group group2 = new Group(groupPairs2, Course.main, pairList.get(1));
 
         groupList.add(group1);
         groupList.add(group2);
@@ -68,8 +66,8 @@ class JacksonExportTest {
         ArrayList<Pair> pairList = initializeCustomPairList();
         System.out.println(pairList.size());
 
-        Group group1 = new Group(new ArrayList<> (pairList.subList(0, 3)), Course.first);
-        Group group2 = new Group(new ArrayList<>(pairList.subList(3, 6)), Course.main);
+        Group group1 = new Group(new ArrayList<> (pairList.subList(1, 3)), Course.first, pairList.get(0));
+        Group group2 = new Group(new ArrayList<>(pairList.subList(4, 6)), Course.main, pairList.get(3));
 
         groupList.add(group1);
         groupList.add(group2);

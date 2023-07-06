@@ -33,6 +33,7 @@ public class Group {
         calculateFoodPreference();
         createParticipants();
         setSeen();
+        setKitchens();
     }
 
 
@@ -263,5 +264,12 @@ public class Group {
 
         p3.getSeen().add(p2);
         p3.getSeen().add(p1);
+    }
+
+    public void setKitchens() {
+        for (Pair pair : pairs) {
+            Double[] coordinates = new Double[] { pair.getKitchen().getLatitude(), pair.getKitchen().getLongitude()};
+            pair.setRoundKitchenCoordinates(coordinates, course);
+        }
     }
 }
