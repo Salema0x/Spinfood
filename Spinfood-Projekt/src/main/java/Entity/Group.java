@@ -280,4 +280,10 @@ public class Group {
             pair.setRoundKitchenCoordinates(coordinates, course);
         }
     }
+
+    //?
+
+    public boolean isPair() {
+        return participants.size() == 2;
+    }
 }

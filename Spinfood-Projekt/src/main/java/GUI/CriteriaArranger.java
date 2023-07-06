@@ -25,6 +25,7 @@ import Misc.TransferHandler;
 
 import static GUI.MainWindow.PARTICIPANT_FACTORY;
 
+
 public class CriteriaArranger extends JPanel {
 
     private static final DefaultListModel<String> LIST_MODEL = new DefaultListModel<>();

@@ -64,7 +64,7 @@ class GroupFactoryTest {
             if(group.getFoodPreference().equals(FoodPreference.vegan) || group.getFoodPreference().equals(FoodPreference.veggie)) {
                 int meatLoverCounter = 0;
                 for (Pair pair : group.getPairs()) {
-                    
+
                     if (pair.getParticipant1().getFoodPreference().equals(FoodPreference.meat) || pair.getParticipant2().getFoodPreference().equals(FoodPreference.meat)) {
                         meatLoverCounter++;
                     }

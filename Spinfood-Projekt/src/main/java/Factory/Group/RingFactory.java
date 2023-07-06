@@ -159,4 +159,8 @@ public class RingFactory {
     public ArrayList<Pair> getInnerRing() {
         return innerRing;
     }
+
+    public ArrayList<Pair> getSuccessorPairs() {
+        return successorPairs;
+    }
 }

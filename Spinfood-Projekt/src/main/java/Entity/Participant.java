@@ -296,6 +296,8 @@ public class Participant {
         return kitchen;
     }
 
+
+
     //Setter
     public void setCountWg(int countWg) {
         this.countWg += countWg;

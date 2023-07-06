@@ -15,8 +15,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +69,7 @@ public class MainWindow implements ActionListener {
 
 
     //FactorySetup
-    private static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory(1000);
+    public static final ParticipantFactory PARTICIPANT_FACTORY = new ParticipantFactory(1000);
     private static PairListFactory PAIR_LIST_FACTORY;
     private static GroupFactory GROUP_FACTORY;
     private static JacksonExport JACKSON_EXPORT;
@@ -123,7 +121,7 @@ public class MainWindow implements ActionListener {
 
         int pairInt = 1;
 
-        for (Pair pair : pairListFactory.pairList) {
+        for (Pair pair : PAIR_LIST_FACTORY.pairList) {
             model.addRow(new Object[]{
                     pairInt,
                     pair.getParticipant1().getName(),
@@ -137,7 +135,7 @@ public class MainWindow implements ActionListener {
             pairInt++;
         }
 
-        PairList keyFigures = new PairList(pairListFactory.pairList,pairListFactory.getSuccessors());
+        PairList keyFigures = new PairList(PAIR_LIST_FACTORY.pairList,PAIR_LIST_FACTORY.getParticipantSuccessorList());
 
         JLabel labelPairs = new JLabel("Pairs Count: " + keyFigures.getCountPairs() + ",");
         JLabel labelSuccessors = new JLabel("Successors count: " + keyFigures.getCountSuccessors() + ",");
@@ -200,7 +198,7 @@ public class MainWindow implements ActionListener {
 
         };
         undoButton.addActionListener(e -> {
-            pairListFactory.undoLatestPairDialog(runnable);
+            PAIR_LIST_FACTORY.undoLatestPairDialog(runnable);
         });
 
         JButton swapButton = new JButton("Swap");
@@ -209,7 +207,7 @@ public class MainWindow implements ActionListener {
         });
         JButton redoButton = new JButton("Redo");
         redoButton.addActionListener(e -> {
-            pairListFactory.redoLatestPairDialog(runnable);
+            PAIR_LIST_FACTORY.redoLatestPairDialog(runnable);
             updatePairsTable();
         });
         JButton dissolvePairButton = new JButton("Paar auflösen");
@@ -263,7 +261,7 @@ public class MainWindow implements ActionListener {
 
         // Create the first dropdown list
         JLabel label1 = new JLabel("Welches Paar");
-        String[] pairList = pairListFactory.pairList.stream().map(pair -> pair.getParticipant1().getName() + " + " + pair.getParticipant2().getName()).toArray(String[]::new);
+        String[] pairList = PAIR_LIST_FACTORY.pairList.stream().map(pair -> pair.getParticipant1().getName() + " + " + pair.getParticipant2().getName()).toArray(String[]::new);
         JComboBox<String> dropdown1 = new JComboBox<>(pairList);
         JPanel panel1 = new JPanel();
         panel1.add(label1);
@@ -277,7 +275,7 @@ public class MainWindow implements ActionListener {
         panel2.add(dropdown2);
 
         // Create the third dropdown list
-        String[] participantList = pairListFactory.getSuccessors().stream().map(Participant::getName).toArray(String[]::new);
+        String[] participantList = PAIR_LIST_FACTORY.getParticipantSuccessorList().stream().map(Participant::getName).toArray(String[]::new);
         JLabel label3 = new JLabel("Ersetzen durch");
         JComboBox<String> dropdown3 = new JComboBox<>(participantList);
         JPanel panel3 = new JPanel();
@@ -292,11 +290,11 @@ public class MainWindow implements ActionListener {
             String selectedParticipant = (String) dropdown2.getSelectedItem();
             int selectedNewParticipant = dropdown3.getSelectedIndex();
 
-            Pair oldPair = pairListFactory.pairList.get(selectedOldPair);
+            Pair oldPair = PAIR_LIST_FACTORY.pairList.get(selectedOldPair);
             Participant oldParticipant = selectedParticipant.equals("User 1") ? oldPair.getParticipant1() : oldPair.getParticipant2();
-            Participant newParticipant = pairListFactory.getSuccessors().get(selectedNewParticipant);
+            Participant newParticipant = PAIR_LIST_FACTORY.getParticipantSuccessorList().get(selectedNewParticipant);
 
-            pairListFactory.swapParticipants(oldPair, oldParticipant, newParticipant);
+            PAIR_LIST_FACTORY.swapParticipants(oldPair, oldParticipant, newParticipant);
             updatePairsTable();
             // Update the participant list in the dropdown
             participantList[selectedNewParticipant] = newParticipant.getName();
@@ -339,7 +337,7 @@ public class MainWindow implements ActionListener {
         frame.setLayout(new FlowLayout());
 
         JLabel label1 = new JLabel("Welches Paar");
-        String[] pairList = pairListFactory.pairList.stream().map(pair -> pair.getParticipant1().getName() + " + " + pair.getParticipant2().getName()).toList().toArray(new String[0]);
+        String[] pairList = PAIR_LIST_FACTORY.pairList.stream().map(pair -> pair.getParticipant1().getName() + " + " + pair.getParticipant2().getName()).toList().toArray(new String[0]);
         JComboBox<String> dropdown1 = new JComboBox<>(pairList);
         JPanel panel = new JPanel();
         panel.add(label1);
@@ -350,10 +348,10 @@ public class MainWindow implements ActionListener {
             // Get the selected values from the dropdown lists
             int selectedOldPair = dropdown1.getSelectedIndex();
 
-            Pair oldPair = pairListFactory.pairList.get(selectedOldPair);
+            Pair oldPair = PAIR_LIST_FACTORY.pairList.get(selectedOldPair);
             System.out.println(oldPair.toString());
 
-            pairListFactory.dissolvePair(oldPair);
+            PAIR_LIST_FACTORY.dissolvePair(oldPair);
             updatePairsTable();
             String message = "Aufgelöst\n" +
                     "Paar: " + selectedOldPair;
@@ -390,11 +388,11 @@ public class MainWindow implements ActionListener {
     public void refreshGroupTable(JTable groupTable, JTable successorTable,JPanel southPanel){
         DefaultTableModel model = new DefaultTableModel();
         DefaultTableModel successorTableModel = new DefaultTableModel();
-        GroupFactory GROUP_FACTORY = new GroupFactory(pairListFactory.pairList, PARTICIPANT_FACTORY.getPartyLocation());
+        GroupFactory GROUP_FACTORY = new GroupFactory(PAIR_LIST_FACTORY.pairList, PARTICIPANT_FACTORY.getPartyLocation());
 
-        ArrayList<Group> appetizerGroups = GROUP_FACTORY.getAppetizerGroups();
-        ArrayList<Group> mainDishGroups = GROUP_FACTORY.getMainDishGroups();
-        ArrayList<Group> dessertGroups = GROUP_FACTORY.getDessertGroups();
+        ArrayList<Group> appetizerGroups = GROUP_FACTORY.getFirstCourseGroupList();
+        ArrayList<Group> mainDishGroups = GROUP_FACTORY.getMainCourseGroupList();
+        ArrayList<Group> dessertGroups = GROUP_FACTORY.getDessertCourseGroupList();
 
 
         model.addColumn("Group Nr");
@@ -489,7 +487,7 @@ public class MainWindow implements ActionListener {
         allGroups.addAll(mainDishGroups);
         allGroups.addAll(dessertGroups);
 
-        GroupList groupList = new GroupList(allGroups, pairListFactory.getSuccessors());
+        GroupList groupList = new GroupList(allGroups, PAIR_LIST_FACTORY.getParticipantSuccessorList());
 
         int totalGroupCount = allGroups.size();
         int totalSuccessorCount = groupList.getSuccessorCount();
@@ -514,12 +512,12 @@ public class MainWindow implements ActionListener {
         JTable groupTable = new JTable(model);
         JPanel southPanel = new JPanel();
 
-        GroupFactory GROUP_FACTORY = new GroupFactory(pairListFactory.pairList, PARTICIPANT_FACTORY.getPartyLocation());
+        GroupFactory GROUP_FACTORY = new GroupFactory(PAIR_LIST_FACTORY.pairList, PARTICIPANT_FACTORY.getPartyLocation());
 
         GROUP_FACTORY.startGroupAlgorithm();
-        ArrayList<Group> appetizerGroups = GROUP_FACTORY.getAppetizerGroups();
-        ArrayList<Group> mainDishGroups = GROUP_FACTORY.getMainDishGroups();
-        ArrayList<Group> dessertGroups = GROUP_FACTORY.getDessertGroups();
+        ArrayList<Group> appetizerGroups = GROUP_FACTORY.getFirstCourseGroupList();
+        ArrayList<Group> mainDishGroups = GROUP_FACTORY.getMainCourseGroupList();
+        ArrayList<Group> dessertGroups = GROUP_FACTORY.getDessertCourseGroupList();
 
         JTable table = new JTable(model);
         model.addColumn("Group Nr");
@@ -619,7 +617,7 @@ public class MainWindow implements ActionListener {
         allGroups.addAll(mainDishGroups);
         allGroups.addAll(dessertGroups);
 
-        GroupList groupList = new GroupList(allGroups, pairListFactory.getSuccessors());
+        GroupList groupList = new GroupList(allGroups, PAIR_LIST_FACTORY.getParticipantSuccessorList());
 
         int totalGroupCount = allGroups.size();
         int totalSuccessorCount = groupList.getSuccessorCount();
@@ -680,10 +678,10 @@ public class MainWindow implements ActionListener {
         JFrame frame = new JFrame("Dropdown Popup");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new FlowLayout());
-        GroupFactory GROUP_FACTORY = new GroupFactory(pairListFactory.pairList, PARTICIPANT_FACTORY.getPartyLocation());
+        GroupFactory GROUP_FACTORY = new GroupFactory(PAIR_LIST_FACTORY.pairList, PARTICIPANT_FACTORY.getPartyLocation());
 
         JLabel label1 = new JLabel("Welche Gruppe");
-        String[] groupList = GROUP_FACTORY.getAppetizerGroups().stream().map(group -> group.getPairs().toString()).toList().toArray(new String[0]);
+        String[] groupList = GROUP_FACTORY.getFirstCourseGroupList().stream().map(group -> group.getPairs().toString()).toList().toArray(new String[0]);
         JComboBox<String> dropdown1 = new JComboBox<>(groupList);
         JPanel panel = new JPanel();
         panel.add(label1);
@@ -709,10 +707,10 @@ public class MainWindow implements ActionListener {
 
  */
 
-            Pair oldPair = pairListFactory.pairList.get(selectedOldGroup);
+            Pair oldPair = PAIR_LIST_FACTORY.pairList.get(selectedOldGroup);
             System.out.println(oldPair.toString());
 
-            pairListFactory.dissolvePair(oldPair);
+            PAIR_LIST_FACTORY.dissolvePair(oldPair);
             String message = "Aufgelöst\n" +
                     "Gruppe: " + selectedOldGroup;
             JOptionPane.showMessageDialog(frame, message);
@@ -765,14 +763,14 @@ public class MainWindow implements ActionListener {
         ArrayList<Group> groups = null;
         switch (selectedDish) {
             case "Vorspeise" -> {
-                groups = GROUP_FACTORY.getAppetizerGroups();
+                groups = GROUP_FACTORY.getFirstCourseGroupList();
             }
             case "Hauptspeise" -> {
-                groups = GROUP_FACTORY.getMainDishGroups();
+                groups = GROUP_FACTORY.getMainCourseGroupList();
             }
 
             case "Nachspeise" -> {
-                groups = GROUP_FACTORY.getDessertGroups();
+                groups = GROUP_FACTORY.getDessertCourseGroupList();
             }
         }
 
@@ -939,7 +937,6 @@ public class MainWindow implements ActionListener {
         startMenu.add(readPartyLocationItem);
 
         menuBar.add(startMenu);
-        menuBar.add(pairMenu);
 
 
         START_PAIRS.addActionListener(this);
@@ -1035,21 +1032,25 @@ public class MainWindow implements ActionListener {
         } else if (bundle.getString("setCriteria").equals(command)) {
             CRITERIA_WINDOW.display();
         } else if (bundle.getString("startPairs").equals(command)) {
-            pairListFactory = new PairListFactory(
+            PAIR_LIST_FACTORY = new PairListFactory(
                     new ArrayList<>(PARTICIPANT_FACTORY.getParticipantList()),
                     new ArrayList<>(PARTICIPANT_FACTORY.getRegisteredPairs()),
                     new ArrayList<>(CRITERIA_ORDER));
             pairsGenerated = true;
             updateJMenu();
             displayPairTable();
+
         } else if (bundle.getString("startGroups").equals(command)) {
+            GROUP_FACTORY = new GroupFactory(
+                    new ArrayList<>(PAIR_LIST_FACTORY.getPairList()), PARTICIPANT_FACTORY.getPartyLocation());
             displayGroupTable();
             groupsGenerated= true;
+            SAVE_GROUPS.setEnabled(true);
 
         }
         else if (bundle.getString("saveGroups").equals(command)) {
             JACKSON_EXPORT = new JacksonExport();
-            JACKSON_EXPORT.export(GROUP_FACTORY.getAppetizerGroups(), GROUP_FACTORY.getPairList(), GROUP_FACTORY.getSuccessorPairs(), PARTICIPANT_FACTORY.getParticipantList());
+            JACKSON_EXPORT.export(GROUP_FACTORY.getGroups(), GROUP_FACTORY.getPairList(), GROUP_FACTORY.getSuccessorPairs(), PARTICIPANT_FACTORY.getParticipantList());
         }
         readParticipantsItem.setText(bundle.getString("readParticipants"));
         readPartyLocationItem.setText(bundle.getString("readPartyLocation"));
@@ -1097,10 +1098,13 @@ public class MainWindow implements ActionListener {
 
     public static void setCriteriaOrdered(boolean isCriteriaOrdered) {
         criteriaOrdered = isCriteriaOrdered;
-
-    }   private ArrayList<Participant> getPairsWithoutGroups() {
-    return pairListFactory.getSuccessors();
+    }
+    private ArrayList<Participant> getPairsWithoutGroups() {
+    return PAIR_LIST_FACTORY.getParticipantSuccessorList();
     }
 
 
+    public static ParticipantFactory getParticipantFactory() {
+        return PARTICIPANT_FACTORY;
+    }
 }

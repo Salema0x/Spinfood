@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 /**
  * The Cancelers class handles adjustments when participants cancel their attendance.
  * It updates the group list and waiting list accordingly.
  */
 public class Cancelers {
+
     private final List<Participant> absences;
     private final List<Participant> successorsInWaitingList;
     private final List<Group> groupList;
@@ -40,22 +40,27 @@ public class Cancelers {
         this.groupList = groupList;
         this.backupGroupList = backupGroupList;
     }
+
     /**
      * Performs the necessary adjustments when participants cancel their attendance.
      * It updates the group list, waiting list, and completes groups.
      */
+
     public void performAdjustment() {
         updateLists();
         completeGroups();
     }
+
     /**
      * Updates the waiting list based on the absences of participants in the group list.
      * If a participant is absent and belongs to a pair group, the group is removed from the group list and added to the backup group list.
      * If a participant is absent and belongs to a non-pair group, the group is removed from the group list and added to the backup group list.
      */
+
+
     void updateLists() {
         for (Participant participant : participantList) {
-            if (!participant.hasPartner() && absences.contains(participant)) {
+            if (!participant.getHasPartner() && absences.contains(participant)) {
                 System.out.println("The participant signed up alone and has canceled.");
                 Participant successor = successorsInWaitingList.remove(0);
                 participantList.remove(participant);
@@ -71,7 +76,7 @@ public class Cancelers {
                 // Wenn sich eine einzelne absagende Teilnehmende im
                 // Pärchen angemeldet hat, wird die zweite Person dieses Pärchens in die Nachrückerliste
                 // für Teilnehmende aufgenommen
-                if (!participant1.hasPartner() || !participant2.hasPartner() && (absences.contains(participant1) || absences.contains(participant2))) {
+                if (!participant1.getHasPartner() || !participant2.getHasPartner() && (absences.contains(participant1) || absences.contains(participant2))) {
                     groupList.remove(group);
                     backupGroupList.add(group);
                     // Check if there are successors available in the waiting list and replace them
@@ -79,20 +84,19 @@ public class Cancelers {
                         System.out.println("A Valid Pair has been found and added to the SuccessorPairList");
                     }
                 }
-                // if both have signed up together
+                // if both have signed up together //TODO: Refactor this
                 if (group.isPair() && participants.size() == 2) {
                     if (absences.contains(participant1) && absences.contains(participant2)) {
                         participantList.remove(participant1);
                         participantList.remove(participant2);
-                        if(successorPairList!=null){
+                        if (successorPairList != null) {
                             Pair replacedPairs = successorPairList.remove(0);
                             group.getPairs().add(replacedPairs);
-                        }else{
+                        } else {
                             // Should an algorithm be applied here ?
                             Participant replacement1 = participantList.remove(0);
-                            Participant replacement2 =participantList.remove(1);
-                            group.addParticipant(replacement1);
-                            group.addParticipant(replacement2);
+                            Participant replacement2 = participantList.remove(1);
+                            group.addPair(new Pair(replacement1, replacement2));
                         }
                     }
                 }
@@ -101,13 +105,17 @@ public class Cancelers {
             }
         }
     }
+
     /**
      * Completes a group by adding a pair of participants from the waiting list.
      * If there is at least one pair in the waiting list and there is at least one incomplete group in the group list,
      * a pair of participants is selected from the waiting list and added to the first group in the group list.
      * The completed group is added to the backup group list, and the group is removed from the group list.
+     *
      * @return
      */
+
+
     List<Group> completeGroups() {
         while (!successorPairList.isEmpty() && backupGroupList.size() < maxCapacity) {
             if (groupList.isEmpty()) break;
@@ -116,8 +124,7 @@ public class Cancelers {
             Pair pair = findPairFromSuccessorPairList();
 
             if (pair != null) {
-                group.addParticipant(pair.getParticipant1());
-                group.addParticipant(pair.getParticipant2());
+                group.addPair(pair);
                 backupGroupList.add(group);
                 groupList.remove(group);
             }
@@ -125,11 +132,15 @@ public class Cancelers {
 
         return backupGroupList;
     }
+
     /**
      * Finds a valid pair from the successorPairList for the provided participants and successors.
      * It uses the PairListFactory to generate pairs and identify successors.
+     *
      * @return true if a valid pair is found, false otherwise
      */
+
+
     private boolean findParticipantFromSuccessorsList() {
         for (Group group : groupList) {
             List<Participant> participants = group.getParticipants();
@@ -161,8 +172,11 @@ public class Cancelers {
     /**
      * Applies the pair algorithm to find a valid pair for the provided participant and successor.
      * It uses the PairListFactory to generate pairs and apply the algorithm.
+     *
      * @return a list of participants representing a valid pair if found, null otherwise
      */
+
+
     public List<Pair> applyPairAlgorithm() {
         PairListFactory pairListFactory = new PairListFactory((ArrayList<Participant>) participantList, (ArrayList<Pair>) registeredPairs, (ArrayList<Object>) criteria);
         return pairListFactory.makePairs();
@@ -171,6 +185,7 @@ public class Cancelers {
     /**
      * Finds a pair from the successorPairList.
      * If a pair is found where neither participant is absent, it is removed from the list and returned.
+     *
      * @return the pair if found, null otherwise
      */
     private Pair findPairFromSuccessorPairList() {

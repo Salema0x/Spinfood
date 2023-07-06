@@ -38,9 +38,6 @@ public class PairListFactory {
 
     private final ArrayList<Object> criteriaOrder;
 
-    private final ArrayList<Participant> removements = new ArrayList<>();
-    private final ArrayList<Participant> upperRemovements = new ArrayList<>();
-    private final PairList pairListObject;
     private final LinkedList<Object> undoRedoList = new LinkedList<>();
     private final LinkedList<Object> undoRedoListFuture = new LinkedList<>();
 
@@ -261,8 +258,8 @@ public class PairListFactory {
             Pair pair = last.getPair();
             pair.removeParticipant(last.getNewParticipant());
             pair.addParticipant(last.getSwappedParticipant());
-            successors.add(last.getNewParticipant());
-            successors.remove(last.getSwappedParticipant());
+            participantSuccessorList.add(last.getNewParticipant());
+            participantSuccessorList.remove(last.getSwappedParticipant());
 
             undoRedoList.removeLast();
             System.out.println(last);
@@ -273,8 +270,8 @@ public class PairListFactory {
             PairDissolve last = (PairDissolve) undoRedoList.getLast();
             Pair pair = new Pair(last.getDissolvedParticipant1(), last.getDissolvedParticipant2());;
             pairList.add(pair);
-            successors.remove(last.getDissolvedParticipant1());
-            successors.remove(last.getDissolvedParticipant2());
+            participantSuccessorList.remove(last.getDissolvedParticipant1());
+            participantSuccessorList.remove(last.getDissolvedParticipant2());
 
             undoRedoList.removeLast();
             System.out.println(last);
@@ -301,8 +298,8 @@ public class PairListFactory {
             pair.removeParticipant(last.getSwappedParticipant());
             pair.addParticipant(last.getNewParticipant());
             pair.updateCalculations();
-            successors.add(last.getSwappedParticipant());
-            successors.remove(last.getNewParticipant());
+            participantSuccessorList.add(last.getSwappedParticipant());
+            participantSuccessorList.remove(last.getNewParticipant());
 
             undoRedoListFuture.removeLast();
             System.out.println(last);
@@ -315,8 +312,8 @@ public class PairListFactory {
             Participant participant1 = pair.getParticipant1();
             Participant participant2 = pair.getParticipant2();
 
-            successors.add(participant1);
-            successors.add(participant2);
+            participantSuccessorList.add(participant1);
+            participantSuccessorList.add(participant2);
 
             pairList.remove(pair);
 
@@ -327,64 +324,14 @@ public class PairListFactory {
         }
     }
 
-    /**
-     * Clears the swapListFuture and swapList, removing all stored swap operations.
-     * This method is used to reset the undo/redo functionality.
-     */
-    public void clearRedoAndUndoList() {
-        undoRedoListFuture.clear();
-        undoRedoList.clear();
-    }
 
-    /**
-     * Swaps the participants in a pair. Moves the specified participant from the pair to the successor list,
-     * and replaces them with another participant from the successor list.
-     *
-     * @param pair                       The pair in which the participants should be swapped.
-     * @param participantInPair          The participant currently in the pair to be replaced.
-     * @param participantInSuccessorList The participant from the successor list to be placed in the pair.
-     */
-    public void swapParticipants(Pair pair, Participant participantInPair, Participant participantInSuccessorList) {
-        // Checking if pair exists in pairList and participantInPair is in the pair
-        if (!pairList.contains(pair) || !pair.containsParticipant(participantInPair)) {
-            System.out.println("The pair does not exist in the pair list or the participant is not in the given pair.");
-            return;
-        }
 
-        // Checking if participantInSuccessorList exists in participantSuccessorList
-        if (!successors.contains(participantInSuccessorList)) {
-            System.out.println("The participant you are trying to swap in is not in the successor list.");
-            return;
-        }
 
-        // Swap the participants
-        pair.removeParticipant(participantInPair);
-        pair.addParticipant(participantInSuccessorList);
-        successors.remove(participantInSuccessorList);
-        successors.add(participantInPair);
-        pair.updateCalculations();
-        undoRedoList.add(new PairSwap(pair, participantInPair, participantInSuccessorList));
-    }
 
-    /**
-     * Dissolves a pair by removing it from the pairList and adding its participants to the successors list.
-     *
-     * @param pair The pair to be dissolved.
-     */
-    public void dissolvePair(Pair pair) {
-        if (pairList.contains(pair)) {
-            Participant participant1 = pair.getParticipant1();
-            Participant participant2 = pair.getParticipant2();
 
-            successors.add(participant1);
-            successors.add(participant2);
-
-            undoRedoList.add(new PairDissolve(pair, participant1, participant2));
-            pairList.remove(pair);
-        }
-    }
 
     //7.2.5 End
+
 
     /**
      * Concatenates the pair list after the pair algorithm with pairs from the registration.
@@ -524,7 +471,7 @@ public class PairListFactory {
     /**
      * Starts making pairs by calling methods for making meatPairs, making veggie/vegan Pairs, and for the nonePairs
      */
-    void makePairs() {
+    List<Pair> makePairs() {
         makePairsMeat();
         makePairsOther();
         makePairsStarter(yesKitchenParticipants.get(0), maybeKitchenParticipants.get(0), noKitchenParticipants.get(0));
@@ -534,6 +481,7 @@ public class PairListFactory {
             maybeKitchenParticipants.get(0).remove(participant);
             noKitchenParticipants.get(0).remove(participant);
         }
+        return null;
     }
 
     /**

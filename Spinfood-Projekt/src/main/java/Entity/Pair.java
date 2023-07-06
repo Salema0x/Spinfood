@@ -190,13 +190,6 @@ public class Pair implements Comparable<Pair> {
     }
 
 
-    public void updateCalculations() {
-        calculateAge();
-        calculateAgeDifference();
-        calculatePreferenceDeviation();
-        calculateGenderDiversityScore();
-    }
-
     @Override
     public String toString() {
         return "Pair{" +
