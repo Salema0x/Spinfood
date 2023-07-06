@@ -1,0 +1,62 @@
+Pseudocode Paaralgorithmus (Grundidee)
+
+Vorarbeit:
+
+	Liste von Teilnehmern	
+	Ordnung von Kriterien als Liste, Kriterium mit niedrigstem Index am wichtigsten
+	(Mögliche Kriterien: Alter, Geschlecht oder Essensvorlieben)
+
+	Liste von Teilnehmern unterteilen in 
+		Teilnehmer mit Küche
+		Teilnehmer mit Notfallküche
+		Teilnehmer ohne Küche
+	Diese Listen werden unterteilt in die veggies, vegans, meat, nones	
+
+	Jede dieser Listen erst sortieren 
+		nach wichtigstem Kriterium
+		dann nach zweitwichtigsten
+		und dann nach drittwichtigstem
+
+(Wenn z.B. Alter das wichtigste ist, dann sind ganz oben die jüngsten)
+
+Paarungsabschnitt(gleiches Muster für jede FoodPreference):
+
+	Yes Kitchens werden mit No Kitchens gepaart (man removed einfach immer das 0te elements von beiden listen)
+	Wenn no kitchens leer sind und yes kitchens nicht leer sind
+		Yes kitchens werden mit mit maybe kitchens gepaart	
+		Wenn maybe kitchens leer sind und yes kitchens nicht leer sind
+			Yes kitchens werden mit yes kitchens gepaart
+		Wenn yesKitchens leer sind und maybeKitchen nicht leer sind 
+			maybe kitchens werden mit maybeKitchesn gepaart
+	Wenn yes kitchens leer sind und no kitchens nicht leer sind
+		noKitchens werden mit maybekitchens gepaart
+		Wenn maybeKitchens leer sind und no kitchens nicht leer sind
+			alle Teilnehmer auf noKitchens sind nachrücker
+		Wenn noKitchens leer sind und maybeKitchens nicht leer sind
+			maybeKitchens werden mit maybeKitchens gepaart
+	Wenn yesKitchens leer sind und noKitchens leer sind
+		maybeKitchens werden mit maybekitchens gepaart
+
+
+	
+Pseudocode Gruppenalgorithmus(Grundidee)
+
+	Es werden drei Listen erstellt
+		Paare die am weitesten entfernt sind (kochen vorspeis)
+		Paare die am nächsten zu der Partylocation sind (kochen main gang)
+		Paare die zwischendrin liegen (kochen dessert)
+
+ 	Listen werden auf die gleiche größe gebracht (Paare werden entfernt und werden zu nachrückern)
+
+	Jede dieser Listen wird durchgegangen
+	
+		Eine Map wird aufgebaut mit paaren die paasend sein können für das aktuelle paar
+		Die Map matched attribute (Gender, FoodPreference) auf die passenden Paare
+
+		jedes paar hat eine liste an paaren die es gesehen hat diese gesehenen paare werden aus der map entfernt
+
+		Wenn das aktuelle Paar männlich vegan ist wird probiert mit zwei veganen paaren
+		aufzufüllen so dass die genderdiversity möglichst niedrig ist wenn das nicht geht 
+		dann wird mit einem veganen paar und einem vegetarischen paar aufgefüllt usw.
+                
+		                                                                                                                                                                                                
